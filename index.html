@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C 프로그래밍 과제</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;color:#1a1a1a;background:#f5f5f4;min-height:100vh}
+.wrap{max-width:860px;margin:0 auto;padding:1.5rem 1rem}
+/* topbar */
+.topbar{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem}
+.topbar-title{font-size:17px;font-weight:600;flex:1}
+.user-chip{font-size:13px;background:#fff;border:1px solid #e2e2e0;border-radius:20px;padding:4px 12px;display:flex;align-items:center;gap:8px}
+.link-btn{background:none;border:none;font-size:12px;color:#888;cursor:pointer;padding:0}
+.link-btn:hover{color:#333}
+/* buttons */
+button{padding:.45rem 1rem;border:1px solid #d4d4d0;border-radius:8px;background:#fff;color:#1a1a1a;font-size:13px;cursor:pointer;font-family:inherit}
+button:hover{background:#f0f0ee}
+button:active{transform:scale(.98)}
+button.primary{background:#1a1a1a;color:#fff;border-color:transparent}
+button.primary:hover{background:#333}
+button:disabled{opacity:.4;cursor:not-allowed}
+.back-btn{background:none;border:none;font-size:13px;color:#888;cursor:pointer;padding:0}
+.back-btn:hover{color:#333}
+/* cards */
+.card{background:#fff;border:1px solid #e2e2e0;border-radius:12px;padding:1rem 1.25rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-bottom:1rem}
+.prob-card{background:#fff;border:1px solid #e2e2e0;border-radius:12px;padding:1rem 1.2rem;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.prob-card:hover{border-color:#aaa;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.prob-card-week{font-size:12px;color:#888;margin-bottom:5px}
+.prob-card-title{font-size:15px;font-weight:600;margin-bottom:5px}
+.prob-card-dl{font-size:12px;color:#888}
+.prob-card-footer{display:flex;align-items:center;margin-top:10px;padding-top:8px;border-top:1px solid #f0f0ee}
+.open-badge{font-size:11px;padding:2px 7px;border-radius:3px;font-weight:600}
+.open-badge.open{background:#e1f5ee;color:#0f6e56}
+.open-badge.closed{background:#f0f0ee;color:#888}
+/* problem view */
+.section-lbl{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.3rem;margin-top:.85rem}
+.section-lbl:first-child{margin-top:0}
+.body-text{font-size:14px;line-height:1.7}
+.io-box{font-family:'Menlo','Consolas',monospace;font-size:13px;padding:.55rem .8rem;background:#f5f5f4;border:1px solid #e2e2e0;border-radius:8px;white-space:pre}
+.prob-box{margin-bottom:1rem}
+/* editor */
+textarea{width:100%;min-height:200px;font-family:'Menlo','Consolas',monospace;font-size:13px;padding:.75rem;border:1px solid #d4d4d0;border-radius:8px;background:#fff;color:#1a1a1a;resize:vertical;outline:none;line-height:1.55;margin-bottom:.75rem}
+textarea:focus{border-color:#888}
+.btn-row{display:flex;gap:8px;margin-bottom:1rem}
+/* results */
+.score-bar{display:flex;align-items:center;gap:10px;padding:.7rem 1rem;background:#f5f5f4;border:1px solid #e2e2e0;border-radius:8px;margin-bottom:.75rem}
+.tc-list{display:flex;flex-direction:column;gap:6px}
+.tc-row{display:flex;align-items:center;gap:10px;padding:.5rem .85rem;border:1px solid #e2e2e0;border-radius:8px;background:#fff}
+.tc-row.tc-pass{border-color:#1D9E75;background:#e1f5ee}
+.tc-row.tc-fail{border-color:#D85A30;background:#faece7}
+.badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:3px;min-width:50px;text-align:center;white-space:nowrap}
+.badge.pass{background:#9fe1cb;color:#085041}
+.badge.fail{background:#f5c4b3;color:#4a1b0c}
+.badge.wait{background:#f0f0ee;color:#888;border:1px solid #e2e2e0}
+.badge.run{background:#b5d4f4;color:#042c53}
+.tc-detail{font-size:12px;font-family:'Menlo',monospace;color:#888;margin-top:2px}
+/* tab */
+.tab-row{display:flex;gap:4px;margin-bottom:1rem}
+.tab{padding:.4rem .9rem;border:1px solid #e2e2e0;border-radius:8px;cursor:pointer;font-size:13px;background:#fff;color:#888}
+.tab.active{background:#1a1a1a;color:#fff;border-color:transparent}
+/* table */
+table{width:100%;border-collapse:collapse}
+th{padding:.55rem 1rem;text-align:left;font-size:12px;font-weight:600;color:#888;background:#f5f5f4;border-bottom:1px solid #e2e2e0}
+td{padding:.6rem 1rem;font-size:13px;border-bottom:1px solid #f0f0ee}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafaf9}
+.empty-row{text-align:center;color:#888;padding:2rem !important}
+/* subs link */
+.subs-link{font-size:12px;color:#378add;cursor:pointer;margin-left:auto}
+.subs-link:hover{text-decoration:underline}
+/* notice */
+.notice{font-size:12px;color:#888;background:#f5f5f4;border-left:3px solid #d4d4d0;padding:.55rem .8rem;border-radius:0 6px 6px 0;margin-bottom:1rem}
+</style>
+</head>
+<body>
+<div class="wrap"><div id="app"></div></div>
+<script>
+/* ============================================================
+   ★ 교수님 설정 구역 ★
+   아래 두 가지만 수정하세요.
+============================================================ */
+
+// 1. Google Sheets 연동 URL
+//    비워두면 로컬 저장만 됨 (교수님은 제출 내역 못 봄)
+//    설정 방법은 파일 맨 아래 주석 참고
+const SHEETS_URL = '';
+
+// 2. 과목명
+const COURSE_NAME = 'C 프로그래밍';
+
+// 3. 문제 목록
+const PROBLEMS = [
+  {
+    id: 'hw1', week: '1주차', title: 'A+B',
+    desc: '두 정수 A와 B를 입력받은 다음, A+B를 출력하는 프로그램을 작성하시오.',
+    input_desc: '첫째 줄에 A와 B가 주어진다. (0 &lt; A, B &lt; 10)',
+    output_desc: '첫째 줄에 A+B를 출력한다.',
+    ex_in: '1 2', ex_out: '3', deadline: '2025-04-10',
+    cases: [
+      { id:1, input:'1 2',  expected:'3',  pts:25 },
+      { id:2, input:'3 4',  expected:'7',  pts:25 },
+      { id:3, input:'9 1',  expected:'10', pts:25 },
+      { id:4, input:'5 5',  expected:'10', pts:25 },
+    ]
+  },
+  {
+    id: 'hw2', week: '2주차', title: '최솟값 출력',
+    desc: '정수 세 개를 입력받아 그 중 최솟값을 출력하시오.',
+    input_desc: '첫째 줄에 세 정수 A, B, C가 주어진다. (-1000 ≤ A, B, C ≤ 1000)',
+    output_desc: '첫째 줄에 최솟값을 출력한다.',
+    ex_in: '3 1 2', ex_out: '1', deadline: '2025-04-17',
+    cases: [
+      { id:1, input:'3 1 2',      expected:'1',     pts:25 },
+      { id:2, input:'-5 0 3',     expected:'-5',    pts:25 },
+      { id:3, input:'7 7 7',      expected:'7',     pts:25 },
+      { id:4, input:'1000 -1000 0',expected:'-1000',pts:25 },
+    ]
+  },
+  {
+    id: 'hw3', week: '3주차', title: '팩토리얼',
+    desc: '정수 N이 주어졌을 때, N!을 출력하시오.',
+    input_desc: '첫째 줄에 N이 주어진다. (0 ≤ N ≤ 12)',
+    output_desc: '첫째 줄에 N!을 출력한다.',
+    ex_in: '5', ex_out: '120', deadline: '2025-04-24',
+    cases: [
+      { id:1, input:'0',  expected:'1',       pts:25 },
+      { id:2, input:'1',  expected:'1',       pts:25 },
+      { id:3, input:'5',  expected:'120',     pts:25 },
+      { id:4, input:'10', expected:'3628800', pts:25 },
+    ]
+  },
+];
+
+/* ============================================================
+   내부 코드 (수정 불필요)
+============================================================ */
+const JUDGE0  = 'https://ce.judge0.com';
+const LANG_C  = 50;
+const STARTER = '#include <stdio.h>\n\nint main() {\n    \n    return 0;\n}';
+const LS_USER = 'oj_username';
+const LS_HIST = 'oj_history'; // {problemId: [{score,max,ts}]}
+
+let view = 'home';
+let curPid = null, curTab = 'editor';
+let code = STARTER, tcResults = {}, submitting = false;
+let username = localStorage.getItem(LS_USER) || '';
+
+/* --- 유틸 --- */
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function trim(s)   { return (s || '').replace(/\r/g, '').trimEnd(); }
+function $(id)     { return document.getElementById(id); }
+function isOpen(p) { return new Date() <= new Date(p.deadline); }
+
+/* --- 이력 (localStorage) --- */
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(LS_HIST) || '{}'); } catch { return {}; }
+}
+function addHistory(pid, entry) {
+  const h = loadHistory();
+  if (!h[pid]) h[pid] = [];
+  h[pid].unshift(entry); // 최신이 앞
+  if (h[pid].length > 10) h[pid] = h[pid].slice(0, 10); // 최대 10개
+  localStorage.setItem(LS_HIST, JSON.stringify(h));
+}
+
+/* --- Google Sheets 전송 --- */
+function sendToSheets(payload) {
+  if (!SHEETS_URL) return;
+  fetch(SHEETS_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  }).catch(() => {});
+}
+
+/* --- Judge0 --- */
+async function runCase(tc, src) {
+  try {
+    const r = await fetch(`${JUDGE0}/submissions?base64_encoded=false&wait=false`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        source_code: src, language_id: LANG_C,
+        stdin: tc.input, expected_output: tc.expected,
+      }),
+    });
+    const { token } = await r.json();
+    if (!token) return { status: 'fail', msg: '제출 실패' };
+    for (let i = 0; i < 20; i++) {
+      await sleep(900);
+      const d = await (await fetch(`${JUDGE0}/submissions/${token}?base64_encoded=false`)).json();
+      if (d.status && d.status.id >= 3) {
+        const sid = d.status.id;
+        const stdout = trim(d.stdout || ''), exp = trim(tc.expected);
+        if (sid === 3) return { status: 'pass', stdout, expected: exp, time: d.time };
+        if (sid === 6) return { status: 'fail', msg: '컴파일 오류', detail: trim(d.compile_output || '').slice(0, 300) };
+        if (sid === 5) return { status: 'fail', msg: '시간 초과' };
+        if (sid === 4) return { status: 'fail', msg: '오답', stdout, expected: exp };
+        return { status: 'fail', msg: d.status.description, detail: trim(d.stderr || '').slice(0, 200) };
+      }
+    }
+    return { status: 'fail', msg: '채점 서버 응답 없음' };
+  } catch { return { status: 'fail', msg: '네트워크 오류' }; }
+}
+
+/* ============================================================
+   렌더
+============================================================ */
+function userBar() {
+  if (username) {
+    return `<div class="user-chip">${username}
+      <button class="link-btn" onclick="doChangeUser()">변경</button>
+    </div>
+    <button onclick="renderHistory()">내 제출 이력</button>`;
+  }
+  return `<button onclick="doSetUser()">학번_이름 입력</button>`;
+}
+
+/* ── 홈 ── */
+function renderHome() {
+  view = 'home';
+  const cards = PROBLEMS.map(p => {
+    const open = isOpen(p);
+    const hist = (loadHistory()[p.id] || []);
+    const best = hist.length ? Math.max(...hist.map(h => h.score)) : null;
+    const bestMax = hist.length ? hist[0].max : null;
+    return `<div class="prob-card" onclick="goProb('${p.id}')">
+      <div class="prob-card-week">${p.week}</div>
+      <div class="prob-card-title">${p.title}</div>
+      <div class="prob-card-dl">마감 ${p.deadline}</div>
+      <div class="prob-card-footer">
+        <span class="open-badge ${open ? 'open' : 'closed'}">${open ? '제출 가능' : '마감'}</span>
+        ${best !== null
+          ? `<span style="font-size:12px;color:#888;margin-left:auto">최고 ${best}/${bestMax}점</span>`
+          : `<span style="font-size:12px;color:#bbb;margin-left:auto">미제출</span>`}
+      </div>
+    </div>`;
+  }).join('');
+
+  $('app').innerHTML = `
+    <div class="topbar">
+      <div class="topbar-title">${COURSE_NAME}</div>
+      ${userBar()}
+    </div>
+    <div class="card-grid">${cards}</div>`;
+}
+
+/* ── 문제 ── */
+function renderProb(pid) {
+  view = 'problem'; curPid = pid; curTab = 'editor';
+  const p = PROBLEMS.find(x => x.id === pid);
+  code = STARTER; tcResults = {}; submitting = false;
+  const hist = (loadHistory()[pid] || []);
+  const bestEntry = hist.length ? hist.reduce((a, b) => a.score >= b.score ? a : b) : null;
+
+  $('app').innerHTML = `
+    <div class="topbar">
+      <button class="back-btn" onclick="renderHome()">← 목록</button>
+      <div class="topbar-title" style="font-size:15px;font-weight:600">${p.week} — ${p.title}</div>
+      ${userBar()}
+    </div>
+    ${bestEntry
+      ? `<div class="notice">이전 최고 점수: <strong>${bestEntry.score}/${bestEntry.max}점</strong>
+         &nbsp;·&nbsp; 총 ${hist.length}회 제출
+         &nbsp;·&nbsp; <span class="subs-link" onclick="renderHistory()">내 제출 이력 보기</span></div>`
+      : ''}
+    <div class="tab-row">
+      <button class="tab active" id="tab-editor" onclick="switchTab('editor')">코드 작성</button>
+      <button class="tab" id="tab-prob" onclick="switchTab('prob')">문제 보기</button>
+    </div>
+    <div id="editor-panel">
+      <textarea id="code-ta" spellcheck="false">${code}</textarea>
+      <div class="btn-row">
+        <button class="primary" id="sub-btn" onclick="doSubmit()">제출 및 채점</button>
+        <button onclick="doReset()">초기화</button>
+      </div>
+      <div id="results"></div>
+    </div>
+    <div id="prob-panel" style="display:none">
+      <div class="prob-box card">
+        <div class="section-lbl">문제</div>
+        <div class="body-text">${p.desc}</div>
+        <div class="section-lbl">입력</div>
+        <div class="body-text">${p.input_desc}</div>
+        <div class="section-lbl">출력</div>
+        <div class="body-text">${p.output_desc}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+          <div><div class="section-lbl">예제 입력</div><div class="io-box">${p.ex_in}</div></div>
+          <div><div class="section-lbl">예제 출력</div><div class="io-box">${p.ex_out}</div></div>
+        </div>
+      </div>
+    </div>`;
+
+  $('code-ta').addEventListener('input', e => { code = e.target.value; });
+}
+
+function switchTab(t) {
+  curTab = t;
+  $('editor-panel').style.display = t === 'editor' ? 'block' : 'none';
+  $('prob-panel').style.display   = t === 'prob'   ? 'block' : 'none';
+  $('tab-editor').className = 'tab' + (t === 'editor' ? ' active' : '');
+  $('tab-prob').className   = 'tab' + (t === 'prob'   ? ' active' : '');
+}
+
+function renderResults() {
+  const p = PROBLEMS.find(x => x.id === curPid);
+  if (!p || !$('results')) return;
+  let total = 0, max = 0;
+  p.cases.forEach(tc => {
+    max += tc.pts;
+    if (tcResults[tc.id]?.status === 'pass') total += tc.pts;
+  });
+  const done = !submitting && Object.keys(tcResults).length > 0;
+  const rows = p.cases.map(tc => {
+    const r = tcResults[tc.id];
+    let cls = '', badge = '', detail = '';
+    if (!r)                      badge = '<span class="badge wait">대기</span>';
+    else if (r.status === 'running') { cls = 'tc-run'; badge = '<span class="badge run">채점중</span>'; }
+    else if (r.status === 'pass')    { cls = 'tc-pass'; badge = '<span class="badge pass">정답</span>'; }
+    else {
+      cls = 'tc-fail';
+      badge = `<span class="badge fail">${r.msg || '오답'}</span>`;
+      if (r.detail)           detail = `<div class="tc-detail">${r.detail}</div>`;
+      else if (r.stdout !== undefined)
+        detail = `<div class="tc-detail">출력: <code>${r.stdout || '(없음)'}</code>&nbsp; 기댓값: <code>${r.expected}</code></div>`;
+    }
+    return `<div class="tc-row ${cls}">
+      ${badge}
+      <div style="flex:1">
+        <div style="font-size:12px;color:#888">TC ${tc.id}</div>
+        ${detail}
+      </div>
+      <div style="font-size:12px;color:#888">${tc.pts}점</div>
+    </div>`;
+  }).join('');
+
+  $('results').innerHTML = `
+    ${done ? `<div class="score-bar">
+      <span style="font-size:19px;font-weight:600">${total} / ${max}점</span>
+      ${total === max ? '<span style="font-size:13px;color:#0f6e56;margin-left:auto;font-weight:600">모두 정답!</span>' : ''}
+    </div>` : ''}
+    <div class="tc-list">${rows}</div>`;
+}
+
+/* ── 내 제출 이력 ── */
+function renderHistory() {
+  view = 'history';
+  const hist = loadHistory();
+  const rows = PROBLEMS.map(p => {
+    const entries = hist[p.id] || [];
+    if (!entries.length) return `<tr>
+      <td>${p.week}</td><td>${p.title}</td>
+      <td colspan="3" style="color:#bbb">미제출</td>
+    </tr>`;
+    return entries.map((e, i) => {
+      const pct = Math.round(e.score / e.max * 100);
+      const c = e.score === e.max ? '#0f6e56' : e.score > 0 ? '#b07d1a' : '#a32d2d';
+      return `<tr>
+        <td>${i === 0 ? p.week : ''}</td>
+        <td>${i === 0 ? p.title : ''}</td>
+        <td style="color:${c};font-weight:600">${e.score}/${e.max} (${pct}%)</td>
+        <td>${new Date(e.ts).toLocaleString('ko-KR')}</td>
+      </tr>`;
+    }).join('');
+  }).join('');
+
+  $('app').innerHTML = `
+    <div class="topbar">
+      <button class="back-btn" onclick="renderHome()">← 목록</button>
+      <div class="topbar-title" style="font-size:15px">내 제출 이력</div>
+      ${userBar()}
+    </div>
+    <div class="notice">${username || '(이름 없음)'} 의 제출 기록 (최대 10회/문제, 브라우저에 저장)</div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table>
+        <thead><tr>
+          <th style="width:80px">주차</th>
+          <th>문제</th>
+          <th>점수</th>
+          <th>제출 시각</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+/* ============================================================
+   액션
+============================================================ */
+function goProb(pid) {
+  if (!username) { doSetUser(() => renderProb(pid)); return; }
+  renderProb(pid);
+}
+
+async function doSubmit() {
+  if (submitting) return;
+  if (!username) { doSetUser(() => doSubmit()); return; }
+  submitting = true;
+  $('sub-btn').disabled = true;
+  $('sub-btn').textContent = '채점 중...';
+  tcResults = {};
+  renderResults();
+
+  const p   = PROBLEMS.find(x => x.id === curPid);
+  const src = $('code-ta')?.value || code;
+
+  p.cases.forEach(tc => { tcResults[tc.id] = { status: 'running' }; });
+  renderResults();
+
+  await Promise.all(p.cases.map(async tc => {
+    tcResults[tc.id] = await runCase(tc, src);
+    renderResults();
+  }));
+
+  let total = 0, max = 0;
+  p.cases.forEach(tc => {
+    max += tc.pts;
+    if (tcResults[tc.id]?.status === 'pass') total += tc.pts;
+  });
+
+  const ts = new Date().toISOString();
+
+  // 로컬 이력 저장
+  addHistory(p.id, { score: total, max, ts });
+
+  // Google Sheets 전송
+  sendToSheets({
+    ts, username,
+    week: p.week, problem: p.title,
+    score: total, max,
+    pct: Math.round(total / max * 100),
+  });
+
+  submitting = false;
+  if ($('sub-btn')) {
+    $('sub-btn').disabled = false;
+    $('sub-btn').textContent = '제출 및 채점';
+  }
+  renderResults();
+}
+
+function doReset() {
+  code = STARTER;
+  const el = $('code-ta');
+  if (el) el.value = code;
+  tcResults = {};
+  renderResults();
+}
+
+function doSetUser(cb) {
+  const v = prompt('학번_이름 형식으로 입력하세요\n예) 202312345_홍길동');
+  if (v && v.trim()) {
+    username = v.trim();
+    localStorage.setItem(LS_USER, username);
+    if (cb) cb(); else renderHome();
+  }
+}
+function doChangeUser() { doSetUser(() => renderHome()); }
+
+/* init */
+renderHome();
+</script>
+
+<!--
+================================================================
+  Google Sheets 연동 설정 방법 (SHEETS_URL 설정)
+================================================================
+
+1. Google Sheets 새 스프레드시트 생성
+
+2. 확장 프로그램 → Apps Script 열기
+
+3. 아래 코드 붙여넣고 저장:
+
+------------------------------------------------------------
+function doPost(e) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const d = JSON.parse(e.postData.contents);
+  sheet.appendRow([
+    new Date(d.ts),   // A: 제출 시각
+    d.username,       // B: 학번_이름
+    d.week,           // C: 주차
+    d.problem,        // D: 문제
+    d.score,          // E: 점수
+    d.max,            // F: 만점
+    d.pct + '%'       // G: 정답률
+  ]);
+  return ContentService
+    .createTextOutput(JSON.stringify({ ok: true }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+------------------------------------------------------------
+
+4. 배포 → 새 배포 → 웹 앱
+   - 실행: 나
+   - 액세스: 모든 사용자
+   → 배포 후 URL 복사
+
+5. 이 파일 상단 SHEETS_URL = '복사한 URL' 로 수정
+
+================================================================
+-->
+</body>
+</html>
