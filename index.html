@@ -374,7 +374,10 @@ function renderHome(){
     </div>
 
     <div class="how-to">
-      <div class="how-title">이용 방법</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem">
+        <div class="how-title" style="margin-bottom:0">이용 방법</div>
+        <div style="font-size:11px;color:#aaa">문제가 안 보이면 <code>Ctrl+Shift+R</code> (Mac: <code>Cmd+Shift+R</code>)</div>
+      </div>
       <div class="how-steps">
         <div class="how-step"><span class="step-num">1</span><span>우측 상단 <b>학번_이름 입력</b> 클릭 &nbsp;→&nbsp; 예) <code>202312345_홍길동</code></span></div>
         <div class="how-step"><span class="step-num">2</span><span>문제 카드 클릭 후 <b>코드 작성</b> 탭에서 C 코드 작성</span></div>
@@ -419,6 +422,7 @@ function renderProb(pid){
         <div><div class="section-lbl">예제 출력</div><div class="io-box">${p.ex_out}</div></div>
       </div>
     </div>
+    <div class="section-lbl" style="margin-top:1.25rem;margin-bottom:.4rem">코드 작성</div>
     <textarea id="code-ta" spellcheck="false">${code}</textarea>
     <div class="btn-row">
       <button class="primary" id="sub-btn" onclick="doSubmit()">제출</button>
@@ -556,6 +560,8 @@ async function doSubmit(){
   if (!src.trim() || src.trim() === STARTER.trim()){
     alert('코드를 작성한 후 제출하세요.'); return;
   }
+  if (!confirm(`${p.title} 과제를 제출하시겠습니까?\n\n제출 후에도 재제출이 가능합니다.`)) return;
+
   submitting = true;
   const btn = $('sub-btn');
   if (btn){ btn.disabled = true; btn.textContent = '제출 중...'; }
