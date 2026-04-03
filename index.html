@@ -815,14 +815,8 @@ function doSetUser(cb){
   if (v && v.trim()){
     username = v.trim();
     localStorage.setItem(LS_USER, username);
-    if (cb) cb(); else window.addEventListener('popstate', function(e){
-  const s = e.state;
-  if (!s || s.view === 'home') renderHome(false);
-  else if (s.view === 'problem') renderProb(s.pid, false);
-  else if (s.view === 'history') renderHistory(false);
-});
-history.replaceState({view:'home'}, '', ' ');
-renderHome(false);
+    if (cb){ cb(); }
+    else { history.replaceState({view:'home'}, '', ' '); renderHome(false); }
   }
 }
 function doChangeUser(){ doSetUser(() => renderHome()); }
