@@ -535,11 +535,10 @@ function renderHome(push=true){
 function renderProb(pid, push=true){
   if(push) history.pushState({view:'problem',pid},'','#'+pid);
   view = 'problem'; curPid = pid; curTab = 'prob';
-  const p = PROBLEMS.find(x => x.id === pid);
-  code = STARTER; tcResults = {}; submitting = false;
-  // 랜덤 케이스 생성
+  const _pBase = PROBLEMS.find(x => x.id === pid);
   const generated = buildCases(pid);
-  if(generated) p = Object.assign({}, p, {cases: generated});
+  const p = generated ? Object.assign({}, _pBase, {cases: generated}) : _pBase;
+  code = STARTER; tcResults = {}; submitting = false;
   const hist = (loadHistory()[pid] || []);
 
 
