@@ -84,7 +84,7 @@ code{font-family:'Menlo','Consolas',monospace;background:#f0f0ee;padding:1px 4px
 /* ============================================================
    ★ 교수님 설정 구역 ★
 ============================================================ */
-const SHEETS_URL  = 'https://script.google.com/macros/s/AKfycbyjZUTX71pG8g_PfBrXnqZWNgKfT1ydqutytwvDJYfAgS3H8PvsuNnDtHMNvB1-Kjg/exec';          // Google Sheets 웹앱 URL
+const SHEETS_URL  = 'https://script.google.com/macros/s/AKfycbyd7v7QkMdA_jURaOBiyKPaPmstjTF5jl5Yrnu0TtsXBv9k4CORkvRBywNnpI5VpDxs/exec';          // Google Sheets 웹앱 URL
 const COURSE_NAME = 'C 프로그래밍 (1)';
 
 const PROBLEMS = [
@@ -131,7 +131,7 @@ const PROBLEMS = [
 
   /* ── Week 5B Practice ─────────────────────────── */
   {
-    id:'p1', week:'5주차 Practice 1', title:'Calculator with switch',
+    id:'p1', week:'5주차 Practice', title:'Calculator with switch',
     desc:'<code>double a</code>, <code>char op</code>, <code>double b</code>를 입력받아 사칙연산 결과를 출력하시오. 연산자는 <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>이며, 0으로 나눌 경우 별도 처리.',
     input_desc:'한 줄에 a op b 순서로 주어진다. (예: <code>10 / 3</code>)',
     output_desc:'결과를 소수점 둘째 자리까지 출력한다. 형식: <code>3.33</code><br>0으로 나누면: <code>Division by zero</code>',
@@ -144,7 +144,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'p2', week:'5주차 Practice 2', title:'Season Finder',
+    id:'p2', week:'5주차 Practice', title:'Season Finder',
     desc:'월 번호(1-12)를 입력받아 계절을 출력하시오. <b>fall-through</b>를 이용한 switch로 작성할 것.',
     input_desc:'첫째 줄에 월 번호(1-12)가 주어진다.',
     output_desc:'해당 계절을 출력한다: <code>Spring</code> / <code>Summer</code> / <code>Autumn</code> / <code>Winter</code><br>범위 외: <code>Invalid</code>',
@@ -157,7 +157,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'p3', week:'5주차 Practice 3', title:'Vending Machine',
+    id:'p3', week:'5주차 Practice', title:'Vending Machine',
     desc:'자판기 프로그램을 작성하시오.<br>메뉴: 1. Coffee (1500원) &nbsp; 2. Tea (1200원) &nbsp; 3. Juice (2000원) &nbsp; 4. Water (800원)',
     input_desc:'첫째 줄에 선택 번호, 둘째 줄에 투입 금액(원)이 주어진다.',
     output_desc:'충분: <code>{품목} dispensed. Change: {N} won</code><br>부족: <code>Insufficient funds</code><br>잘못된 선택: <code>Invalid selection</code>',
@@ -170,7 +170,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'p4', week:'5주차 Practice 4', title:'Days in Month',
+    id:'p4', week:'5주차 Practice', title:'Days in Month',
     desc:'월과 연도를 입력받아 해당 월의 날 수를 출력하시오. switch로 월을 처리하고, 2월은 if-else-if로 윤년을 처리할 것.',
     input_desc:'한 줄에 월(1-12)과 연도가 주어진다. (예: <code>2 2024</code>)',
     output_desc:'해당 월의 날 수를 출력한다.',
@@ -185,7 +185,7 @@ const PROBLEMS = [
 
   /* ── Week 5B Challenge ────────────────────────── */
   {
-    id:'c1', week:'5주차 Challenge 1', title:'Tax Bracket Calculator',
+    id:'c1', week:'5주차 Challenge', title:'Tax Bracket Calculator',
     desc:'연소득(원)을 입력받아 누진세를 계산하시오.<br>세율 구간: ~1,400만원 6% / ~5,000만원 15% / ~8,800만원 24% / 초과 35%<br>세금은 누진 적용됨 (예: 6천만원 = 14M×6% + 36M×15% + 10M×24%)',
     input_desc:'첫째 줄에 연소득(원, 정수)이 주어진다.',
     output_desc:'형식: <code>Tax: {N} won</code>',
@@ -198,7 +198,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'c2', week:'5주차 Challenge 2', title:'Rock Paper Scissors',
+    id:'c2', week:'5주차 Challenge', title:'Rock Paper Scissors',
     desc:'두 플레이어가 각각 R(Rock), P(Paper), S(Scissors) 중 하나를 입력하면 승자를 결정하시오. 대소문자 모두 처리할 것.',
     input_desc:'첫째 줄에 Player 1의 선택, 둘째 줄에 Player 2의 선택이 주어진다.',
     output_desc:'<code>Player 1 wins</code> / <code>Player 2 wins</code> / <code>Draw</code>',
@@ -211,7 +211,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'c3', week:'5주차 Challenge 3', title:'Quadratic Equation Solver',
+    id:'c3', week:'5주차 Challenge', title:'Quadratic Equation Solver',
     desc:'ax²+bx+c=0의 계수 a, b, c를 입력받아 근을 구하시오. <code>&lt;math.h&gt;</code>의 <code>sqrt()</code>를 사용하고, <code>gcc -lm</code>으로 컴파일.',
     input_desc:'한 줄에 a b c가 주어진다.',
     output_desc:'두 실근: <code>x1 = X.XX, x2 = X.XX</code> (x1 ≥ x2)<br>중근: <code>x = X.XX</code><br>허근: <code>No real roots</code><br>a=0 선형: <code>x = X.XX</code>',
@@ -224,7 +224,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'c4', week:'5주차 Challenge 4', title:'Date Validator',
+    id:'c4', week:'5주차 Challenge', title:'Date Validator',
     desc:'연도, 월, 일을 입력받아 유효한 날짜인지 확인하시오. 윤년 처리 포함. if-else-if + switch 조합으로 작성할 것.',
     input_desc:'한 줄에 year month day가 주어진다.',
     output_desc:'유효: <code>Valid date</code><br>무효: <code>Invalid date: invalid year</code> / <code>Invalid date: invalid month</code> / <code>Invalid date: invalid day</code>',
@@ -237,7 +237,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'c5', week:'5주차 Challenge 5', title:'Mini ATM System',
+    id:'c5', week:'5주차 Challenge', title:'Mini ATM System',
     desc:'PIN(1234)을 검증하고 메뉴를 처리하는 ATM을 작성하시오. 초기 잔액: 100,000원. switch로 메뉴 처리, if로 검증.',
     input_desc:'첫째 줄: PIN. 올바르면 둘째 줄: 메뉴(1.잔액 2.입금 3.출금 4.종료). 입금/출금이면 셋째 줄: 금액.',
     output_desc:'PIN 오류: <code>Wrong PIN</code><br>잔액 확인: <code>Balance: N won</code><br>입금: <code>Deposited. Balance: N won</code><br>출금 성공: <code>Withdrawn. Balance: N won</code><br>잔액 부족: <code>Insufficient funds</code>',
@@ -407,33 +407,25 @@ function renderProb(pid){
     ${best ? `<div class="notice">이전 최고: <strong>${best.score}/${best.max}점</strong>
       &nbsp;·&nbsp; 총 ${hist.length}회 제출
       &nbsp;·&nbsp; <span style="color:#378add;cursor:pointer" onclick="renderHistory()">이력 보기</span></div>` : ''}
-    <div class="tab-row">
-      <button class="tab active" id="tab-prob"   onclick="switchTab('prob')">문제 보기</button>
-      <button class="tab"        id="tab-editor" onclick="switchTab('editor')">코드 작성</button>
-    </div>
-    <div id="prob-panel">
-      <div class="card" style="margin-bottom:1rem">
-        <div class="section-lbl">문제</div>
-        <div class="body-text">${p.desc}</div>
-        <div class="section-lbl">입력</div>
-        <div class="body-text">${p.input_desc}</div>
-        <div class="section-lbl">출력</div>
-        <div class="body-text">${p.output_desc}</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
-          <div><div class="section-lbl">예제 입력</div><div class="io-box">${p.ex_in}</div></div>
-          <div><div class="section-lbl">예제 출력</div><div class="io-box">${p.ex_out}</div></div>
-        </div>
+    <div class="card" style="margin-bottom:1rem">
+      <div class="section-lbl">문제</div>
+      <div class="body-text">${p.desc}</div>
+      <div class="section-lbl">입력</div>
+      <div class="body-text">${p.input_desc}</div>
+      <div class="section-lbl">출력</div>
+      <div class="body-text">${p.output_desc}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+        <div><div class="section-lbl">예제 입력</div><div class="io-box">${p.ex_in}</div></div>
+        <div><div class="section-lbl">예제 출력</div><div class="io-box">${p.ex_out}</div></div>
       </div>
     </div>
-    <div id="editor-panel" style="display:none">
-      <textarea id="code-ta" spellcheck="false">${code}</textarea>
-      <div class="btn-row">
-        <button class="primary" id="sub-btn" onclick="doSubmit()">제출 및 채점</button>
-        <button id="test-btn" onclick="doTest()">테스트 실행</button>
-        <button onclick="doReset()">초기화</button>
-      </div>
-      <div id="results"></div>
-    </div>`;
+    <textarea id="code-ta" spellcheck="false">${code}</textarea>
+    <div class="btn-row">
+      <button class="primary" id="sub-btn" onclick="doSubmit()">제출</button>
+      <button id="test-btn" onclick="doTest()">테스트 실행</button>
+      <button onclick="doReset()">초기화</button>
+    </div>
+    <div id="results"></div>`;
 
   /* Tab 인덴트 */
   const ta = $('code-ta');
@@ -574,7 +566,7 @@ async function doSubmit(){
     problem: p.title, code: src });
 
   submitting = false;
-  if (btn){ btn.disabled = false; btn.textContent = '제출 및 채점'; }
+  if (btn){ btn.disabled = false; btn.textContent = '제출'; }
 
   // 결과 영역에 제출 완료 표시
   if ($('results')){
