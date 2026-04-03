@@ -92,7 +92,7 @@ code{font-family:'Menlo','Consolas',monospace;background:#f0f0ee;padding:1px 4px
 /* ============================================================
    ★ 교수님 설정 구역 ★
 ============================================================ */
-const SHEETS_URL  = 'https://script.google.com/macros/s/AKfycbyd7v7QkMdA_jURaOBiyKPaPmstjTF5jl5Yrnu0TtsXBv9k4CORkvRBywNnpI5VpDxs/exec';          // Google Sheets 웹앱 URL
+const SHEETS_URL  = 'https://script.google.com/macros/s/AKfycbz0i67nM-OIJzmrrPEXWSgdtqZexq9ggNbmAf8b2saFIUz6YyxcAqu2fg5rym_N5hKM/exec';          // Google Sheets 웹앱 URL
 const COURSE_NAME = 'C Programming (1)';
 
 const PROBLEMS = [
@@ -215,7 +215,7 @@ const PROBLEMS = [
       {id:1,input:'R\nS', expected:'Player 1 wins', pts:25},
       {id:2,input:'P\nR', expected:'Player 1 wins', pts:25},
       {id:3,input:'R\nR', expected:'Draw',           pts:25},
-      {id:4,input:'S\nP', expected:'Player 1 wins', pts:25},
+      {id:4,input:'s\nP', expected:'Player 1 wins', pts:25},
     ]
   },
   {
@@ -617,8 +617,21 @@ async function doSubmit(){
     submitScore = tot; submitMax = mx;
   }
   addHistory(p.id, { ts, submitted: true, score: submitScore, max: submitMax });
-  sendToSheets({ ts, username, week: p.week, problemId: p.id,
-    problem: p.title, code: src });
+  // TC 결과 정리
+  const tcSummary = p.cases.map(tc => {
+    const r = tcResults[tc.id];
+    if (!r) return 'N';
+    if (r.status === 'pass') return 'O';
+    if (r.status === 'fail' && r.msg === '컴파일 오류') return 'E';
+    return 'X';
+  }).join('');
+
+  sendToSheets({
+    ts, username, week: p.week, problemId: p.id, problem: p.title,
+    code: src,
+    score: submitScore, max: submitMax,
+    tc: tcSummary || '',   // 예) OOXO, EEEE, '' (테스트 안 함)
+  });
 
   submitting = false;
   if (btn){ btn.disabled = false; btn.textContent = '제출'; }
@@ -708,11 +721,15 @@ function doPost(e) {
   const d = JSON.parse(e.postData.contents);
   // 헤더 없으면 첫 행에 추가
   if (sheet.getLastRow() === 0) {
-    sheet.appendRow(['시각','학번_이름','주차','문제ID','문제명','코드']);
+    sheet.appendRow(['시각','학번_이름','주차','문제ID','문제명','점수','만점','TC결과','코드']);
   }
   sheet.appendRow([
     new Date(d.ts), d.username, d.week,
-    d.problemId || '', d.problem, d.code || ''
+    d.problemId || '', d.problem,
+    d.score !== null && d.score !== undefined ? d.score : '',
+    d.max   !== null && d.max   !== undefined ? d.max   : '',
+    d.tc || '',
+    d.code || ''
   ]);
   return ContentService
     .createTextOutput(JSON.stringify({ ok: true }))
