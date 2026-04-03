@@ -7,14 +7,12 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;color:#1a1a1a;background:#f5f5f4;min-height:100vh}
-.wrap{max-width:860px;margin:0 auto;padding:1.5rem 1rem}
-/* topbar */
+.wrap{max-width:900px;margin:0 auto;padding:1.5rem 1rem}
 .topbar{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem}
 .topbar-title{font-size:17px;font-weight:600;flex:1}
 .user-chip{font-size:13px;background:#fff;border:1px solid #e2e2e0;border-radius:20px;padding:4px 12px;display:flex;align-items:center;gap:8px}
 .link-btn{background:none;border:none;font-size:12px;color:#888;cursor:pointer;padding:0}
 .link-btn:hover{color:#333}
-/* buttons */
 button{padding:.45rem 1rem;border:1px solid #d4d4d0;border-radius:8px;background:#fff;color:#1a1a1a;font-size:13px;cursor:pointer;font-family:inherit}
 button:hover{background:#f0f0ee}
 button:active{transform:scale(.98)}
@@ -23,56 +21,61 @@ button.primary:hover{background:#333}
 button:disabled{opacity:.4;cursor:not-allowed}
 .back-btn{background:none;border:none;font-size:13px;color:#888;cursor:pointer;padding:0}
 .back-btn:hover{color:#333}
-/* cards */
 .card{background:#fff;border:1px solid #e2e2e0;border-radius:12px;padding:1rem 1.25rem}
-.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-bottom:1rem}
-.prob-card{background:#fff;border:1px solid #e2e2e0;border-radius:12px;padding:1rem 1.2rem;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+/* 홈 그리드 */
+.week-section{margin-bottom:1.5rem}
+.week-label{font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.6rem}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
+.prob-card{background:#fff;border:1px solid #e2e2e0;border-radius:10px;padding:.9rem 1rem;cursor:pointer;transition:border-color .15s,box-shadow .15s}
 .prob-card:hover{border-color:#aaa;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.prob-card-week{font-size:12px;color:#888;margin-bottom:5px}
-.prob-card-title{font-size:15px;font-weight:600;margin-bottom:5px}
-.prob-card-dl{font-size:12px;color:#888}
-.prob-card-footer{display:flex;align-items:center;margin-top:10px;padding-top:8px;border-top:1px solid #f0f0ee}
-.open-badge{font-size:11px;padding:2px 7px;border-radius:3px;font-weight:600}
+.prob-card-title{font-size:14px;font-weight:600;margin-bottom:4px}
+.prob-card-dl{font-size:11px;color:#aaa}
+.prob-card-footer{display:flex;align-items:center;margin-top:8px;padding-top:7px;border-top:1px solid #f0f0ee}
+.open-badge{font-size:11px;padding:2px 6px;border-radius:3px;font-weight:600}
 .open-badge.open{background:#e1f5ee;color:#0f6e56}
 .open-badge.closed{background:#f0f0ee;color:#888}
-/* problem view */
+/* 문제 뷰 */
 .section-lbl{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.3rem;margin-top:.85rem}
 .section-lbl:first-child{margin-top:0}
 .body-text{font-size:14px;line-height:1.7}
-.io-box{font-family:'Menlo','Consolas',monospace;font-size:13px;padding:.55rem .8rem;background:#f5f5f4;border:1px solid #e2e2e0;border-radius:8px;white-space:pre}
-.prob-box{margin-bottom:1rem}
-/* editor */
-textarea{width:100%;min-height:200px;font-family:'Menlo','Consolas',monospace;font-size:13px;padding:.75rem;border:1px solid #d4d4d0;border-radius:8px;background:#fff;color:#1a1a1a;resize:vertical;outline:none;line-height:1.55;margin-bottom:.75rem}
+.io-box{font-family:'Menlo','Consolas',monospace;font-size:13px;padding:.55rem .8rem;background:#f5f5f4;border:1px solid #e2e2e0;border-radius:8px;white-space:pre-wrap;word-break:break-all}
+/* 에디터 */
+textarea{width:100%;min-height:200px;font-family:'Menlo','Consolas',monospace;font-size:13px;padding:.75rem;border:1px solid #d4d4d0;border-radius:8px;background:#fff;color:#1a1a1a;resize:vertical;outline:none;line-height:1.6;margin-bottom:.75rem;tab-size:4}
 textarea:focus{border-color:#888}
 .btn-row{display:flex;gap:8px;margin-bottom:1rem}
-/* results */
+/* 결과 */
 .score-bar{display:flex;align-items:center;gap:10px;padding:.7rem 1rem;background:#f5f5f4;border:1px solid #e2e2e0;border-radius:8px;margin-bottom:.75rem}
 .tc-list{display:flex;flex-direction:column;gap:6px}
-.tc-row{display:flex;align-items:center;gap:10px;padding:.5rem .85rem;border:1px solid #e2e2e0;border-radius:8px;background:#fff}
+.tc-row{display:flex;align-items:flex-start;gap:10px;padding:.55rem .85rem;border:1px solid #e2e2e0;border-radius:8px;background:#fff}
 .tc-row.tc-pass{border-color:#1D9E75;background:#e1f5ee}
 .tc-row.tc-fail{border-color:#D85A30;background:#faece7}
-.badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:3px;min-width:50px;text-align:center;white-space:nowrap}
+.badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:3px;min-width:50px;text-align:center;white-space:nowrap;flex-shrink:0;margin-top:2px}
 .badge.pass{background:#9fe1cb;color:#085041}
 .badge.fail{background:#f5c4b3;color:#4a1b0c}
 .badge.wait{background:#f0f0ee;color:#888;border:1px solid #e2e2e0}
 .badge.run{background:#b5d4f4;color:#042c53}
 .tc-detail{font-size:12px;font-family:'Menlo',monospace;color:#888;margin-top:2px}
-/* tab */
+.tc-perf{font-size:11px;color:#aaa;font-family:'Menlo',monospace;margin-top:1px}
+/* 탭 */
 .tab-row{display:flex;gap:4px;margin-bottom:1rem}
 .tab{padding:.4rem .9rem;border:1px solid #e2e2e0;border-radius:8px;cursor:pointer;font-size:13px;background:#fff;color:#888}
 .tab.active{background:#1a1a1a;color:#fff;border-color:transparent}
-/* table */
-table{width:100%;border-collapse:collapse}
-th{padding:.55rem 1rem;text-align:left;font-size:12px;font-weight:600;color:#888;background:#f5f5f4;border-bottom:1px solid #e2e2e0}
-td{padding:.6rem 1rem;font-size:13px;border-bottom:1px solid #f0f0ee}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:#fafaf9}
-.empty-row{text-align:center;color:#888;padding:2rem !important}
-/* subs link */
-.subs-link{font-size:12px;color:#378add;cursor:pointer;margin-left:auto}
-.subs-link:hover{text-decoration:underline}
-/* notice */
+.course-header{background:#fff;border:1px solid #e2e2e0;border-radius:12px;padding:1.5rem 1.75rem;margin-bottom:1rem;border-left:4px solid #1a1a1a}
+.course-meta{font-size:12px;color:#888;margin-bottom:.5rem;letter-spacing:.02em}
+.course-title{font-size:28px;font-weight:700;letter-spacing:-.5px;margin-bottom:.2rem;line-height:1.2}
+.course-code{font-size:13px;color:#aaa;font-family:'Menlo','Consolas',monospace;margin-bottom:.75rem}
+.course-info{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:13px;color:#555}
+.course-info a{color:#378add;text-decoration:none}
+.course-info a:hover{text-decoration:underline}
+.dot{color:#ccc}
+.how-to{background:#fafaf9;border:1px solid #e2e2e0;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.25rem}
+.how-title{font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.65rem}
+.how-steps{display:flex;flex-direction:column;gap:.45rem}
+.how-step{display:flex;align-items:baseline;gap:.6rem;font-size:13px;color:#444;line-height:1.55}
+.step-num{background:#1a1a1a;color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
+/* 기타 */
 .notice{font-size:12px;color:#888;background:#f5f5f4;border-left:3px solid #d4d4d0;padding:.55rem .8rem;border-radius:0 6px 6px 0;margin-bottom:1rem}
+code{font-family:'Menlo','Consolas',monospace;background:#f0f0ee;padding:1px 4px;border-radius:3px;font-size:12px}
 </style>
 </head>
 <body>
@@ -80,208 +83,336 @@ tr:hover td{background:#fafaf9}
 <script>
 /* ============================================================
    ★ 교수님 설정 구역 ★
-   아래 두 가지만 수정하세요.
 ============================================================ */
+const SHEETS_URL  = '';          // Google Sheets 웹앱 URL
+const COURSE_NAME = 'C 프로그래밍 (1)';
 
-// 1. Google Sheets 연동 URL
-//    비워두면 로컬 저장만 됨 (교수님은 제출 내역 못 봄)
-//    설정 방법은 파일 맨 아래 주석 참고
-const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbykzWCiPaJQCvUJ2JrKI1x-HSbB6rwMb1ggh9mZEtex0GNLA5ILnv6QG9FNwPXxqL0J/exec';
-
-// 2. 과목명
-const COURSE_NAME = 'C 프로그래밍';
-
-// 3. 문제 목록
 const PROBLEMS = [
+  /* ── 기존 예제 ──────────────────────────────────── */
   {
-    id: 'hw1', week: '1주차', title: 'A+B',
-    desc: '두 정수 A와 B를 입력받은 다음, A+B를 출력하는 프로그램을 작성하시오.',
-    input_desc: '첫째 줄에 A와 B가 주어진다. (0 &lt; A, B &lt; 10)',
-    output_desc: '첫째 줄에 A+B를 출력한다.',
-    ex_in: '1 2', ex_out: '3', deadline: '2025-04-10',
-    cases: [
-      { id:1, input:'1 2',  expected:'3',  pts:25 },
-      { id:2, input:'3 4',  expected:'7',  pts:25 },
-      { id:3, input:'9 1',  expected:'10', pts:25 },
-      { id:4, input:'5 5',  expected:'10', pts:25 },
+    id:'hw1', week:'1주차', title:'A+B',
+    desc:'두 정수 A와 B를 입력받은 다음, A+B를 출력하는 프로그램을 작성하시오.',
+    input_desc:'첫째 줄에 A와 B가 주어진다. (0 &lt; A, B &lt; 10)',
+    output_desc:'첫째 줄에 A+B를 출력한다.',
+    ex_in:'1 2', ex_out:'3', deadline:'2026-04-10',
+    cases:[
+      {id:1,input:'1 2',  expected:'3',  pts:25},
+      {id:2,input:'3 4',  expected:'7',  pts:25},
+      {id:3,input:'9 1',  expected:'10', pts:25},
+      {id:4,input:'5 5',  expected:'10', pts:25},
     ]
   },
   {
-    id: 'hw2', week: '2주차', title: '최솟값 출력',
-    desc: '정수 세 개를 입력받아 그 중 최솟값을 출력하시오.',
-    input_desc: '첫째 줄에 세 정수 A, B, C가 주어진다. (-1000 ≤ A, B, C ≤ 1000)',
-    output_desc: '첫째 줄에 최솟값을 출력한다.',
-    ex_in: '3 1 2', ex_out: '1', deadline: '2025-04-17',
-    cases: [
-      { id:1, input:'3 1 2',      expected:'1',     pts:25 },
-      { id:2, input:'-5 0 3',     expected:'-5',    pts:25 },
-      { id:3, input:'7 7 7',      expected:'7',     pts:25 },
-      { id:4, input:'1000 -1000 0',expected:'-1000',pts:25 },
+    id:'hw2', week:'2주차', title:'최솟값 출력',
+    desc:'정수 세 개를 입력받아 그 중 최솟값을 출력하시오.',
+    input_desc:'첫째 줄에 세 정수 A, B, C가 주어진다. (-1000 ≤ A, B, C ≤ 1000)',
+    output_desc:'첫째 줄에 최솟값을 출력한다.',
+    ex_in:'3 1 2', ex_out:'1', deadline:'2026-04-17',
+    cases:[
+      {id:1,input:'3 1 2',       expected:'1',     pts:25},
+      {id:2,input:'-5 0 3',      expected:'-5',    pts:25},
+      {id:3,input:'7 7 7',       expected:'7',     pts:25},
+      {id:4,input:'1000 -1000 0',expected:'-1000', pts:25},
     ]
   },
   {
-    id: 'hw3', week: '3주차', title: '팩토리얼',
-    desc: '정수 N이 주어졌을 때, N!을 출력하시오.',
-    input_desc: '첫째 줄에 N이 주어진다. (0 ≤ N ≤ 12)',
-    output_desc: '첫째 줄에 N!을 출력한다.',
-    ex_in: '5', ex_out: '120', deadline: '2025-04-24',
-    cases: [
-      { id:1, input:'0',  expected:'1',       pts:25 },
-      { id:2, input:'1',  expected:'1',       pts:25 },
-      { id:3, input:'5',  expected:'120',     pts:25 },
-      { id:4, input:'10', expected:'3628800', pts:25 },
+    id:'hw3', week:'3주차', title:'팩토리얼',
+    desc:'정수 N이 주어졌을 때, N!을 출력하시오.',
+    input_desc:'첫째 줄에 N이 주어진다. (0 ≤ N ≤ 12)',
+    output_desc:'첫째 줄에 N!을 출력한다.',
+    ex_in:'5', ex_out:'120', deadline:'2026-04-24',
+    cases:[
+      {id:1,input:'0',  expected:'1',       pts:25},
+      {id:2,input:'1',  expected:'1',       pts:25},
+      {id:3,input:'5',  expected:'120',     pts:25},
+      {id:4,input:'10', expected:'3628800', pts:25},
+    ]
+  },
+
+  /* ── Week 5B Practice ─────────────────────────── */
+  {
+    id:'p1', week:'5주차 Practice 1', title:'Calculator with switch',
+    desc:'<code>double a</code>, <code>char op</code>, <code>double b</code>를 입력받아 사칙연산 결과를 출력하시오. 연산자는 <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>이며, 0으로 나눌 경우 별도 처리.',
+    input_desc:'한 줄에 a op b 순서로 주어진다. (예: <code>10 / 3</code>)',
+    output_desc:'결과를 소수점 둘째 자리까지 출력한다. 형식: <code>3.33</code><br>0으로 나누면: <code>Division by zero</code>',
+    ex_in:'10 / 3', ex_out:'3.33', deadline:'2026-05-01',
+    cases:[
+      {id:1,input:'5 + 3',  expected:'8.00',             pts:25},
+      {id:2,input:'10 - 4', expected:'6.00',             pts:25},
+      {id:3,input:'10 / 3', expected:'3.33',             pts:25},
+      {id:4,input:'5 / 0',  expected:'Division by zero', pts:25},
+    ]
+  },
+  {
+    id:'p2', week:'5주차 Practice 2', title:'Season Finder',
+    desc:'월 번호(1-12)를 입력받아 계절을 출력하시오. <b>fall-through</b>를 이용한 switch로 작성할 것.',
+    input_desc:'첫째 줄에 월 번호(1-12)가 주어진다.',
+    output_desc:'해당 계절을 출력한다: <code>Spring</code> / <code>Summer</code> / <code>Autumn</code> / <code>Winter</code><br>범위 외: <code>Invalid</code>',
+    ex_in:'4', ex_out:'Spring', deadline:'2026-05-01',
+    cases:[
+      {id:1,input:'4',  expected:'Spring', pts:25},
+      {id:2,input:'7',  expected:'Summer', pts:25},
+      {id:3,input:'10', expected:'Autumn', pts:25},
+      {id:4,input:'1',  expected:'Winter', pts:25},
+    ]
+  },
+  {
+    id:'p3', week:'5주차 Practice 3', title:'Vending Machine',
+    desc:'자판기 프로그램을 작성하시오.<br>메뉴: 1. Coffee (1500원) &nbsp; 2. Tea (1200원) &nbsp; 3. Juice (2000원) &nbsp; 4. Water (800원)',
+    input_desc:'첫째 줄에 선택 번호, 둘째 줄에 투입 금액(원)이 주어진다.',
+    output_desc:'충분: <code>{품목} dispensed. Change: {N} won</code><br>부족: <code>Insufficient funds</code><br>잘못된 선택: <code>Invalid selection</code>',
+    ex_in:'1\n2000', ex_out:'Coffee dispensed. Change: 500 won', deadline:'2026-05-01',
+    cases:[
+      {id:1,input:'1\n2000', expected:'Coffee dispensed. Change: 500 won',  pts:25},
+      {id:2,input:'2\n1000', expected:'Insufficient funds',                  pts:25},
+      {id:3,input:'3\n5000', expected:'Juice dispensed. Change: 3000 won',  pts:25},
+      {id:4,input:'5\n1000', expected:'Invalid selection',                   pts:25},
+    ]
+  },
+  {
+    id:'p4', week:'5주차 Practice 4', title:'Days in Month',
+    desc:'월과 연도를 입력받아 해당 월의 날 수를 출력하시오. switch로 월을 처리하고, 2월은 if-else-if로 윤년을 처리할 것.',
+    input_desc:'한 줄에 월(1-12)과 연도가 주어진다. (예: <code>2 2024</code>)',
+    output_desc:'해당 월의 날 수를 출력한다.',
+    ex_in:'2 2024', ex_out:'29', deadline:'2026-05-01',
+    cases:[
+      {id:1,input:'1 2024', expected:'31', pts:25},
+      {id:2,input:'2 2024', expected:'29', pts:25},
+      {id:3,input:'2 2023', expected:'28', pts:25},
+      {id:4,input:'4 2024', expected:'30', pts:25},
+    ]
+  },
+
+  /* ── Week 5B Challenge ────────────────────────── */
+  {
+    id:'c1', week:'5주차 Challenge 1', title:'Tax Bracket Calculator',
+    desc:'연소득(원)을 입력받아 누진세를 계산하시오.<br>세율 구간: ~1,400만원 6% / ~5,000만원 15% / ~8,800만원 24% / 초과 35%<br>세금은 누진 적용됨 (예: 6천만원 = 14M×6% + 36M×15% + 10M×24%)',
+    input_desc:'첫째 줄에 연소득(원, 정수)이 주어진다.',
+    output_desc:'형식: <code>Tax: {N} won</code>',
+    ex_in:'60000000', ex_out:'Tax: 8640000 won', deadline:'2026-05-08',
+    cases:[
+      {id:1,input:'14000000',  expected:'Tax: 840000 won',   pts:25},
+      {id:2,input:'60000000',  expected:'Tax: 8640000 won',  pts:25},
+      {id:3,input:'100000000', expected:'Tax: 19560000 won', pts:25},
+      {id:4,input:'5000000',   expected:'Tax: 300000 won',   pts:25},
+    ]
+  },
+  {
+    id:'c2', week:'5주차 Challenge 2', title:'Rock Paper Scissors',
+    desc:'두 플레이어가 각각 R(Rock), P(Paper), S(Scissors) 중 하나를 입력하면 승자를 결정하시오. 대소문자 모두 처리할 것.',
+    input_desc:'첫째 줄에 Player 1의 선택, 둘째 줄에 Player 2의 선택이 주어진다.',
+    output_desc:'<code>Player 1 wins</code> / <code>Player 2 wins</code> / <code>Draw</code>',
+    ex_in:'R\nS', ex_out:'Player 1 wins', deadline:'2026-05-08',
+    cases:[
+      {id:1,input:'R\nS', expected:'Player 1 wins', pts:25},
+      {id:2,input:'P\nR', expected:'Player 1 wins', pts:25},
+      {id:3,input:'R\nR', expected:'Draw',           pts:25},
+      {id:4,input:'s\nP', expected:'Player 1 wins', pts:25},
+    ]
+  },
+  {
+    id:'c3', week:'5주차 Challenge 3', title:'Quadratic Equation Solver',
+    desc:'ax²+bx+c=0의 계수 a, b, c를 입력받아 근을 구하시오. <code>&lt;math.h&gt;</code>의 <code>sqrt()</code>를 사용하고, <code>gcc -lm</code>으로 컴파일.',
+    input_desc:'한 줄에 a b c가 주어진다.',
+    output_desc:'두 실근: <code>x1 = X.XX, x2 = X.XX</code> (x1 ≥ x2)<br>중근: <code>x = X.XX</code><br>허근: <code>No real roots</code><br>a=0 선형: <code>x = X.XX</code>',
+    ex_in:'1 -5 6', ex_out:'x1 = 3.00, x2 = 2.00', deadline:'2026-05-08',
+    cases:[
+      {id:1,input:'1 -5 6', expected:'x1 = 3.00, x2 = 2.00', pts:25},
+      {id:2,input:'1 -2 1', expected:'x = 1.00',              pts:25},
+      {id:3,input:'1 0 1',  expected:'No real roots',         pts:25},
+      {id:4,input:'0 2 -4', expected:'x = 2.00',              pts:25},
+    ]
+  },
+  {
+    id:'c4', week:'5주차 Challenge 4', title:'Date Validator',
+    desc:'연도, 월, 일을 입력받아 유효한 날짜인지 확인하시오. 윤년 처리 포함. if-else-if + switch 조합으로 작성할 것.',
+    input_desc:'한 줄에 year month day가 주어진다.',
+    output_desc:'유효: <code>Valid date</code><br>무효: <code>Invalid date: invalid year</code> / <code>Invalid date: invalid month</code> / <code>Invalid date: invalid day</code>',
+    ex_in:'2024 2 29', ex_out:'Valid date', deadline:'2026-05-08',
+    cases:[
+      {id:1,input:'2024 2 29', expected:'Valid date',                 pts:25},
+      {id:2,input:'2023 2 29', expected:'Invalid date: invalid day',  pts:25},
+      {id:3,input:'2024 13 1', expected:'Invalid date: invalid month',pts:25},
+      {id:4,input:'2024 4 31', expected:'Invalid date: invalid day',  pts:25},
+    ]
+  },
+  {
+    id:'c5', week:'5주차 Challenge 5', title:'Mini ATM System',
+    desc:'PIN(1234)을 검증하고 메뉴를 처리하는 ATM을 작성하시오. 초기 잔액: 100,000원. switch로 메뉴 처리, if로 검증.',
+    input_desc:'첫째 줄: PIN. 올바르면 둘째 줄: 메뉴(1.잔액 2.입금 3.출금 4.종료). 입금/출금이면 셋째 줄: 금액.',
+    output_desc:'PIN 오류: <code>Wrong PIN</code><br>잔액 확인: <code>Balance: N won</code><br>입금: <code>Deposited. Balance: N won</code><br>출금 성공: <code>Withdrawn. Balance: N won</code><br>잔액 부족: <code>Insufficient funds</code>',
+    ex_in:'1234\n1', ex_out:'Balance: 100000 won', deadline:'2026-05-08',
+    cases:[
+      {id:1,input:'9999\n1',          expected:'Wrong PIN',                    pts:25},
+      {id:2,input:'1234\n1',          expected:'Balance: 100000 won',          pts:25},
+      {id:3,input:'1234\n2\n50000',   expected:'Deposited. Balance: 150000 won',pts:25},
+      {id:4,input:'1234\n3\n200000',  expected:'Insufficient funds',           pts:25},
     ]
   },
 ];
 
 /* ============================================================
-   내부 코드 (수정 불필요)
+   내부 코드
 ============================================================ */
 const JUDGE0  = 'https://ce.judge0.com';
 const LANG_C  = 50;
-const STARTER = '#include <stdio.h>\n\nint main() {\n    \n    return 0;\n}';
+const STARTER = '#define _CRT_SECURE_NO_WARNINGS\n#include <stdio.h>\n\nint main(void)\n{\n    \n    return 0;\n}\n';
 const LS_USER = 'oj_username';
-const LS_HIST = 'oj_history'; // {problemId: [{score,max,ts}]}
+const LS_HIST = 'oj_history';
 
-let view = 'home';
-let curPid = null, curTab = 'editor';
+let view = 'home', curPid = null, curTab = 'prob';
 let code = STARTER, tcResults = {}, submitting = false;
 let username = localStorage.getItem(LS_USER) || '';
 
-/* --- 유틸 --- */
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-function trim(s)   { return (s || '').replace(/\r/g, '').trimEnd(); }
-function $(id)     { return document.getElementById(id); }
-function isOpen(p) { return new Date() <= new Date(p.deadline); }
+function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+function trim(s){ return (s || '').replace(/\r/g, '').trimEnd(); }
+function $(id){ return document.getElementById(id); }
+function isOpen(p){ return new Date() <= new Date(p.deadline); }
 
-/* --- 이력 (localStorage) --- */
-function loadHistory() {
-  try { return JSON.parse(localStorage.getItem(LS_HIST) || '{}'); } catch { return {}; }
-}
-function addHistory(pid, entry) {
+/* 이력 */
+function loadHistory(){ try{ return JSON.parse(localStorage.getItem(LS_HIST)||'{}'); }catch{ return {}; } }
+function addHistory(pid, entry){
   const h = loadHistory();
   if (!h[pid]) h[pid] = [];
-  h[pid].unshift(entry); // 최신이 앞
-  if (h[pid].length > 10) h[pid] = h[pid].slice(0, 10); // 최대 10개
+  h[pid].unshift(entry);
+  if (h[pid].length > 20) h[pid] = h[pid].slice(0, 20);
   localStorage.setItem(LS_HIST, JSON.stringify(h));
 }
 
-/* --- Google Sheets 전송 --- */
-function sendToSheets(payload) {
+/* Google Sheets */
+function sendToSheets(payload){
   if (!SHEETS_URL) return;
-  fetch(SHEETS_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  }).catch(() => {});
+  fetch(SHEETS_URL, { method:'POST', mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(payload) }).catch(()=>{});
 }
 
-/* --- Judge0 --- */
-async function runCase(tc, src) {
-  try {
+/* Judge0 */
+async function runCase(tc, src){
+  try{
     const r = await fetch(`${JUDGE0}/submissions?base64_encoded=false&wait=false`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        source_code: src, language_id: LANG_C,
-        stdin: tc.input, expected_output: tc.expected,
-      }),
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ source_code:src, language_id:LANG_C,
+        stdin:tc.input, expected_output:tc.expected }),
     });
     const { token } = await r.json();
-    if (!token) return { status: 'fail', msg: '제출 실패' };
-    for (let i = 0; i < 20; i++) {
+    if (!token) return { status:'fail', msg:'제출 실패' };
+    for (let i = 0; i < 20; i++){
       await sleep(900);
       const d = await (await fetch(`${JUDGE0}/submissions/${token}?base64_encoded=false`)).json();
-      if (d.status && d.status.id >= 3) {
+      if (d.status && d.status.id >= 3){
         const sid = d.status.id;
-        const stdout = trim(d.stdout || ''), exp = trim(tc.expected);
-        if (sid === 3) return { status: 'pass', stdout, expected: exp, time: d.time };
-        if (sid === 6) return { status: 'fail', msg: '컴파일 오류', detail: trim(d.compile_output || '').slice(0, 300) };
-        if (sid === 5) return { status: 'fail', msg: '시간 초과' };
-        if (sid === 4) return { status: 'fail', msg: '오답', stdout, expected: exp };
-        return { status: 'fail', msg: d.status.description, detail: trim(d.stderr || '').slice(0, 200) };
+        const stdout = trim(d.stdout||''), exp = trim(tc.expected);
+        if (sid === 3) return { status:'pass', stdout, expected:exp,
+          time: d.time, memory: d.memory };
+        if (sid === 6) return { status:'fail', msg:'컴파일 오류',
+          detail: trim(d.compile_output||'').slice(0, 400) };
+        if (sid === 5) return { status:'fail', msg:'시간 초과' };
+        if (sid === 4) return { status:'fail', msg:'오답', stdout, expected:exp };
+        return { status:'fail', msg: d.status.description,
+          detail: trim(d.stderr||'').slice(0, 200) };
       }
     }
-    return { status: 'fail', msg: '채점 서버 응답 없음' };
-  } catch { return { status: 'fail', msg: '네트워크 오류' }; }
+    return { status:'fail', msg:'채점 서버 응답 없음' };
+  } catch { return { status:'fail', msg:'네트워크 오류' }; }
 }
 
-/* ============================================================
-   렌더
-============================================================ */
-function userBar() {
-  if (username) {
-    return `<div class="user-chip">${username}
-      <button class="link-btn" onclick="doChangeUser()">변경</button>
-    </div>
-    <button onclick="renderHistory()">내 제출 이력</button>`;
-  }
+/* ── 렌더 ── */
+function userBar(){
+  if (username) return `<div class="user-chip">${username}
+    <button class="link-btn" onclick="doChangeUser()">변경</button></div>
+    <button onclick="renderHistory()">내 이력</button>`;
   return `<button onclick="doSetUser()">학번_이름 입력</button>`;
 }
 
-/* ── 홈 ── */
-function renderHome() {
+/* 홈 */
+function renderHome(){
   view = 'home';
-  const cards = PROBLEMS.map(p => {
-    const open = isOpen(p);
-    const hist = (loadHistory()[p.id] || []);
-    const best = hist.length ? Math.max(...hist.map(h => h.score)) : null;
-    const bestMax = hist.length ? hist[0].max : null;
-    return `<div class="prob-card" onclick="goProb('${p.id}')">
-      <div class="prob-card-week">${p.week}</div>
-      <div class="prob-card-title">${p.title}</div>
-      <div class="prob-card-dl">마감 ${p.deadline}</div>
-      <div class="prob-card-footer">
-        <span class="open-badge ${open ? 'open' : 'closed'}">${open ? '제출 가능' : '마감'}</span>
-        ${best !== null
-          ? `<span style="font-size:12px;color:#888;margin-left:auto">최고 ${best}/${bestMax}점</span>`
-          : `<span style="font-size:12px;color:#bbb;margin-left:auto">미제출</span>`}
-      </div>
+  const hist = loadHistory();
+  // 주차별 그룹
+  const groups = {};
+  PROBLEMS.forEach(p => {
+    const w = p.week;
+    if (!groups[w]) groups[w] = [];
+    groups[w].push(p);
+  });
+  const sectionsHtml = Object.keys(groups).map(w => {
+    const cards = groups[w].map(p => {
+      const open = isOpen(p);
+      const entries = hist[p.id] || [];
+      const best = entries.length ? Math.max(...entries.map(e => e.score)) : null;
+      const bestMax = entries.length ? entries[0].max : null;
+      return `<div class="prob-card" onclick="goProb('${p.id}')">
+        <div class="prob-card-title">${p.title}</div>
+        <div class="prob-card-dl">마감 ${p.deadline}</div>
+        <div class="prob-card-footer">
+          <span class="open-badge ${open?'open':'closed'}">${open?'제출 가능':'마감'}</span>
+          ${best !== null
+            ? `<span style="font-size:11px;color:#888;margin-left:auto">${best}/${bestMax}점</span>`
+            : `<span style="font-size:11px;color:#ccc;margin-left:auto">미제출</span>`}
+        </div>
+      </div>`;
+    }).join('');
+    return `<div class="week-section">
+      <div class="week-label">${w}</div>
+      <div class="card-grid">${cards}</div>
     </div>`;
   }).join('');
 
   $('app').innerHTML = `
-    <div class="topbar">
-      <div class="topbar-title">${COURSE_NAME}</div>
+    <div class="course-header">
+      <div class="course-meta">임베디드시스템공학과 &nbsp;·&nbsp; 인천대학교</div>
+      <div class="course-title">C언어프로그래밍(1)</div>
+      <div class="course-code">0006799001</div>
+      <div class="course-info">
+        <span>Instructor: 원경호 교수</span>
+        <span class="dot">·</span>
+        <span>TA: 황주옥</span>
+        <span class="dot">·</span>
+        <a href="mailto:kyungho.won@inu.ac.kr">kyungho.won@inu.ac.kr</a>
+      </div>
+    </div>
+
+    <div class="how-to">
+      <div class="how-title">이용 방법</div>
+      <div class="how-steps">
+        <div class="how-step"><span class="step-num">1</span><span>우측 상단 <b>학번_이름 입력</b> 클릭 &nbsp;→&nbsp; 예) <code>202312345_홍길동</code></span></div>
+        <div class="how-step"><span class="step-num">2</span><span>문제 카드 클릭 후 <b>코드 작성</b> 탭에서 C 코드 작성</span></div>
+        <div class="how-step"><span class="step-num">3</span><span><b>테스트 실행</b>으로 예제 케이스 확인 (서버 불안정 시 IDE에서 직접 확인)</span></div>
+        <div class="how-step"><span class="step-num">4</span><span>완성 후 <b>제출 및 채점</b> 클릭 &nbsp;→&nbsp; 제출 완료 ✓ 확인</span></div>
+      </div>
+    </div>
+
+    <div class="topbar" style="margin-bottom:1rem">
+      <div class="topbar-title" style="font-size:15px">과제 목록</div>
       ${userBar()}
     </div>
-    <div class="card-grid">${cards}</div>`;
+    ${sectionsHtml}`;
 }
 
-/* ── 문제 ── */
-function renderProb(pid) {
-  view = 'problem'; curPid = pid; curTab = 'editor';
+/* 문제 */
+function renderProb(pid){
+  view = 'problem'; curPid = pid; curTab = 'prob';
   const p = PROBLEMS.find(x => x.id === pid);
   code = STARTER; tcResults = {}; submitting = false;
   const hist = (loadHistory()[pid] || []);
-  const bestEntry = hist.length ? hist.reduce((a, b) => a.score >= b.score ? a : b) : null;
+  const best = hist.length ? hist.reduce((a,b) => a.score >= b.score ? a : b) : null;
 
   $('app').innerHTML = `
     <div class="topbar">
       <button class="back-btn" onclick="renderHome()">← 목록</button>
-      <div class="topbar-title" style="font-size:15px;font-weight:600">${p.week} — ${p.title}</div>
+      <div class="topbar-title" style="font-size:15px">${p.week} — ${p.title}</div>
       ${userBar()}
     </div>
-    ${bestEntry
-      ? `<div class="notice">이전 최고 점수: <strong>${bestEntry.score}/${bestEntry.max}점</strong>
-         &nbsp;·&nbsp; 총 ${hist.length}회 제출
-         &nbsp;·&nbsp; <span class="subs-link" onclick="renderHistory()">내 제출 이력 보기</span></div>`
-      : ''}
+    ${best ? `<div class="notice">이전 최고: <strong>${best.score}/${best.max}점</strong>
+      &nbsp;·&nbsp; 총 ${hist.length}회 제출
+      &nbsp;·&nbsp; <span style="color:#378add;cursor:pointer" onclick="renderHistory()">이력 보기</span></div>` : ''}
     <div class="tab-row">
-      <button class="tab active" id="tab-editor" onclick="switchTab('editor')">코드 작성</button>
-      <button class="tab" id="tab-prob" onclick="switchTab('prob')">문제 보기</button>
+      <button class="tab active" id="tab-prob"   onclick="switchTab('prob')">문제 보기</button>
+      <button class="tab"        id="tab-editor" onclick="switchTab('editor')">코드 작성</button>
     </div>
-    <div id="editor-panel">
-      <textarea id="code-ta" spellcheck="false">${code}</textarea>
-      <div class="btn-row">
-        <button class="primary" id="sub-btn" onclick="doSubmit()">제출 및 채점</button>
-        <button onclick="doReset()">초기화</button>
-      </div>
-      <div id="results"></div>
-    </div>
-    <div id="prob-panel" style="display:none">
-      <div class="prob-box card">
+    <div id="prob-panel">
+      <div class="card" style="margin-bottom:1rem">
         <div class="section-lbl">문제</div>
         <div class="body-text">${p.desc}</div>
         <div class="section-lbl">입력</div>
@@ -293,20 +424,43 @@ function renderProb(pid) {
           <div><div class="section-lbl">예제 출력</div><div class="io-box">${p.ex_out}</div></div>
         </div>
       </div>
+    </div>
+    <div id="editor-panel" style="display:none">
+      <textarea id="code-ta" spellcheck="false">${code}</textarea>
+      <div class="btn-row">
+        <button class="primary" id="sub-btn" onclick="doSubmit()">제출 및 채점</button>
+        <button id="test-btn" onclick="doTest()">테스트 실행</button>
+        <button onclick="doReset()">초기화</button>
+      </div>
+      <div id="results"></div>
     </div>`;
 
-  $('code-ta').addEventListener('input', e => { code = e.target.value; });
+  /* Tab 인덴트 */
+  const ta = $('code-ta');
+  if (ta){
+    ta.addEventListener('input', e => { code = e.target.value; });
+    ta.addEventListener('keydown', function(e){
+      if (e.key === 'Tab'){
+        e.preventDefault();
+        const s = this.selectionStart, end = this.selectionEnd;
+        const spaces = '    ';
+        this.value = this.value.substring(0, s) + spaces + this.value.substring(end);
+        this.selectionStart = this.selectionEnd = s + spaces.length;
+        code = this.value;
+      }
+    });
+  }
 }
 
-function switchTab(t) {
+function switchTab(t){
   curTab = t;
-  $('editor-panel').style.display = t === 'editor' ? 'block' : 'none';
   $('prob-panel').style.display   = t === 'prob'   ? 'block' : 'none';
-  $('tab-editor').className = 'tab' + (t === 'editor' ? ' active' : '');
+  $('editor-panel').style.display = t === 'editor' ? 'block' : 'none';
   $('tab-prob').className   = 'tab' + (t === 'prob'   ? ' active' : '');
+  $('tab-editor').className = 'tab' + (t === 'editor' ? ' active' : '');
 }
 
-function renderResults() {
+function renderResults(){
   const p = PROBLEMS.find(x => x.id === curPid);
   if (!p || !$('results')) return;
   let total = 0, max = 0;
@@ -315,55 +469,63 @@ function renderResults() {
     if (tcResults[tc.id]?.status === 'pass') total += tc.pts;
   });
   const done = !submitting && Object.keys(tcResults).length > 0;
+
   const rows = p.cases.map(tc => {
     const r = tcResults[tc.id];
-    let cls = '', badge = '', detail = '';
-    if (!r)                      badge = '<span class="badge wait">대기</span>';
-    else if (r.status === 'running') { cls = 'tc-run'; badge = '<span class="badge run">채점중</span>'; }
-    else if (r.status === 'pass')    { cls = 'tc-pass'; badge = '<span class="badge pass">정답</span>'; }
-    else {
+    let cls = '', badge = '', detail = '', perf = '';
+    if (!r)
+      badge = '<span class="badge wait">대기</span>';
+    else if (r.status === 'running')
+      { cls = ''; badge = '<span class="badge run">채점중</span>'; }
+    else if (r.status === 'pass'){
+      cls = 'tc-pass';
+      badge = '<span class="badge pass">정답</span>';
+      if (r.time || r.memory)
+        perf = `<div class="tc-perf">${r.time ? r.time+'s' : ''}${r.time && r.memory ? ' · ' : ''}${r.memory ? r.memory+'KB' : ''}</div>`;
+    } else {
       cls = 'tc-fail';
       badge = `<span class="badge fail">${r.msg || '오답'}</span>`;
-      if (r.detail)           detail = `<div class="tc-detail">${r.detail}</div>`;
+      if (r.detail)
+        detail = `<div class="tc-detail">${r.detail}</div>`;
       else if (r.stdout !== undefined)
-        detail = `<div class="tc-detail">출력: <code>${r.stdout || '(없음)'}</code>&nbsp; 기댓값: <code>${r.expected}</code></div>`;
+        detail = `<div class="tc-detail">출력: <code>${r.stdout||'(없음)'}</code>&nbsp;&nbsp;기댓값: <code>${r.expected}</code></div>`;
     }
     return `<div class="tc-row ${cls}">
       ${badge}
-      <div style="flex:1">
-        <div style="font-size:12px;color:#888">TC ${tc.id}</div>
-        ${detail}
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;color:#888">TC ${tc.id} &nbsp; ${tc.pts}점</div>
+        ${detail}${perf}
       </div>
-      <div style="font-size:12px;color:#888">${tc.pts}점</div>
     </div>`;
   }).join('');
 
   $('results').innerHTML = `
     ${done ? `<div class="score-bar">
       <span style="font-size:19px;font-weight:600">${total} / ${max}점</span>
-      ${total === max ? '<span style="font-size:13px;color:#0f6e56;margin-left:auto;font-weight:600">모두 정답!</span>' : ''}
+      ${total===max ? '<span style="font-size:13px;color:#0f6e56;margin-left:auto;font-weight:600">모두 정답!</span>' : ''}
     </div>` : ''}
     <div class="tc-list">${rows}</div>`;
 }
 
-/* ── 내 제출 이력 ── */
-function renderHistory() {
+/* 이력 */
+function renderHistory(){
   view = 'history';
   const hist = loadHistory();
   const rows = PROBLEMS.map(p => {
     const entries = hist[p.id] || [];
     if (!entries.length) return `<tr>
-      <td>${p.week}</td><td>${p.title}</td>
-      <td colspan="3" style="color:#bbb">미제출</td>
+      <td style="color:#aaa">${p.week}</td>
+      <td>${p.title}</td>
+      <td colspan="2" style="color:#ccc">미제출</td>
     </tr>`;
-    return entries.map((e, i) => {
-      const pct = Math.round(e.score / e.max * 100);
-      const c = e.score === e.max ? '#0f6e56' : e.score > 0 ? '#b07d1a' : '#a32d2d';
+    return entries.map((e,i) => {
+      const pct = Math.round(e.score/e.max*100);
+      const c = e.score===e.max ? '#0f6e56' : e.score>0 ? '#b07d1a' : '#a32d2d';
       return `<tr>
-        <td>${i === 0 ? p.week : ''}</td>
-        <td>${i === 0 ? p.title : ''}</td>
+        <td style="color:#aaa;font-size:12px">${i===0?p.week:''}</td>
+        <td>${i===0?p.title:''}</td>
         <td style="color:${c};font-weight:600">${e.score}/${e.max} (${pct}%)</td>
-        <td>${new Date(e.ts).toLocaleString('ko-KR')}</td>
+        <td style="color:#aaa;font-size:12px">${new Date(e.ts).toLocaleString('ko-KR')}</td>
       </tr>`;
     }).join('');
   }).join('');
@@ -374,76 +536,77 @@ function renderHistory() {
       <div class="topbar-title" style="font-size:15px">내 제출 이력</div>
       ${userBar()}
     </div>
-    <div class="notice">${username || '(이름 없음)'} 의 제출 기록 (최대 10회/문제, 브라우저에 저장)</div>
+    <div class="notice">${username||'(이름 없음)'} · 브라우저 저장 (최대 20회/문제)</div>
     <div class="card" style="padding:0;overflow:hidden">
-      <table>
+      <table style="width:100%;border-collapse:collapse">
         <thead><tr>
-          <th style="width:80px">주차</th>
-          <th>문제</th>
-          <th>점수</th>
-          <th>제출 시각</th>
+          <th style="padding:.5rem 1rem;text-align:left;font-size:12px;font-weight:600;color:#888;background:#f5f5f4;border-bottom:1px solid #e2e2e0;width:120px">주차</th>
+          <th style="padding:.5rem 1rem;text-align:left;font-size:12px;font-weight:600;color:#888;background:#f5f5f4;border-bottom:1px solid #e2e2e0">문제</th>
+          <th style="padding:.5rem 1rem;text-align:left;font-size:12px;font-weight:600;color:#888;background:#f5f5f4;border-bottom:1px solid #e2e2e0;width:110px">점수</th>
+          <th style="padding:.5rem 1rem;text-align:left;font-size:12px;font-weight:600;color:#888;background:#f5f5f4;border-bottom:1px solid #e2e2e0">제출 시각</th>
         </tr></thead>
         <tbody>${rows}</tbody>
       </table>
     </div>`;
 }
 
-/* ============================================================
-   액션
-============================================================ */
-function goProb(pid) {
-  if (!username) { doSetUser(() => renderProb(pid)); return; }
+/* 액션 */
+function goProb(pid){
+  if (!username){ doSetUser(() => renderProb(pid)); return; }
   renderProb(pid);
 }
 
-async function doSubmit() {
+async function doSubmit(){
   if (submitting) return;
-  if (!username) { doSetUser(() => doSubmit()); return; }
-  submitting = true;
-  $('sub-btn').disabled = true;
-  $('sub-btn').textContent = '채점 중...';
-  tcResults = {};
-  renderResults();
-
+  if (!username){ doSetUser(() => doSubmit()); return; }
   const p   = PROBLEMS.find(x => x.id === curPid);
   const src = $('code-ta')?.value || code;
-
-  p.cases.forEach(tc => { tcResults[tc.id] = { status: 'running' }; });
-  renderResults();
-
-  await Promise.all(p.cases.map(async tc => {
-    tcResults[tc.id] = await runCase(tc, src);
-    renderResults();
-  }));
-
-  let total = 0, max = 0;
-  p.cases.forEach(tc => {
-    max += tc.pts;
-    if (tcResults[tc.id]?.status === 'pass') total += tc.pts;
-  });
+  if (!src.trim() || src.trim() === STARTER.trim()){
+    alert('코드를 작성한 후 제출하세요.'); return;
+  }
+  submitting = true;
+  const btn = $('sub-btn');
+  if (btn){ btn.disabled = true; btn.textContent = '제출 중...'; }
 
   const ts = new Date().toISOString();
-
-  // 로컬 이력 저장
-  addHistory(p.id, { score: total, max, ts });
-
-  // Google Sheets 전송
-  sendToSheets({
-    ts, username,
-    week: p.week, problem: p.title,
-    score: total, max,
-    pct: Math.round(total / max * 100),
-  });
+  addHistory(p.id, { ts, submitted: true });
+  sendToSheets({ ts, username, week: p.week, problemId: p.id,
+    problem: p.title, code: src });
 
   submitting = false;
-  if ($('sub-btn')) {
-    $('sub-btn').disabled = false;
-    $('sub-btn').textContent = '제출 및 채점';
+  if (btn){ btn.disabled = false; btn.textContent = '제출 및 채점'; }
+
+  // 결과 영역에 제출 완료 표시
+  if ($('results')){
+    $('results').innerHTML = `<div style="padding:.85rem 1rem;background:#e1f5ee;border:1px solid #1D9E75;
+      border-radius:8px;color:#0f6e56;font-size:14px;font-weight:600">
+      제출 완료 ✓ &nbsp;<span style="font-weight:400;font-size:12px">${new Date(ts).toLocaleString('ko-KR')}</span>
+    </div>`;
   }
-  renderResults();
 }
 
-function doReset() {
+async function doTest(){
+  if (submitting) return;
+  const p   = PROBLEMS.find(x => x.id === curPid);
+  const src = $('code-ta')?.value || code;
+  const tc  = p.cases[0];
+  submitting = true;
+  const testBtn = $('test-btn');
+  if (testBtn){ testBtn.disabled = true; testBtn.textContent = '실행 중...'; }
+  tcResults = { [tc.id]: { status:'running' } };
+  renderResults();
+  tcResults[tc.id] = await runCase(tc, src);
+  // Judge0 실패 시 안내 메시지로 교체
+  if (tcResults[tc.id].status === 'fail' &&
+      (tcResults[tc.id].msg === '네트워크 오류' || tcResults[tc.id].msg === '채점 서버 응답 없음')) {
+    tcResults[tc.id] = { status:'fail', msg:'채점 서버 오류', detail:'IDE에서 실행 확인 후 제출 버튼을 눌러 주세요.' };
+  }
+  renderResults();
+  submitting = false;
+  if (testBtn){ testBtn.disabled = false; testBtn.textContent = '테스트 실행'; }
+}
+
+function doReset(){
   code = STARTER;
   const el = $('code-ta');
   if (el) el.value = code;
@@ -451,57 +614,48 @@ function doReset() {
   renderResults();
 }
 
-function doSetUser(cb) {
+function doSetUser(cb){
   const v = prompt('학번_이름 형식으로 입력하세요\n예) 202312345_홍길동');
-  if (v && v.trim()) {
+  if (v && v.trim()){
     username = v.trim();
     localStorage.setItem(LS_USER, username);
     if (cb) cb(); else renderHome();
   }
 }
-function doChangeUser() { doSetUser(() => renderHome()); }
+function doChangeUser(){ doSetUser(() => renderHome()); }
 
-/* init */
 renderHome();
 </script>
 
 <!--
 ================================================================
-  Google Sheets 연동 설정 방법 (SHEETS_URL 설정)
+  Google Sheets 연동 설정
 ================================================================
-
-1. Google Sheets 새 스프레드시트 생성
-
+1. Google Sheets 새 파일 생성
 2. 확장 프로그램 → Apps Script 열기
+3. 기존 코드 삭제 후 아래 붙여넣기:
 
-3. 아래 코드 붙여넣고 저장:
-
-------------------------------------------------------------
 function doPost(e) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   const d = JSON.parse(e.postData.contents);
+  // 헤더 없으면 첫 행에 추가
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(['시각','학번_이름','주차','문제ID','문제명','코드']);
+  }
   sheet.appendRow([
-    new Date(d.ts),   // A: 제출 시각
-    d.username,       // B: 학번_이름
-    d.week,           // C: 주차
-    d.problem,        // D: 문제
-    d.score,          // E: 점수
-    d.max,            // F: 만점
-    d.pct + '%'       // G: 정답률
+    new Date(d.ts), d.username, d.week,
+    d.problemId || '', d.problem, d.code || ''
   ]);
   return ContentService
     .createTextOutput(JSON.stringify({ ok: true }))
     .setMimeType(ContentService.MimeType.JSON);
 }
-------------------------------------------------------------
 
 4. 배포 → 새 배포 → 웹 앱
-   - 실행: 나
-   - 액세스: 모든 사용자
-   → 배포 후 URL 복사
+   실행: 나 / 액세스: 모든 사용자
+   → URL 복사
 
-5. 이 파일 상단 SHEETS_URL = '복사한 URL' 로 수정
-
+5. 이 파일 상단 SHEETS_URL = '복사한 URL' 수정
 ================================================================
 -->
 </body>
