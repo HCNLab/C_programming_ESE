@@ -399,6 +399,123 @@ const PROBLEMS = [
   },
 ];
 
+/* ── week01-04 연습문제 (noSubmit) ── */
+PROBLEMS.push(
+  {
+    id:'r01', week:'week01-04 연습문제 (과제 아님)', noSubmit:true,
+    title:'두 정수의 합',
+    desc:'정수 210과 324의 합을 출력하는 프로그램을 작성하시오.',
+    input_desc:'없음 (입력 불필요)',
+    output_desc:'두 정수의 합을 출력한다.',
+    ex_in:'',
+    ex_out:'534',
+    deadline:'2099-12-31',
+    cases:[
+      {id:1, input:'', expected:'534', pts:100},
+    ]
+  },
+  {
+    id:'r02', week:'week01-04 연습문제 (과제 아님)', noSubmit:true,
+    title:'연산자 우선순위',
+    desc:'67 - 75 * 3 의 결과를 출력하는 프로그램을 작성하시오.<br>* 와 - 중 어느 연산이 먼저 수행될까요?',
+    input_desc:'없음 (입력 불필요)',
+    output_desc:'계산 결과를 출력한다.',
+    ex_in:'',
+    ex_out:'-158',
+    deadline:'2099-12-31',
+    cases:[
+      {id:1, input:'', expected:'-158', pts:100},
+    ]
+  },
+  {
+    id:'r03', week:'week01-04 연습문제 (과제 아님)', noSubmit:true,
+    title:'합계와 평균',
+    desc:'사용자로부터 3개의 정수를 입력받은 뒤, 합계와 평균을 계산하여 출력하는 프로그램을 작성하라.',
+    input_desc:'정수 3개를 공백으로 구분하여 입력한다.',
+    output_desc:'합계를 첫 줄에, 평균을 둘째 줄에 출력한다.',
+    ex_in:'10 20 30',
+    ex_out:'60\n20',
+    deadline:'2099-12-31',
+    cases:[
+      {id:1, input:'10 20 30', expected:'60\n20', pts:34},
+      {id:2, input:'1 2 3',    expected:'6\n2',   pts:33},
+      {id:3, input:'5 15 10',  expected:'30\n10', pts:33},
+    ]
+  },
+  {
+    id:'r04', week:'week01-04 연습문제 (과제 아님)', noSubmit:true,
+    title:'화씨→섭씨 변환',
+    desc:'사용자로부터 화씨온도를 입력받아서, 섭씨온도로 변환하여 출력하라.<br>힌트: C = (5.0 / 9.0) * (F - 32)',
+    input_desc:'화씨 온도(실수)를 입력한다.',
+    output_desc:'섭씨 온도를 소수점 둘째 자리까지 출력한다.',
+    ex_in:'32.0',
+    ex_out:'0.00',
+    deadline:'2099-12-31',
+    cases:[
+      {id:1, input:'32.0',  expected:'0.00',   pts:34},
+      {id:2, input:'212.0', expected:'100.00', pts:33},
+      {id:3, input:'98.6',  expected:'37.00',  pts:33},
+    ]
+  },
+  {
+    id:'r05', week:'week01-04 연습문제 (과제 아님)', noSubmit:true,
+    title:'뺄셈',
+    desc:'두 개의 숫자를 입력받아 첫 번째 숫자에서 두 번째 숫자를 뺀 값을 출력하라.',
+    input_desc:'정수 두 개를 공백으로 구분하여 입력한다.',
+    output_desc:'첫 번째 수에서 두 번째 수를 뺀 결과를 출력한다.',
+    ex_in:'10 3',
+    ex_out:'7',
+    deadline:'2099-12-31',
+    cases:[
+      {id:1, input:'10 3',  expected:'7',   pts:34},
+      {id:2, input:'5 8',   expected:'-3',  pts:33},
+      {id:3, input:'100 1', expected:'99',  pts:33},
+    ]
+  },
+  {
+    id:'r06', week:'week01-04 연습문제 (과제 아님)', noSubmit:true,
+    title:'실수 표기 변환',
+    desc:'하나의 실수를 입력받아 소수점 표기방법과 지수 표기방법으로 동시에 출력하는 프로그램을 작성하라.',
+    input_desc:'실수 하나를 입력한다.',
+    output_desc:'소수점 표기(%f)를 첫 줄에, 지수 표기(%e)를 둘째 줄에 출력한다.',
+    ex_in:'3.14',
+    ex_out:'3.140000\n3.140000e+00',
+    deadline:'2099-12-31',
+    cases:[
+      {id:1, input:'3.14',   expected:'3.140000\n3.140000e+00',   pts:50},
+      {id:2, input:'1234.5', expected:'1234.500000\n1.234500e+03', pts:50},
+    ]
+  },
+  {
+    id:'r07', week:'week01-04 연습문제 (과제 아님)', noSubmit:true,
+    title:'변수 값 교환 (swap)',
+    desc:'int형의 변수 x와 y의 값을 서로 교환하는 프로그램.<br>변수 x와 y는 10, 20의 값으로 초기화하라.<br>힌트: 임시 변수 temp를 활용하세요.',
+    input_desc:'없음 (입력 불필요)',
+    output_desc:'교환 후 x 값을 첫 줄에, y 값을 둘째 줄에 출력한다.',
+    ex_in:'',
+    ex_out:'20\n10',
+    deadline:'2099-12-31',
+    cases:[
+      {id:1, input:'', expected:'20\n10', pts:100},
+    ]
+  },
+  {
+    id:'r08', week:'week01-04 연습문제 (과제 아님)', noSubmit:true,
+    title:'소수점 둘째 자리까지 출력',
+    desc:'실수(float) 하나를 입력받아 저장한 후, 소수점 3째 자리에서 반올림해 2째 자리까지 출력하시오.',
+    input_desc:'실수 하나를 입력한다.',
+    output_desc:'소수점 둘째 자리까지 출력한다.',
+    ex_in:'3.141',
+    ex_out:'3.14',
+    deadline:'2099-12-31',
+    cases:[
+      {id:1, input:'3.141',  expected:'3.14', pts:34},
+      {id:2, input:'2.719',  expected:'2.72', pts:33},
+      {id:3, input:'1.005',  expected:'1.01', pts:33},
+    ]
+  },
+);
+
 /* ============================================================
    내부 코드
 ============================================================ */
@@ -685,7 +802,7 @@ function renderProb(pid, push=true){
     </div>
     <textarea id="code-ta" spellcheck="false">${code}</textarea>
     <div class="btn-row">
-      <button class="primary" id="sub-btn" onclick="doSubmit()">제출</button>
+      ${p.noSubmit ? '<button class="primary" id="sub-btn" disabled title="이 문제는 제출 없이 테스트만 가능합니다">제출 불가</button>' : '<button class="primary" id="sub-btn" onclick="doSubmit()">제출</button>'}
       <button id="test-btn" onclick="doTest()">테스트 실행</button>
       <button onclick="doReset()">초기화</button>
     </div>
