@@ -98,7 +98,7 @@ const COURSE_NAME = 'C Programming (1)';
 const PROBLEMS = [
   /* ── 기존 예제 ──────────────────────────────────── */
   {
-    id:'hw1', week:'TEST', title:'A+B',
+    id:'hw1', week:'1주차', title:'A+B',
     desc:'두 정수 A와 B를 입력받은 다음, A+B를 출력하는 프로그램을 작성하시오.',
     input_desc:'첫째 줄에 A와 B가 주어진다. (0 &lt; A, B &lt; 10)',
     output_desc:'첫째 줄에 A+B를 출력한다.',
@@ -111,7 +111,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'hw2', week:'TEST', title:'최솟값 출력',
+    id:'hw2', week:'2주차', title:'최솟값 출력',
     desc:'정수 세 개를 입력받아 그 중 최솟값을 출력하시오.',
     input_desc:'첫째 줄에 세 정수 A, B, C가 주어진다. (-1000 ≤ A, B, C ≤ 1000)',
     output_desc:'첫째 줄에 최솟값을 출력한다.',
@@ -124,7 +124,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'hw3', week:'TEST', title:'팩토리얼',
+    id:'hw3', week:'3주차', title:'팩토리얼',
     desc:'정수 N이 주어졌을 때, N!을 출력하시오.',
     input_desc:'첫째 줄에 N이 주어진다. (0 ≤ N ≤ 12)',
     output_desc:'첫째 줄에 N!을 출력한다.',
@@ -264,7 +264,7 @@ const PROBLEMS = [
 ============================================================ */
 const JUDGE0  = 'https://ce.judge0.com';
 const LANG_C  = 50;
-const STARTER = '#define _CRT_SECURE_NO_WARNINGS\n#include <stdio.h>\n\nint main(void)\n{\n    \n    return 0;\n}\n';
+const STARTER = '#define _CRT_SECURE_NO_WARNINGS\n#include <stdio.h>\n// 추가 헤더가 필요하면 여기에 입력하세요 (예: #include <string.h>)\n\nint main(void)\n{\n    \n    return 0;\n}\n';
 const LS_USER = 'oj_username';
 const LS_HIST = 'oj_history';
 
@@ -434,6 +434,7 @@ function renderProb(pid, push=true){
         <div><div class="section-lbl">예제 입력</div><div class="io-box">${p.ex_in}</div></div>
         <div><div class="section-lbl">예제 출력</div><div class="io-box">${p.ex_out}</div></div>
       </div>
+      <div style="margin-top:10px;font-size:12px;color:#888">출력 결과는 예제 출력과 띄어쓰기·줄바꿈까지 정확히 일치해야 합니다.</div>
     </div>
     <div class="section-lbl" style="margin-top:1.25rem;margin-bottom:.4rem">코드 작성</div>
     <textarea id="code-ta" spellcheck="false">${code}</textarea>
@@ -620,19 +621,23 @@ async function doTest(){
   if (submitting) return;
   const p   = PROBLEMS.find(x => x.id === curPid);
   const src = getCode();
-  const tc  = p.cases[0];
   submitting = true;
   const testBtn = $('test-btn');
   if (testBtn){ testBtn.disabled = true; testBtn.textContent = '실행 중...'; }
-  tcResults = { [tc.id]: { status:'running' } };
+  // 전체 TC 초기화
+  p.cases.forEach(tc => { tcResults[tc.id] = { status:'running' }; });
   renderResults();
-  tcResults[tc.id] = await runCase(tc, src);
-  // Judge0 실패 시 안내 메시지로 교체
-  if (tcResults[tc.id].status === 'fail' &&
-      (tcResults[tc.id].msg === '네트워크 오류' || tcResults[tc.id].msg === '채점 서버 응답 없음')) {
-    tcResults[tc.id] = { status:'fail', msg:'채점 서버 오류', detail:'IDE에서 실행 확인 후 제출 버튼을 눌러 주세요.' };
-  }
-  renderResults();
+  // 전체 TC 병렬 실행
+  await Promise.all(p.cases.map(async tc => {
+    const result = await runCase(tc, src);
+    if (result.status === 'fail' &&
+        (result.msg === '네트워크 오류' || result.msg === '채점 서버 응답 없음')) {
+      tcResults[tc.id] = { status:'fail', msg:'채점 서버 오류', detail:'IDE에서 실행 확인 후 제출 버튼을 눌러 주세요.' };
+    } else {
+      tcResults[tc.id] = result;
+    }
+    renderResults();
+  }));
   submitting = false;
   if (testBtn){ testBtn.disabled = false; testBtn.textContent = '테스트 실행'; }
 }
