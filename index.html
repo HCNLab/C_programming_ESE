@@ -236,47 +236,6 @@ function buildCases(pid){
 }
 
 const PROBLEMS = [
-  /* ── 기존 예제 ──────────────────────────────────── */
-  {
-    id:'hw1', week:'TEST-dummy', title:'A+B',
-    desc:'두 정수 A와 B를 입력받은 다음, A+B를 출력하는 프로그램을 작성하시오.',
-    input_desc:'첫째 줄에 A와 B가 주어진다. (0 &lt; A, B &lt; 10)',
-    output_desc:'첫째 줄에 A+B를 출력한다.',
-    ex_in:'1 2', ex_out:'3', deadline:'2026-04-10',
-    cases:[
-      {id:1,input:'1 2',  expected:'3',  pts:25},
-      {id:2,input:'3 4',  expected:'7',  pts:25},
-      {id:3,input:'9 1',  expected:'10', pts:25},
-      {id:4,input:'5 5',  expected:'10', pts:25},
-    ]
-  },
-  {
-    id:'hw2', week:'TEST-dummy', title:'최솟값 출력',
-    desc:'정수 세 개를 입력받아 그 중 최솟값을 출력하시오.',
-    input_desc:'첫째 줄에 세 정수 A, B, C가 주어진다. (-1000 ≤ A, B, C ≤ 1000)',
-    output_desc:'첫째 줄에 최솟값을 출력한다.',
-    ex_in:'3 1 2', ex_out:'1', deadline:'2026-04-17',
-    cases:[
-      {id:1,input:'3 1 2',       expected:'1',     pts:25},
-      {id:2,input:'-5 0 3',      expected:'-5',    pts:25},
-      {id:3,input:'7 7 7',       expected:'7',     pts:25},
-      {id:4,input:'1000 -1000 0',expected:'-1000', pts:25},
-    ]
-  },
-  {
-    id:'hw3', week:'TEST-dummy', title:'팩토리얼',
-    desc:'정수 N이 주어졌을 때, N!을 출력하시오.',
-    input_desc:'첫째 줄에 N이 주어진다. (0 ≤ N ≤ 12)',
-    output_desc:'첫째 줄에 N!을 출력한다.',
-    ex_in:'5', ex_out:'120', deadline:'2026-04-24',
-    cases:[
-      {id:1,input:'0',  expected:'1',       pts:25},
-      {id:2,input:'1',  expected:'1',       pts:25},
-      {id:3,input:'5',  expected:'120',     pts:25},
-      {id:4,input:'10', expected:'3628800', pts:25},
-    ]
-  },
-
   /* ── Week 5B Practice ─────────────────────────── */
   {
     id:'p1', week:'5주차 Practice', title:'Calculator with switch',
