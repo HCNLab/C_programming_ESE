@@ -5,99 +5,114 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>C Programming (1) — INU</title>
 <style>
+:root{
+  --bg:#f5f5f4;--surface:#fff;--surface2:#fafaf9;--surface3:#f5f5f4;--surface4:#f0f0ee;
+  --border:#e2e2e0;--border2:#d4d4d0;
+  --text:#1a1a1a;--text2:#555;--text3:#888;--text4:#aaa;--text5:#ccc;--text6:#333;--text7:#444;--text8:#bbb;
+  --accent:#1D9E75;--accent-bg:#e1f5ee;--accent-text:#0f6e56;
+  --fail:#D85A30;--fail-bg:#faece7;
+  --pass-badge-bg:#9fe1cb;--pass-badge-tx:#085041;
+  --fail-badge-bg:#f5c4b3;--fail-badge-tx:#4a1b0c;
+  --run-badge-bg:#b5d4f4;--run-badge-tx:#042c53;
+  --warn-bg:#fff8e1;--warn-border:#ffe082;--warn-text:#5a4a00;
+  --error:#a32d2d;--partial:#b07d1a;--link:#378add;
+  --incomplete:#e8e8e6;--shadow:rgba(0,0,0,.06);--overlay:rgba(0,0,0,.45);
+}
+body.dark{
+  --bg:#111;--surface:#1e1e1e;--surface2:#181818;--surface3:#252525;--surface4:#2a2a2a;
+  --border:#333;--border2:#444;
+  --text:#e8e8e6;--text2:#9a9a98;--text3:#777;--text4:#666;--text5:#444;--text6:#ccc;--text7:#aaa;--text8:#555;
+  --accent:#1D9E75;--accent-bg:#0a2e22;--accent-text:#1D9E75;
+  --fail:#e06040;--fail-bg:#2a1510;
+  --pass-badge-bg:#0a3028;--pass-badge-tx:#9fe1cb;
+  --fail-badge-bg:#5a2010;--fail-badge-tx:#f5c4b3;
+  --run-badge-bg:#0a2040;--run-badge-tx:#b5d4f4;
+  --warn-bg:#2a2510;--warn-border:#5a4a10;--warn-text:#c8a020;
+  --error:#e05555;--partial:#d4a035;--link:#5a9fd4;
+  --incomplete:#333;--shadow:rgba(0,0,0,.3);--overlay:rgba(0,0,0,.7);
+}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;color:#1a1a1a;background:#f5f5f4;min-height:100vh}
-.wrap{max-width:1280px;margin:0 auto;padding:1.5rem 1rem}
-.topbar{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem}
-.topbar-title{font-size:17px;font-weight:600;flex:1}
-.user-chip{font-size:13px;background:#fff;border:1px solid #e2e2e0;border-radius:20px;padding:4px 12px;display:flex;align-items:center;gap:8px}
-.link-btn{background:none;border:none;font-size:12px;color:#888;cursor:pointer;padding:0}
-.link-btn:hover{color:#333}
-button{padding:.45rem 1rem;border:1px solid #d4d4d0;border-radius:8px;background:#fff;color:#1a1a1a;font-size:13px;cursor:pointer;font-family:inherit}
-button:hover{background:#f0f0ee}
-button:active{transform:scale(.98)}
-button.primary{background:#1a1a1a;color:#fff;border-color:transparent}
-button.primary:hover{background:#333}
-button:disabled{opacity:.4;cursor:not-allowed}
-.back-btn{background:none;border:none;font-size:13px;color:#888;cursor:pointer;padding:0}
-.back-btn:hover{color:#333}
-.card{background:#fff;border:1px solid #e2e2e0;border-radius:12px;padding:1rem 1.25rem}
-/* 홈 그리드 */
-.week-section{margin-bottom:1.5rem}
-.week-label{font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.6rem}
-.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
-.prob-card{background:#fff;border:1px solid #e2e2e0;border-radius:10px;padding:.9rem 1rem;cursor:pointer;transition:border-color .15s,box-shadow .15s}
-.prob-card:hover{border-color:#aaa;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.prob-card-title{font-size:14px;font-weight:600;margin-bottom:4px}
-.prob-card-dl{font-size:11px;color:#aaa}
-.prob-card-footer{display:flex;align-items:center;margin-top:8px;padding-top:7px;border-top:1px solid #f0f0ee}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;color:var(--text);background:var(--bg);min-height:100vh;transition:background .2s,color .2s}
+.user-chip{font-size:13px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 12px;display:flex;align-items:center;gap:8px;color:var(--text)}
+.link-btn{background:none;border:none;font-size:12px;color:var(--text3);cursor:pointer;padding:0}
+.link-btn:hover{color:var(--text6)}
+button{padding:.45rem 1rem;border:1px solid var(--border2);border-radius:8px;background:var(--surface);color:var(--text);font-size:13px;cursor:pointer;font-family:inherit}
+button:hover{background:var(--surface4)}
+button.primary{background:var(--text);color:var(--surface);border-color:transparent}
+button.primary:hover{background:var(--text6)}
+.back-btn{background:none;border:none;font-size:13px;color:var(--text3);cursor:pointer;padding:0}
+.back-btn:hover{color:var(--text6)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem 1.25rem}
+.week-label{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.6rem}
+.prob-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.9rem 1rem;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.prob-card:hover{border-color:var(--text4);box-shadow:0 2px 8px var(--shadow)}
+.prob-card-title{font-size:14px;font-weight:600;margin-bottom:.3rem;color:var(--text)}
+.prob-card-dl{font-size:11px;color:var(--text4)}
+.prob-card-footer{display:flex;align-items:center;margin-top:8px;padding-top:7px;border-top:1px solid var(--surface4)}
 .open-badge{font-size:11px;padding:2px 6px;border-radius:3px;font-weight:600}
-.open-badge.open{background:#e1f5ee;color:#0f6e56}
-.open-badge.closed{background:#f0f0ee;color:#888}
-/* 문제 뷰 */
-.section-lbl{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.3rem;margin-top:.85rem}
-.section-lbl:first-child{margin-top:0}
-.body-text{font-size:14px;line-height:1.7}
-.io-box{font-family:'Menlo','Consolas',monospace;font-size:13px;padding:.55rem .8rem;background:#f5f5f4;border:1px solid #e2e2e0;border-radius:8px;white-space:pre-wrap;word-break:break-all}
-/* 에디터 */
-textarea{width:100%;min-height:200px;font-family:'Menlo','Consolas',monospace;font-size:13px;padding:.75rem;border:1px solid #d4d4d0;border-radius:8px;background:#fff;color:#1a1a1a;resize:vertical;outline:none;line-height:1.6;margin-bottom:.75rem}
-textarea:focus{border-color:#888}
-.btn-row{display:flex;gap:8px;margin-bottom:1rem}
-/* 결과 */
-.score-bar{display:flex;align-items:center;gap:10px;padding:.7rem 1rem;background:#f5f5f4;border:1px solid #e2e2e0;border-radius:8px;margin-bottom:.75rem}
+.open-badge.open{background:var(--accent-bg);color:var(--accent-text)}
+.open-badge.closed{background:var(--surface4);color:var(--text3)}
+.section-lbl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.3rem;margin-top:.85rem}
+.io-box{font-family:'Menlo','Consolas',monospace;font-size:13px;padding:.55rem .8rem;background:var(--surface3);border:1px solid var(--border);border-radius:8px;white-space:pre-wrap;word-break:break-all;color:var(--text)}
+textarea{width:100%;min-height:200px;font-family:'Menlo','Consolas',monospace;font-size:13px;padding:.75rem;border:1px solid var(--border2);border-radius:8px;background:var(--surface);color:var(--text);resize:vertical;outline:none;line-height:1.6;margin-bottom:.75rem}
+textarea:focus{border-color:var(--text3)}
+.score-bar{display:flex;align-items:center;gap:10px;padding:.7rem 1rem;background:var(--surface3);border:1px solid var(--border);border-radius:8px;margin-bottom:.75rem;color:var(--text)}
 .tc-list{display:flex;flex-direction:column;gap:6px}
-.tc-row{display:flex;align-items:flex-start;gap:10px;padding:.55rem .85rem;border:1px solid #e2e2e0;border-radius:8px;background:#fff}
-.tc-row.tc-pass{border-color:#1D9E75;background:#e1f5ee}
-.tc-row.tc-fail{border-color:#D85A30;background:#faece7}
+.tc-row{display:flex;align-items:flex-start;gap:10px;padding:.55rem .85rem;border:1px solid var(--border);border-radius:8px;background:var(--surface)}
+.tc-row.tc-pass{border-color:var(--accent);background:var(--accent-bg)}
+.tc-row.tc-fail{border-color:var(--fail);background:var(--fail-bg)}
 .badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:3px;min-width:50px;text-align:center;white-space:nowrap;flex-shrink:0;margin-top:2px}
-.badge.pass{background:#9fe1cb;color:#085041}
-.badge.fail{background:#f5c4b3;color:#4a1b0c}
-.badge.wait{background:#f0f0ee;color:#888;border:1px solid #e2e2e0}
-.badge.run{background:#b5d4f4;color:#042c53}
-.tc-detail{font-size:12px;font-family:'Menlo',monospace;color:#888;margin-top:2px}
-.tc-perf{font-size:11px;color:#aaa;font-family:'Menlo',monospace;margin-top:1px}
-/* 탭 */
-.tab-row{display:flex;gap:4px;margin-bottom:1rem}
-.tab{padding:.4rem .9rem;border:1px solid #e2e2e0;border-radius:8px;cursor:pointer;font-size:13px;background:#fff;color:#888}
-.tab.active{background:#1a1a1a;color:#fff;border-color:transparent}
-.course-header{background:#fff;border:none;border-bottom:3px solid #1a1a1a;border-radius:0;padding:1.5rem 1.75rem;margin-bottom:1rem}
-.course-meta{font-size:12px;color:#888;margin-bottom:.5rem;letter-spacing:.02em}
-.course-title{font-size:28px;font-weight:700;letter-spacing:-.5px;margin-bottom:.2rem;line-height:1.2}
-.course-code{font-size:13px;color:#aaa;font-family:'Menlo','Consolas',monospace;margin-bottom:.75rem}
-.course-info{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:13px;color:#555}
-.course-info a{color:#378add;text-decoration:none}
-.course-info a:hover{text-decoration:underline}
-.dot{color:#ccc}
-.how-to{background:#fafaf9;border:1px solid #e2e2e0;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.25rem}
-.how-title{font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.65rem}
+.badge.pass{background:var(--pass-badge-bg);color:var(--pass-badge-tx)}
+.badge.fail{background:var(--fail-badge-bg);color:var(--fail-badge-tx)}
+.badge.wait{background:var(--surface4);color:var(--text3);border:1px solid var(--border)}
+.badge.run{background:var(--run-badge-bg);color:var(--run-badge-tx)}
+.tc-detail{font-size:12px;font-family:'Menlo',monospace;color:var(--text3);margin-top:2px}
+.tc-perf{font-size:11px;color:var(--text4);font-family:'Menlo',monospace;margin-top:1px}
+.tab{padding:.4rem .9rem;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px;background:var(--surface);color:var(--text3)}
+.tab.active{background:var(--text);color:var(--surface);border-color:transparent}
+.course-header{background:var(--surface);border:none;border-bottom:3px solid var(--text);border-radius:0;padding:1.5rem 1.75rem;margin-bottom:1rem}
+.course-meta{font-size:12px;color:var(--text3);margin-bottom:.5rem;letter-spacing:.02em}
+.course-title{font-size:22px;font-weight:700;letter-spacing:-.02em;margin-bottom:.3rem;color:var(--text)}
+.course-code{font-size:13px;color:var(--text4);font-family:'Menlo','Consolas',monospace;margin-bottom:.75rem}
+.course-info{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:13px;color:var(--text2)}
+.course-info a{color:var(--link);text-decoration:none}
+.dot{color:var(--text5)}
+.how-to{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.25rem}
+.how-title{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.65rem}
 .how-steps{display:flex;flex-direction:column;gap:.45rem}
-.how-step{display:flex;align-items:baseline;gap:.6rem;font-size:13px;color:#444;line-height:1.55}
-.step-num{background:#1a1a1a;color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
+.how-step{display:flex;align-items:baseline;gap:.6rem;font-size:13px;color:var(--text7);line-height:1.55}
+.step-num{background:var(--text);color:var(--surface);border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
 .layout{display:grid;grid-template-columns:1fr;gap:1.25rem}
 @media(min-width:960px){.layout{grid-template-columns:1fr 300px}}
 @media(max-width:959px){.sidebar{order:-1}}
 .sidebar{display:flex;flex-direction:column;gap:.85rem}
-.sidebar-card{background:#fff;border:1px solid #e2e2e0;border-radius:10px;padding:.9rem 1rem}
-.sidebar-title{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.6rem}
-.view-toggle{display:flex;gap:4px;margin-left:auto}
-.view-btn{background:none;border:1px solid #e2e2e0;border-radius:6px;padding:3px 8px;font-size:12px;cursor:pointer;color:#888}
-.view-btn.active{background:#1a1a1a;color:#fff;border-color:transparent}
+.sidebar-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.9rem 1rem}
+.sidebar-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.6rem}
+.topbar{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.topbar-title{font-size:15px;font-weight:600;color:var(--text)}
+.view-toggle{display:flex;gap:4px;margin-right:auto}
+.view-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:12px;cursor:pointer;color:var(--text3)}
+.view-btn.active{background:var(--text);color:var(--surface);border-color:transparent}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem}
+.week-section{margin-bottom:1.5rem}
+.list-view .card-grid{display:flex;flex-direction:column;gap:.4rem}
 .list-view .prob-card{display:flex;align-items:center;gap:12px;padding:.65rem 1rem;border-radius:8px}
-.list-view .prob-card-title{font-size:13px;margin-bottom:0;flex:1}
-.list-view .prob-card-dl{font-size:11px;color:#aaa;white-space:nowrap}
-.list-view .prob-card-footer{display:none}
-.list-view .card-grid{grid-template-columns:1fr;gap:4px}
-/* 기타 */
-.notice{font-size:12px;color:#888;background:#f5f5f4;border-left:3px solid #d4d4d0;padding:.55rem .8rem;border-radius:0 6px 6px 0;margin-bottom:1rem}
-code{font-family:'Menlo','Consolas',monospace;background:#f0f0ee;padding:1px 4px;border-radius:3px;font-size:12px}
+.list-view .prob-card-title{margin-bottom:0;font-size:13px}
+.list-view .prob-card-dl{font-size:11px;color:var(--text4);white-space:nowrap}
+.notice{font-size:12px;color:var(--text3);background:var(--surface3);border-left:3px solid var(--border2);padding:.55rem .8rem;border-radius:0 6px 6px 0;margin-bottom:1rem}
+code{font-family:'Menlo','Consolas',monospace;background:var(--surface4);padding:1px 4px;border-radius:3px;font-size:12px;color:var(--text)}
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
 <style>
 .CodeMirror{height:auto;min-height:200px;font-family:'Menlo','Consolas',monospace;font-size:13px;
-  border:1px solid #d4d4d0;border-radius:8px;line-height:1.6;margin-bottom:.75rem}
-.CodeMirror:hover{border-color:#aaa}
-.CodeMirror-focused{border-color:#888}
+  border:1px solid var(--border2);border-radius:8px;line-height:1.6;margin-bottom:.75rem}
+.CodeMirror:hover{border-color:var(--text4)}
+.CodeMirror-focused{border-color:var(--text3)}
 .CodeMirror-scroll{min-height:200px}
+body.dark .CodeMirror{border-color:var(--border2);background:#282a36;color:#f8f8f2}
+body.dark .CodeMirror:hover{border-color:#555}
+body.dark .CodeMirror-focused{border-color:#888}
 </style>
 </head>
 <body>
@@ -756,11 +771,21 @@ async function runCase(tc, src){
 }
 
 /* ── 렌더 ── */
+function toggleTheme(){
+  const dark = document.body.classList.toggle('dark');
+  localStorage.setItem('oj_theme', dark ? 'dark' : 'light');
+  if (window._cm) window._cm.setOption('theme', dark ? 'dracula' : 'default');
+  if (view === 'home') renderHome(false);
+  else if (view === 'problem') renderProb(curPid, false);
+}
+
 function userBar(){
+  const isDark = document.body.classList.contains('dark');
+  const themeBtn = `<button onclick="toggleTheme()" title="테마 전환" style="font-size:15px;background:none;border:none;cursor:pointer;padding:2px 6px;line-height:1">${isDark ? '☀️' : '🌙'}</button>`;
   if (username) return `<div class="user-chip">${username}
     <button class="link-btn" onclick="doChangeUser()">변경</button></div>
-    <button onclick="renderHistory()">내 이력</button>`;
-  return `<button onclick="doSetUser()">학번_이름 입력</button>`;
+    <button onclick="renderHistory()">내 이력</button>${themeBtn}`;
+  return `<button onclick="doSetUser()">학번_이름 입력</button>${themeBtn}`;
 }
 
 /* 홈 */
@@ -777,7 +802,7 @@ function renderHome(push=true){
   });
   // 공지사항
   const noticeHtml = NOTICE
-    ? `<div style="display:flex;align-items:flex-start;gap:.5rem;font-size:13px;color:#5a4a00">
+    ? `<div style="display:flex;align-items:flex-start;gap:.5rem;font-size:13px;color:var(--warn-text)">
         <span style="flex-shrink:0">📢</span><span>${NOTICE}</span></div>`
     : '';
 
@@ -790,20 +815,20 @@ function renderHome(push=true){
   const display = showAll ? upcoming : upcoming.slice(0,5);
   // 리더보드
   const leaderboardHtml = _leaderboard.length === 0
-    ? `<div style="font-size:12px;color:#aaa">아직 제출 데이터 없음</div>`
+    ? `<div style="font-size:12px;color:var(--text4)">아직 제출 데이터 없음</div>`
     : _leaderboard.slice(0,10).map((item, i) => {
         const isMe = username && item.name.includes(username.split('_')[1] || username);
         const rank = i+1;
         const medal = rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':'';
         return `<div style="display:flex;align-items:center;gap:8px;padding:.35rem 0;
-          border-bottom:1px solid #f0f0ee;${isMe?'background:#fff8e1;margin:0 -.5rem;padding:.35rem .5rem;border-radius:4px':''}">
-          <div style="font-size:11px;font-weight:600;color:#aaa;width:16px;text-align:center">${medal||rank}</div>
+          border-bottom:1px solid var(--surface4);${isMe?'background:var(--warn-bg);margin:0 -.5rem;padding:.35rem .5rem;border-radius:4px':''}">
+          <div style="font-size:11px;font-weight:600;color:var(--text4);width:16px;text-align:center">${medal||rank}</div>
           <div style="flex:1;font-size:12px;font-weight:${isMe?'700':'400'};
             white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.name}</div>
-          <div style="font-size:12px;font-weight:600;color:#555">${item.count}문제</div>
+          <div style="font-size:12px;font-weight:600;color:var(--text2)">${item.count}문제</div>
         </div>`;
       }).join('')
-    + (_leaderboard.length > 10 ? `<div style="font-size:11px;color:#aaa;text-align:center;margin-top:.4rem">총 ${_leaderboard.length}명 참여</div>` : '');
+    + (_leaderboard.length > 10 ? `<div style="font-size:11px;color:var(--text4);text-align:center;margin-top:.4rem">총 ${_leaderboard.length}명 참여</div>` : '');
 
   // 진행률 (과제/연습 분리)
   const assignProbs    = PROBLEMS.filter(p => !p.noSubmit);
@@ -826,70 +851,70 @@ function renderHome(push=true){
   const progressHtml = `
     <div style="margin-bottom:.7rem">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.3rem">
-        <span style="font-size:11px;font-weight:600;color:#555">과제</span>
-        <span style="font-size:11px;color:#888">${doneAssign} / ${totalAssign}문제&nbsp;
-          <b style="color:#1a1a1a">${pctAssign}%</b></span>
+        <span style="font-size:11px;font-weight:600;color:var(--text2)">과제</span>
+        <span style="font-size:11px;color:var(--text3)">${doneAssign} / ${totalAssign}문제&nbsp;
+          <b style="color:var(--text)">${pctAssign}%</b></span>
       </div>
-      <div style="height:7px;background:#f0f0ee;border-radius:4px;overflow:hidden">
-        <div style="height:100%;width:${pctAssign}%;background:${pctAssign===100?'#1D9E75':'#1a1a1a'};border-radius:4px;transition:width .4s"></div>
+      <div style="height:7px;background:var(--surface4);border-radius:4px;overflow:hidden">
+        <div style="height:100%;width:${pctAssign}%;background:${pctAssign===100?'var(--accent)':'var(--text)'};border-radius:4px;transition:width .4s"></div>
       </div>
     </div>
     <div style="margin-bottom:.85rem">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.3rem">
-        <span style="font-size:11px;font-weight:600;color:#555">연습문제</span>
-        <span style="font-size:11px;color:#888">${donePractice} / ${totalPractice}문제&nbsp;
-          <b style="color:#1a1a1a">${pctPractice}%</b></span>
+        <span style="font-size:11px;font-weight:600;color:var(--text2)">연습문제</span>
+        <span style="font-size:11px;color:var(--text3)">${donePractice} / ${totalPractice}문제&nbsp;
+          <b style="color:var(--text)">${pctPractice}%</b></span>
       </div>
-      <div style="height:7px;background:#f0f0ee;border-radius:4px;overflow:hidden">
-        <div style="height:100%;width:${pctPractice}%;background:#1D9E75;border-radius:4px;transition:width .4s"></div>
+      <div style="height:7px;background:var(--surface4);border-radius:4px;overflow:hidden">
+        <div style="height:100%;width:${pctPractice}%;background:var(--accent);border-radius:4px;transition:width .4s"></div>
       </div>
     </div>
-    <div style="border-top:1px solid #f0f0ee;padding-top:.75rem">
-      <div style="font-size:11px;font-weight:600;color:#555;margin-bottom:.6rem">종합 진행률</div>
+    <div style="border-top:1px solid var(--surface4);padding-top:.75rem">
+      <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:.6rem">종합 진행률</div>
       <div style="display:flex;align-items:center;gap:14px">
         <svg width="84" height="84" viewBox="0 0 100 100" style="flex-shrink:0">
-          <circle cx="${_cx}" cy="${_cy}" r="${_r}" fill="none" stroke="#f0f0ee" stroke-width="16"/>
-          ${_rSlice > 0.01 ? `<circle cx="${_cx}" cy="${_cy}" r="${_r}" fill="none" stroke="#e8e8e6" stroke-width="16"
+          <circle cx="${_cx}" cy="${_cy}" r="${_r}" fill="none" stroke="var(--surface4)" stroke-width="16"/>
+          ${_rSlice > 0.01 ? `<circle cx="${_cx}" cy="${_cy}" r="${_r}" fill="none" stroke="var(--incomplete)" stroke-width="16"
             stroke-dasharray="${_rSlice} ${_circ}" stroke-dashoffset="${-(_aSlice+_pSlice)}"
             transform="rotate(-90 ${_cx} ${_cy})"/>` : ''}
-          ${_aSlice > 0.01 ? `<circle cx="${_cx}" cy="${_cy}" r="${_r}" fill="none" stroke="#1a1a1a" stroke-width="16"
+          ${_aSlice > 0.01 ? `<circle cx="${_cx}" cy="${_cy}" r="${_r}" fill="none" stroke="var(--text)" stroke-width="16"
             stroke-dasharray="${_aSlice} ${_circ}" stroke-dashoffset="0"
             transform="rotate(-90 ${_cx} ${_cy})"/>` : ''}
-          ${_pSlice > 0.01 ? `<circle cx="${_cx}" cy="${_cy}" r="${_r}" fill="none" stroke="#1D9E75" stroke-width="16"
+          ${_pSlice > 0.01 ? `<circle cx="${_cx}" cy="${_cy}" r="${_r}" fill="none" stroke="var(--accent)" stroke-width="16"
             stroke-dasharray="${_pSlice} ${_circ}" stroke-dashoffset="${-_aSlice}"
             transform="rotate(-90 ${_cx} ${_cy})"/>` : ''}
           <text x="${_cx}" y="${_cy}" text-anchor="middle" dominant-baseline="middle"
-            font-size="15" font-weight="700" fill="#1a1a1a" font-family="-apple-system,BlinkMacSystemFont,sans-serif">${pctAll}%</text>
+            font-size="15" font-weight="700" fill="var(--text)" font-family="-apple-system,BlinkMacSystemFont,sans-serif">${pctAll}%</text>
         </svg>
         <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;min-width:0">
           <div style="display:flex;align-items:center;gap:6px">
-            <div style="width:9px;height:9px;border-radius:2px;background:#1a1a1a;flex-shrink:0"></div>
-            <span style="color:#555">과제&nbsp;<b>${doneAssign}</b><span style="color:#aaa">/${totalAssign}</span></span>
+            <div style="width:9px;height:9px;border-radius:2px;background:var(--text);flex-shrink:0"></div>
+            <span style="color:var(--text2)">과제&nbsp;<b>${doneAssign}</b><span style="color:var(--text4)">/${totalAssign}</span></span>
           </div>
           <div style="display:flex;align-items:center;gap:6px">
-            <div style="width:9px;height:9px;border-radius:2px;background:#1D9E75;flex-shrink:0"></div>
-            <span style="color:#555">연습&nbsp;<b>${donePractice}</b><span style="color:#aaa">/${totalPractice}</span></span>
+            <div style="width:9px;height:9px;border-radius:2px;background:var(--accent);flex-shrink:0"></div>
+            <span style="color:var(--text2)">연습&nbsp;<b>${donePractice}</b><span style="color:var(--text4)">/${totalPractice}</span></span>
           </div>
           <div style="display:flex;align-items:center;gap:6px">
-            <div style="width:9px;height:9px;border-radius:2px;background:#e8e8e6;border:1px solid #d4d4d0;flex-shrink:0"></div>
-            <span style="color:#aaa">미완료&nbsp;${totalAll - doneAll}</span>
+            <div style="width:9px;height:9px;border-radius:2px;background:var(--incomplete);border:1px solid var(--border2);flex-shrink:0"></div>
+            <span style="color:var(--text4)">미완료&nbsp;${totalAll - doneAll}</span>
           </div>
-          ${pctAll===100 ? `<div style="font-size:11px;color:#0f6e56;font-weight:600;margin-top:2px">모두 완료!</div>` : ''}
+          ${pctAll===100 ? `<div style="font-size:11px;color:var(--accent-text);font-weight:600;margin-top:2px">모두 완료!</div>` : ''}
         </div>
       </div>
     </div>`;
 
   const sidebarPinnedHtml = upcoming.length === 0
-    ? `<div style="font-size:12px;color:#aaa">모두 제출 완료!</div>`
+    ? `<div style="font-size:12px;color:var(--text4)">모두 제출 완료!</div>`
     : display.map(p => {
         const dday = Math.ceil((new Date(p.deadline) - now) / 86400000);
         const ddayStr = dday === 0 ? 'D-day' : `D-${dday}`;
-        const ddayColor = dday <= 3 ? '#a32d2d' : '#888';
+        const ddayColor = dday <= 3 ? 'var(--error)' : 'var(--text3)';
         return `<div onclick="goProb('${p.id}')" style="cursor:pointer;display:flex;
-          align-items:center;gap:8px;padding:.4rem 0;border-bottom:1px solid #f0f0ee">
+          align-items:center;gap:8px;padding:.4rem 0;border-bottom:1px solid var(--surface4)">
           <div style="flex:1;min-width:0">
             <div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.title}</div>
-            <div style="font-size:11px;color:#aaa">${p.week}</div>
+            <div style="font-size:11px;color:var(--text4)">${p.week}</div>
           </div>
           <div style="font-size:11px;font-weight:600;color:${ddayColor};white-space:nowrap">${ddayStr}</div>
         </div>`;
@@ -897,7 +922,7 @@ function renderHome(push=true){
     + (upcoming.length > 5 && !showAll
         ? `<div style="text-align:center;margin-top:.5rem">
             <button onclick="window._sidebarAll=true;renderHome(false)" 
-              style="font-size:12px;color:#888;background:none;border:none;cursor:pointer;padding:0">
+              style="font-size:12px;color:var(--text3);background:none;border:none;cursor:pointer;padding:0">
               +${upcoming.length-5}개 더보기
             </button></div>`
         : '');
@@ -916,13 +941,13 @@ function renderHome(push=true){
             ${entries.length
               ? (() => {
                   const best = entries.find(e => e.score !== null && e.score !== undefined);
-                  return `<span style="font-size:11px;color:#0f6e56;font-weight:600">제출됨${best ? ` (${best.score}/${best.max}점)` : ''}</span>`;
+                  return `<span style="font-size:11px;color:var(--accent-text);font-weight:600">제출됨${best ? ` (${best.score}/${best.max}점)` : ''}</span>`;
                 })()
               : sessionStorage.getItem('draft:'+p.id)
-                ? `<span style="font-size:11px;color:#378add">작성중</span>`
-                : `<span style="font-size:11px;color:#ccc">미제출</span>`}
+                ? `<span style="font-size:11px;color:var(--link)">작성중</span>`
+                : `<span style="font-size:11px;color:var(--text5)">미제출</span>`}
             ${_submitCountsLoaded && _submitCounts[p.id] !== undefined
-              ? `<span style="font-size:10px;color:#bbb">${_submitCounts[p.id]}명 제출</span>`
+              ? `<span style="font-size:10px;color:var(--text8)">${_submitCounts[p.id]}명 제출</span>`
               : ''}
           </div>
         </div>
@@ -951,15 +976,15 @@ function renderHome(push=true){
     <div class="how-to">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem">
         <div class="how-title" style="margin-bottom:0">이용 방법</div>
-        <div style="font-size:11px;color:#aaa">문제가 안 보이면 강제 새로고침: Windows <code>Ctrl+Shift+R</code> · Mac Chrome <code>Cmd+Shift+R</code> · Mac Safari <code>Cmd+Option+R</code></div>
+        <div style="font-size:11px;color:var(--text4)">문제가 안 보이면 강제 새로고침: Windows <code>Ctrl+Shift+R</code> · Mac Chrome <code>Cmd+Shift+R</code> · Mac Safari <code>Cmd+Option+R</code></div>
       </div>
       <div class="how-steps">
         <div class="how-step"><span class="step-num">1</span><span>우측 상단 <b>학번_이름 입력</b> 클릭 &nbsp;→&nbsp; 예) <code>202312345_홍길동</code></span></div>
         <div class="how-step"><span class="step-num">2</span><span>문제 카드 클릭 후 <b>코드 작성</b> 탭에서 C 코드 작성</span></div>
         <div class="how-step"><span class="step-num">3</span><span><b>테스트 실행</b>으로 예제 케이스 확인 후 <b>제출</b> 버튼까지 눌러야 제출이 완료됩니다</span></div>
         <div class="how-step"><span class="step-num">4</span><span>완성 후 <b>제출</b> 클릭 &nbsp;→&nbsp; 제출 완료 ✓ 확인</span></div>
-        <div class="how-step"><span class="step-num" style="background:#888">!</span><span style="color:#888">내 이력은 <b>제출한 PC의 브라우저에만</b> 저장됩니다. 다른 PC에서는 보이지 않습니다.</span></div>
-        <div style="margin-top:.4rem;padding:.45rem .75rem;background:#fff8e1;border-radius:6px;font-size:12px;color:#888;border:1px solid #ffe082">
+        <div class="how-step"><span class="step-num" style="background:var(--text3)">!</span><span style="color:var(--text3)">내 이력은 <b>제출한 PC의 브라우저에만</b> 저장됩니다. 다른 PC에서는 보이지 않습니다.</span></div>
+        <div style="margin-top:.4rem;padding:.45rem .75rem;background:var(--warn-bg);border-radius:6px;font-size:12px;color:var(--text3);border:1px solid var(--warn-border)">
           ⚠ 제출 이력은 현재 PC/브라우저에만 저장됩니다. 다른 컴퓨터에서는 이력이 보이지 않으나, 제출 자체는 서버에 정상 기록됩니다.
         </div>
       </div>
@@ -1014,7 +1039,7 @@ function renderProb(pid, push=true){
     </div>
     ${hist.length ? `<div class="notice">제출 이력: <strong>${hist.length}회</strong>
       &nbsp;·&nbsp; 최근 ${new Date(hist[0].ts).toLocaleString('ko-KR')}
-      &nbsp;·&nbsp; <span style="color:#378add;cursor:pointer" onclick="renderHistory()">이력 보기</span></div>` : ''}
+      &nbsp;·&nbsp; <span style="color:var(--link);cursor:pointer" onclick="renderHistory()">이력 보기</span></div>` : ''}
     <div class="card" style="margin-bottom:1rem">
       <div class="section-lbl">문제</div>
       <div class="body-text">${p.desc}</div>
@@ -1024,17 +1049,17 @@ function renderProb(pid, push=true){
       <div class="body-text">${p.output_desc}</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
         <div><div class="section-lbl">예제 입력</div><div class="io-box">${p.ex_in}</div></div>
-        <div><div class="section-lbl">예제 출력</div><div class="io-box">${p.ex_out.replace(/\n/g, '<span style="color:#aaa">↵</span>\n')}</div></div>
+        <div><div class="section-lbl">예제 출력</div><div class="io-box">${p.ex_out.replace(/\n/g, '<span style="color:var(--text4)">↵</span>\n')}</div></div>
       </div>
       
     </div>
     <div class="section-lbl" style="margin-top:1.25rem;margin-bottom:.4rem">코드 작성</div>
-    <div style="font-size:12px;color:#888;margin-bottom:.6rem;padding:.5rem .75rem;background:#fff8e1;border-radius:6px;border:1px solid #ffe082">
+    <div style="font-size:12px;color:var(--text3);margin-bottom:.6rem;padding:.5rem .75rem;background:var(--warn-bg);border-radius:6px;border:1px solid var(--warn-border)">
       출력은 예제 출력과 <b>완전히 동일</b>해야 합니다. <code>printf("입력하세요: ")</code> 같은 안내 문구 없이 결과 값만 출력하세요.
     </div>
     <textarea id="code-ta" spellcheck="false">${code}</textarea>
     <div class="btn-row">
-      ${p.noSubmit ? '<button class="primary" id="sub-btn" onclick="doSubmit()" style="background:#888" title="제출 순위에 반영됩니다 (성적 무관)">제출 (순위 반영)</button>' : '<button class="primary" id="sub-btn" onclick="doSubmit()">제출</button>'}
+      ${p.noSubmit ? '<button class="primary" id="sub-btn" onclick="doSubmit()" style="background:var(--text3)" title="제출 순위에 반영됩니다 (성적 무관)">제출 (순위 반영)</button>' : '<button class="primary" id="sub-btn" onclick="doSubmit()">제출</button>'}
       <button id="test-btn" onclick="doTest()">테스트 실행</button>
       <button onclick="doReset()">초기화</button>
     </div>
@@ -1052,6 +1077,7 @@ function renderProb(pid, push=true){
       extraKeys: { Tab: (cm) => cm.replaceSelection('    ') },
       lineWrapping: false,
       autofocus: false,
+      theme: document.body.classList.contains('dark') ? 'dracula' : 'default',
     });
     const draft = sessionStorage.getItem('draft:'+pid);
     window._cm.setValue(draft || code);
@@ -1120,7 +1146,7 @@ function renderResults(){
     return `<div class="tc-row ${cls}">
       ${badge}
       <div style="flex:1;min-width:0">
-        <div style="font-size:12px;color:#888">TC ${tc.id} &nbsp; ${tc.pts}점</div>
+        <div style="font-size:12px;color:var(--text3)">TC ${tc.id} &nbsp; ${tc.pts}점</div>
         ${detail}${perf}
       </div>
     </div>`;
@@ -1129,7 +1155,7 @@ function renderResults(){
   $('results').innerHTML = `
     ${done ? `<div class="score-bar">
       <span style="font-size:19px;font-weight:600">${total} / ${max}점</span>
-      ${total===max ? '<span style="font-size:13px;color:#0f6e56;margin-left:auto;font-weight:600">모두 정답!</span>' : ''}
+      ${total===max ? '<span style="font-size:13px;color:var(--accent-text);margin-left:auto;font-weight:600">모두 정답!</span>' : ''}
     </div>` : ''}
     <div class="tc-list">${rows}</div>`;
 }
@@ -1142,19 +1168,19 @@ function renderHistory(push=true){
   const rows = PROBLEMS.map(p => {
     const entries = hist[p.id] || [];
     if (!entries.length) return `<tr>
-      <td style="color:#aaa">${p.week}</td>
+      <td style="color:var(--text4)">${p.week}</td>
       <td>${p.title}</td>
-      <td colspan="2" style="color:#ccc">미제출</td>
+      <td colspan="2" style="color:var(--text5)">미제출</td>
     </tr>`;
     return entries.map((e,i) => {
       const hasScore = e.score !== null && e.score !== undefined && !isNaN(e.score);
-      const scoreColor = hasScore ? (e.score === e.max ? '#0f6e56' : e.score > 0 ? '#b07d1a' : '#a32d2d') : '#0f6e56';
+      const scoreColor = hasScore ? (e.score === e.max ? 'var(--accent-text)' : e.score > 0 ? 'var(--partial)' : 'var(--error)') : 'var(--accent-text)';
       const scoreCell = `<span style="color:${scoreColor};font-weight:600">제출됨${hasScore ? ` (${e.score}/${e.max}점)` : ''}</span>`;
       return `<tr>
-        <td style="color:#aaa;font-size:12px">${i===0?p.week:''}</td>
+        <td style="color:var(--text4);font-size:12px">${i===0?p.week:''}</td>
         <td>${i===0?p.title:''}</td>
         <td>${scoreCell}</td>
-        <td style="color:#aaa;font-size:12px">${new Date(e.ts).toLocaleString('ko-KR')}</td>
+        <td style="color:var(--text4);font-size:12px">${new Date(e.ts).toLocaleString('ko-KR')}</td>
       </tr>`;
     }).join('');
   }).join('');
@@ -1168,16 +1194,16 @@ function renderHistory(push=true){
     <div class="notice" style="display:flex;align-items:center">
       <span>${username||'(이름 없음)'} · 브라우저 저장 (최대 20회/문제)</span>
       <button onclick="if(confirm('제출 이력을 모두 삭제할까요?')){localStorage.removeItem('oj_history');renderHistory();}" 
-        style="margin-left:auto;font-size:11px;padding:2px 8px;color:#a32d2d;border-color:#f5c4b3">이력 초기화</button>
+        style="margin-left:auto;font-size:11px;padding:2px 8px;color:var(--error);border-color:var(--fail-badge-bg)">이력 초기화</button>
     </div>
     <div class="card" style="padding:0;overflow:hidden">
       <table style="width:100%;border-collapse:collapse">
         <thead><tr>
-          <th style="padding:.5rem 1rem;text-align:left;font-size:12px;font-weight:600;color:#888;background:#f5f5f4;border-bottom:1px solid #e2e2e0;width:120px">주차</th>
-          <th style="padding:.5rem 1rem;text-align:left;font-size:12px;font-weight:600;color:#888;background:#f5f5f4;border-bottom:1px solid #e2e2e0">문제</th>
-          <th style="padding:.5rem 1rem;text-align:left;font-size:12px;font-weight:600;color:#888;background:#f5f5f4;border-bottom:1px solid #e2e2e0;width:110px">점수</th>
-          <th style="padding:.5rem 1rem;text-align:left;font-size:12px;font-weight:600;color:#888;background:#f5f5f4;border-bottom:1px solid #e2e2e0">제출 시각</th>
-          <th style="padding:.5rem 1rem;text-align:left;font-size:12px;font-weight:600;color:#888;background:#f5f5f4;border-bottom:1px solid #e2e2e0"></th>
+          <th style="padding:.5rem 1rem;text-align:left;font-size:12px;font-weight:600;color:var(--text3);background:var(--surface3);border-bottom:1px solid var(--border);width:120px">주차</th>
+          <th style="padding:.5rem 1rem;text-align:left;font-size:12px;font-weight:600;color:var(--text3);background:var(--surface3);border-bottom:1px solid var(--border)">문제</th>
+          <th style="padding:.5rem 1rem;text-align:left;font-size:12px;font-weight:600;color:var(--text3);background:var(--surface3);border-bottom:1px solid var(--border);width:110px">점수</th>
+          <th style="padding:.5rem 1rem;text-align:left;font-size:12px;font-weight:600;color:var(--text3);background:var(--surface3);border-bottom:1px solid var(--border)">제출 시각</th>
+          <th style="padding:.5rem 1rem;text-align:left;font-size:12px;font-weight:600;color:var(--text3);background:var(--surface3);border-bottom:1px solid var(--border)"></th>
         </tr></thead>
         <tbody>${rows}</tbody>
       </table>
@@ -1245,9 +1271,9 @@ async function doSubmit(){
 
   // 결과 영역에 제출 완료 표시
   if ($('results')){
-    const lateTag = isLate ? ' &nbsp;<span style="color:#a32d2d;font-size:12px;font-weight:600">[지각]</span>' : '';
-    $('results').innerHTML = `<div style="padding:.85rem 1rem;background:#e1f5ee;border:1px solid #1D9E75;
-      border-radius:8px;color:#0f6e56;font-size:14px;font-weight:600">
+    const lateTag = isLate ? ' &nbsp;<span style="color:var(--error);font-size:12px;font-weight:600">[지각]</span>' : '';
+    $('results').innerHTML = `<div style="padding:.85rem 1rem;background:var(--accent-bg);border:1px solid var(--accent);
+      border-radius:8px;color:var(--accent-text);font-size:14px;font-weight:600">
       제출 완료 ✓${lateTag} &nbsp;<span style="font-weight:400;font-size:12px">${new Date(ts).toLocaleString('ko-KR')}</span>
     </div>`;
   }
@@ -1315,17 +1341,17 @@ async function fetchSubmitCounts(){
 
 function showCode(code, title, ts){
   const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;display:flex;align-items:center;justify-content:center;padding:1rem';
+  overlay.style.cssText = 'position:fixed;inset:0;background:var(--overlay);z-index:999;display:flex;align-items:center;justify-content:center;padding:1rem';
   overlay.onclick = e => { if(e.target===overlay) overlay.remove(); };
-  overlay.innerHTML = `<div style="background:#fff;border-radius:12px;width:100%;max-width:680px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden">
-    <div style="padding:.85rem 1.25rem;border-bottom:1px solid #e2e2e0;display:flex;align-items:center;gap:8px">
+  overlay.innerHTML = `<div style="background:var(--surface);border-radius:12px;width:100%;max-width:680px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden">
+    <div style="padding:.85rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">
       <div style="flex:1">
         <div style="font-weight:600;font-size:14px">${title}</div>
-        <div style="font-size:12px;color:#888">${ts}</div>
+        <div style="font-size:12px;color:var(--text3)">${ts}</div>
       </div>
-      <button onclick="this.closest('.fixed-overlay').remove()" style="background:none;border:none;font-size:18px;cursor:pointer;color:#888;padding:0 4px">✕</button>
+      <button onclick="this.closest('.fixed-overlay').remove()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--text3);padding:0 4px">✕</button>
     </div>
-    <pre style="margin:0;padding:1rem;overflow:auto;font-family:'Menlo','Consolas',monospace;font-size:12px;line-height:1.6;background:#f5f5f4;flex:1">${code.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre>
+    <pre style="margin:0;padding:1rem;overflow:auto;font-family:'Menlo','Consolas',monospace;font-size:12px;line-height:1.6;background:var(--surface3);flex:1">${code.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre>
   </div>`;
   overlay.querySelector('button').closest('div').parentElement.classList.add('fixed-overlay');
   document.body.appendChild(overlay);
@@ -1360,6 +1386,8 @@ window.addEventListener('popstate', function(e){
   else if (s.view === 'history') renderHistory(false);
 });
 history.replaceState({view:'home'}, '', ' ');
+// Apply saved theme
+(function(){ const t=localStorage.getItem('oj_theme'); if(t==='dark') document.body.classList.add('dark'); })();
 renderHome(false);
 fetchSubmitCounts();
 </script>
