@@ -105,7 +105,7 @@ code{font-family:'Menlo','Consolas',monospace;background:#f0f0ee;padding:1px 4px
 /* ============================================================
    ★ 교수님 설정 구역 ★
 ============================================================ */
-const SHEETS_URL  = 'https://script.google.com/macros/s/AKfycbyd7v7QkMdA_jURaOBiyKPaPmstjTF5jl5Yrnu0TtsXBv9k4CORkvRBywNnpI5VpDxs/exec';          // Google Sheets 웹앱 URL
+const SHEETS_URL  = 'https://script.google.com/macros/s/AKfycbzMQq9ZTsVSZwOgPbuYbmNAsChn3UsnQ8YLrJkPW-BpTxErIEfP3PUykPA_6ERfrKBt/exec';          // Google Sheets 웹앱 URL
 const COURSE_NAME = 'C Programming (1)';
 
 // 공지사항 (빈 문자열이면 숨김)
@@ -497,6 +497,22 @@ function renderHome(push=true){
     .sort((a,b) => new Date(a.deadline) - new Date(b.deadline));
   const showAll = window._sidebarAll || false;
   const display = showAll ? upcoming : upcoming.slice(0,5);
+  // 진행률
+  const totalProbs = PROBLEMS.length;
+  const doneProbs = PROBLEMS.filter(p => hist[p.id] && hist[p.id].length > 0).length;
+  const pct = totalProbs > 0 ? Math.round(doneProbs/totalProbs*100) : 0;
+  const progressHtml = `
+    <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:.5rem">
+      <span style="font-size:22px;font-weight:700">${doneProbs}</span>
+      <span style="font-size:13px;color:#888">/ ${totalProbs}문제</span>
+      <span style="font-size:12px;color:#aaa;margin-left:auto">${pct}%</span>
+    </div>
+    <div style="height:8px;background:#f0f0ee;border-radius:4px;overflow:hidden">
+      <div style="height:100%;width:${pct}%;background:${pct===100?'#1D9E75':'#1a1a1a'};
+        border-radius:4px;transition:width .4s"></div>
+    </div>
+    ${pct===100 ? '<div style="font-size:12px;color:#0f6e56;margin-top:.4rem;font-weight:600">모두 제출 완료!</div>' : ''}`;
+
   const sidebarPinnedHtml = upcoming.length === 0
     ? `<div style="font-size:12px;color:#aaa">모두 제출 완료!</div>`
     : display.map(p => {
@@ -530,14 +546,19 @@ function renderHome(push=true){
         <div class="prob-card-dl">마감 ${p.deadline}</div>
         <div class="prob-card-footer">
           <span class="open-badge ${open?'open':'closed'}">${open?'제출 가능':'마감'}</span>
-          ${entries.length
-            ? (() => {
-                const best = entries.find(e => e.score !== null && e.score !== undefined);
-                return `<span style="font-size:11px;color:#0f6e56;margin-left:auto;font-weight:600">제출됨${best ? ` (${best.score}/${best.max}점)` : ''}</span>`;
-              })()
-            : sessionStorage.getItem('draft:'+p.id)
-              ? `<span style="font-size:11px;color:#378add;margin-left:auto">작성중</span>`
-              : `<span style="font-size:11px;color:#ccc;margin-left:auto">미제출</span>`}
+          <div style="margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:2px">
+            ${entries.length
+              ? (() => {
+                  const best = entries.find(e => e.score !== null && e.score !== undefined);
+                  return `<span style="font-size:11px;color:#0f6e56;font-weight:600">제출됨${best ? ` (${best.score}/${best.max}점)` : ''}</span>`;
+                })()
+              : sessionStorage.getItem('draft:'+p.id)
+                ? `<span style="font-size:11px;color:#378add">작성중</span>`
+                : `<span style="font-size:11px;color:#ccc">미제출</span>`}
+            ${_submitCountsLoaded && _submitCounts[p.id] !== undefined
+              ? `<span style="font-size:10px;color:#bbb">${_submitCounts[p.id]}명 제출</span>`
+              : ''}
+          </div>
         </div>
       </div>`;
     }).join('');
@@ -592,6 +613,10 @@ function renderHome(push=true){
       </div>
       <div class="sidebar">
         ${noticeHtml ? `<div class="sidebar-card">${noticeHtml}</div>` : ''}
+        <div class="sidebar-card">
+          <div class="sidebar-title">내 진행률</div>
+          ${progressHtml}
+        </div>
         <div class="sidebar-card">
           <div class="sidebar-title">미제출 마감 예정</div>
           ${sidebarPinnedHtml}
@@ -886,6 +911,26 @@ function doReset(){
   renderResults();
 }
 
+/* ── 제출 현황 (Sheets doGet) ── */
+let _submitCounts = {};  // { problemId: count }
+let _submitCountsLoaded = false;
+
+async function fetchSubmitCounts(){
+  if (!SHEETS_URL) return;
+  try {
+    const url = SHEETS_URL.replace('/exec', '/exec') + '?action=counts';
+    const r = await fetch(url, { method:'GET', mode:'cors' });
+    if (!r.ok) return;
+    const d = await r.json();
+    if (d.counts) {
+      _submitCounts = d.counts;
+      _submitCountsLoaded = true;
+      // 홈이 열려있으면 카운트 업데이트
+      if (view === 'home') renderHome(false);
+    }
+  } catch {}
+}
+
 function showCode(code, title, ts){
   const overlay = document.createElement('div');
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;display:flex;align-items:center;justify-content:center;padding:1rem';
@@ -934,6 +979,7 @@ window.addEventListener('popstate', function(e){
 });
 history.replaceState({view:'home'}, '', ' ');
 renderHome(false);
+fetchSubmitCounts();
 </script>
 
 <!--
@@ -947,7 +993,6 @@ renderHome(false);
 function doPost(e) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   const d = JSON.parse(e.postData.contents);
-  // 헤더 없으면 첫 행에 추가
   if (sheet.getLastRow() === 0) {
     sheet.appendRow(['시각','학번_이름','주차','문제ID','문제명','점수','만점','TC결과','코드']);
   }
@@ -961,6 +1006,27 @@ function doPost(e) {
   ]);
   return ContentService
     .createTextOutput(JSON.stringify({ ok: true }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doGet(e) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const rows = sheet.getDataRange().getValues();
+  // 문제ID(col4)별 유니크 학번(col2) 카운트
+  const counts = {};
+  const seen = new Set();
+  for (let i = 1; i < rows.length; i++) {
+    const user = rows[i][1];
+    const pid  = rows[i][3];
+    if (!user || !pid) continue;
+    const key = user + '|' + pid;
+    if (!seen.has(key)) {
+      seen.add(key);
+      counts[pid] = (counts[pid] || 0) + 1;
+    }
+  }
+  return ContentService
+    .createTextOutput(JSON.stringify({ counts }))
     .setMimeType(ContentService.MimeType.JSON);
 }
 
