@@ -294,7 +294,7 @@ function sendToSheets(payload){
     body: JSON.stringify(payload) }).catch(()=>{});
 }
 
-/* Wandbox */
+/* Judge0 */
 async function runCase(tc, src){
   try{
     const r = await fetch(WANDBOX, {
@@ -309,8 +309,11 @@ async function runCase(tc, src){
     });
     if (!r.ok) return { status:'fail', msg:'채점 서버 오류' };
     const d = await r.json();
-    if (d.compiler_error && d.compiler_error.trim()){
-      return { status:'fail', msg:'컴파일 오류', detail: d.compiler_error.trim().slice(0, 400) };
+    // warning만 있는 경우는 오류 아님 — error: 문자열이 있을 때만 컴파일 오류
+    const hasError = d.compiler_error && d.compiler_error.includes('error:');
+    if (hasError){
+      return { status:'fail', msg:'컴파일 오류',
+        detail: d.compiler_error.trim().slice(0, 400) };
     }
     const stdout = trim(d.program_output || '');
     const exp    = trim(tc.expected);
