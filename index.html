@@ -84,7 +84,7 @@ code{font-family:'Menlo','Consolas',monospace;background:#f0f0ee;padding:1px 4px
 /* ============================================================
    ★ 교수님 설정 구역 ★
 ============================================================ */
-const SHEETS_URL  = 'https://script.google.com/macros/s/AKfycbyd7v7QkMdA_jURaOBiyKPaPmstjTF5jl5Yrnu0TtsXBv9k4CORkvRBywNnpI5VpDxs/exec';          // Google Sheets 웹앱 URL
+const SHEETS_URL  = '';          // Google Sheets 웹앱 URL
 const COURSE_NAME = 'C 프로그래밍 (1)';
 
 const PROBLEMS = [
@@ -382,6 +382,9 @@ function renderHome(){
         <div class="how-step"><span class="step-num">2</span><span>문제 카드 클릭 후 <b>코드 작성</b> 탭에서 C 코드 작성</span></div>
         <div class="how-step"><span class="step-num">3</span><span><b>테스트 실행</b>으로 예제 케이스 확인 (서버 불안정 시 IDE에서 직접 확인)</span></div>
         <div class="how-step"><span class="step-num">4</span><span>완성 후 <b>제출 및 채점</b> 클릭 &nbsp;→&nbsp; 제출 완료 ✓ 확인</span></div>
+        <div style="margin-top:.4rem;padding:.45rem .75rem;background:#fff8e1;border-radius:6px;font-size:12px;color:#888;border:1px solid #ffe082">
+          ⚠ 제출 이력은 현재 PC/브라우저에만 저장됩니다. 다른 컴퓨터에서는 이력이 보이지 않으나, 제출 자체는 서버에 정상 기록됩니다.
+        </div>
       </div>
     </div>
 
@@ -514,10 +517,13 @@ function renderHistory(){
       <td colspan="2" style="color:#ccc">미제출</td>
     </tr>`;
     return entries.map((e,i) => {
+      const scoreCell = (e.score !== undefined && !isNaN(e.score))
+        ? `<span style="color:#0f6e56;font-weight:600">${e.score}/${e.max}점</span>`
+        : `<span style="color:#0f6e56;font-weight:600">제출됨</span>`;
       return `<tr>
         <td style="color:#aaa;font-size:12px">${i===0?p.week:''}</td>
         <td>${i===0?p.title:''}</td>
-        <td style="color:#0f6e56;font-weight:600">제출됨</td>
+        <td>${scoreCell}</td>
         <td style="color:#aaa;font-size:12px">${new Date(e.ts).toLocaleString('ko-KR')}</td>
       </tr>`;
     }).join('');
@@ -529,7 +535,11 @@ function renderHistory(){
       <div class="topbar-title" style="font-size:15px">내 제출 이력</div>
       ${userBar()}
     </div>
-    <div class="notice">${username||'(이름 없음)'} · 브라우저 저장 (최대 20회/문제)</div>
+    <div class="notice" style="display:flex;align-items:center">
+      <span>${username||'(이름 없음)'} · 브라우저 저장 (최대 20회/문제)</span>
+      <button onclick="if(confirm('제출 이력을 모두 삭제할까요?')){localStorage.removeItem('oj_history');renderHistory();}" 
+        style="margin-left:auto;font-size:11px;padding:2px 8px;color:#a32d2d;border-color:#f5c4b3">이력 초기화</button>
+    </div>
     <div class="card" style="padding:0;overflow:hidden">
       <table style="width:100%;border-collapse:collapse">
         <thead><tr>
