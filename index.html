@@ -60,7 +60,7 @@ textarea:focus{border-color:#888}
 .tab-row{display:flex;gap:4px;margin-bottom:1rem}
 .tab{padding:.4rem .9rem;border:1px solid #e2e2e0;border-radius:8px;cursor:pointer;font-size:13px;background:#fff;color:#888}
 .tab.active{background:#1a1a1a;color:#fff;border-color:transparent}
-.course-header{background:#fff;border:1px solid #e2e2e0;border-radius:12px;padding:1.5rem 1.75rem;margin-bottom:1rem;border-left:4px solid #1a1a1a}
+.course-header{background:#fff;border:none;border-bottom:3px solid #1a1a1a;border-radius:0;padding:1.5rem 1.75rem;margin-bottom:1rem}
 .course-meta{font-size:12px;color:#888;margin-bottom:.5rem;letter-spacing:.02em}
 .course-title{font-size:28px;font-weight:700;letter-spacing:-.5px;margin-bottom:.2rem;line-height:1.2}
 .course-code{font-size:13px;color:#aaa;font-family:'Menlo','Consolas',monospace;margin-bottom:.75rem}
@@ -92,7 +92,7 @@ code{font-family:'Menlo','Consolas',monospace;background:#f0f0ee;padding:1px 4px
 /* ============================================================
    ★ 교수님 설정 구역 ★
 ============================================================ */
-const SHEETS_URL  = 'https://script.google.com/macros/s/AKfycbz0i67nM-OIJzmrrPEXWSgdtqZexq9ggNbmAf8b2saFIUz6YyxcAqu2fg5rym_N5hKM/exec';          // Google Sheets 웹앱 URL
+const SHEETS_URL  = 'https://script.google.com/macros/s/AKfycbyd7v7QkMdA_jURaOBiyKPaPmstjTF5jl5Yrnu0TtsXBv9k4CORkvRBywNnpI5VpDxs/exec';          // Google Sheets 웹앱 URL
 const COURSE_NAME = 'C Programming (1)';
 
 const PROBLEMS = [
@@ -391,7 +391,7 @@ function renderHome(push=true){
       <div class="how-steps">
         <div class="how-step"><span class="step-num">1</span><span>우측 상단 <b>학번_이름 입력</b> 클릭 &nbsp;→&nbsp; 예) <code>202312345_홍길동</code></span></div>
         <div class="how-step"><span class="step-num">2</span><span>문제 카드 클릭 후 <b>코드 작성</b> 탭에서 C 코드 작성</span></div>
-        <div class="how-step"><span class="step-num">3</span><span><b>테스트 실행</b>으로 예제 케이스 확인 (서버 불안정 시 IDE에서 직접 확인)</span></div>
+        <div class="how-step"><span class="step-num">3</span><span><b>테스트 실행</b>으로 예제 케이스 확인 후 <b>제출</b> 버튼까지 눌러야 제출이 완료됩니다</span></div>
         <div class="how-step"><span class="step-num">4</span><span>완성 후 <b>제출</b> 클릭 &nbsp;→&nbsp; 제출 완료 ✓ 확인</span></div>
         <div class="how-step"><span class="step-num" style="background:#888">!</span><span style="color:#888">내 이력은 <b>제출한 PC의 브라우저에만</b> 저장됩니다. 다른 PC에서는 보이지 않습니다.</span></div>
         <div style="margin-top:.4rem;padding:.45rem .75rem;background:#fff8e1;border-radius:6px;font-size:12px;color:#888;border:1px solid #ffe082">
@@ -436,7 +436,7 @@ function renderProb(pid, push=true){
         <div><div class="section-lbl">예제 입력</div><div class="io-box">${p.ex_in}</div></div>
         <div><div class="section-lbl">예제 출력</div><div class="io-box">${p.ex_out}</div></div>
       </div>
-      <div style="margin-top:10px;font-size:12px;color:#888">출력 결과는 예제 출력과 띄어쓰기·줄바꿈까지 정확히 일치해야 합니다.</div>
+      <div style="margin-top:10px;font-size:12px;color:#888">출력 결과는 예제 출력과 띄어쓰기·줄바꿈까지 정확히 일치해야 합니다. 출력 마지막에 <code>\n</code>이 필요하면 <code>printf("...\n")</code> 형태로 작성하세요.</div>
     </div>
     <div class="section-lbl" style="margin-top:1.25rem;margin-bottom:.4rem">코드 작성</div>
     <textarea id="code-ta" spellcheck="false">${code}</textarea>
