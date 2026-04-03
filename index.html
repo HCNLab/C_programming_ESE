@@ -239,7 +239,7 @@ function buildCases(pid){
 const PROBLEMS = [
   /* ── Week 5B Practice ─────────────────────────── */
   {
-    id:'p1', week:'5주차 Practice', title:'Calculator with switch',
+    id:'p1', week:'6주차 Practice', title:'Calculator with switch',
     desc:'<code>double a</code>, <code>char op</code>, <code>double b</code>를 입력받아 사칙연산 결과를 출력하시오. 연산자는 <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>이며, 0으로 나눌 경우 별도 처리.',
     input_desc:'한 줄에 a op b 순서로 주어진다. (예: <code>10 / 3</code>)',
     output_desc:'결과를 소수점 둘째 자리까지 출력한다. 형식: <code>3.33</code><br>0으로 나누면: <code>Division by zero</code>',
@@ -252,7 +252,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'p2', week:'5주차 Practice', title:'Season Finder',
+    id:'p2', week:'6주차 Practice', title:'Season Finder',
     desc:'월 번호(1-12)를 입력받아 계절을 출력하시오. <b>fall-through</b>를 이용한 switch로 작성할 것.<br>계절 매핑: 3, 4, 5월 → Spring &nbsp; 6, 7, 8월 → Summer &nbsp; 9, 10, 11월 → Autumn &nbsp; 12, 1, 2월 → Winter',
     input_desc:'첫째 줄에 월 번호(1-12)가 주어진다.',
     output_desc:'해당 계절을 출력한다: <code>Spring</code> / <code>Summer</code> / <code>Autumn</code> / <code>Winter</code><br>범위 외: <code>Invalid</code>',
@@ -265,7 +265,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'p3', week:'5주차 Practice', title:'Vending Machine',
+    id:'p3', week:'6주차 Practice', title:'Vending Machine',
     desc:'자판기 프로그램을 작성하시오.<br>메뉴: 1. Coffee (1500원) &nbsp; 2. Tea (1200원) &nbsp; 3. Juice (2000원) &nbsp; 4. Water (800원)',
     input_desc:'첫째 줄에 선택 번호, 둘째 줄에 투입 금액(원)이 주어진다.',
     output_desc:'충분: <code>{품목} dispensed. Change: {N} won</code><br>부족: <code>Insufficient funds</code><br>잘못된 선택: <code>Invalid selection</code>',
@@ -278,7 +278,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'p4', week:'5주차 Practice', title:'Days in Month',
+    id:'p4', week:'6주차 Practice', title:'Days in Month',
     desc:'월과 연도를 입력받아 해당 월의 날 수를 출력하시오. switch로 월을 처리하고, 2월은 if-else-if로 윤년을 처리할 것.<br>31일: 1, 3, 5, 7, 8, 10, 12월 &nbsp; 30일: 4, 6, 9, 11월 &nbsp; 2월: 28 또는 29일<br>윤년 조건: 4의 배수이되 100의 배수는 아닌 해, 또는 400의 배수인 해',
     input_desc:'한 줄에 월(1-12)과 연도가 주어진다. (예: <code>2 2024</code>)',
     output_desc:'해당 월의 날 수를 출력한다.',
@@ -293,7 +293,7 @@ const PROBLEMS = [
 
   /* ── Week 5B Challenge ────────────────────────── */
   {
-    id:'c1', week:'5주차 Practice', title:'Tax Bracket Calculator',
+    id:'c1', week:'6주차 Practice', title:'Tax Bracket Calculator',
     desc:'연소득(원)을 입력받아 누진세를 계산하시오.<br>세율 구간: ~1,400만원 6% / ~5,000만원 15% / ~8,800만원 24% / 초과 35%<br>세금은 누진 적용됨 (예: 6천만원 = 14M×6% + 36M×15% + 10M×24%)',
     input_desc:'첫째 줄에 연소득(원, 정수)이 주어진다.',
     output_desc:'형식: <code>Tax: {N} won</code>',
@@ -306,7 +306,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'c2', week:'5주차 Practice', title:'Rock Paper Scissors',
+    id:'c2', week:'6주차 Practice', title:'Rock Paper Scissors',
     desc:'두 플레이어가 각각 R(Rock), P(Paper), S(Scissors) 중 하나를 입력하면 승자를 결정하시오. 대소문자 모두 처리할 것.<br>규칙: Rock beats Scissors &nbsp; Scissors beats Paper &nbsp; Paper beats Rock &nbsp; 같으면 Draw',
     input_desc:'첫째 줄에 Player 1의 선택, 둘째 줄에 Player 2의 선택이 주어진다.',
     output_desc:'<code>Player 1 wins</code> / <code>Player 2 wins</code> / <code>Draw</code>',
@@ -319,7 +319,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'c3', week:'5주차 Practice', title:'Quadratic Equation Solver',
+    id:'c3', week:'6주차 Practice', title:'Quadratic Equation Solver',
     desc:'ax²+bx+c=0의 계수 a, b, c를 입력받아 근을 구하시오. <code>&lt;math.h&gt;</code>의 <code>sqrt()</code>를 사용하고, <code>gcc -lm</code>으로 컴파일.<br>판별식 D = b²−4ac 계산: a=0이면 선형 방정식(x = −c/b) &nbsp; D&gt;0이면 두 실근 &nbsp; D=0이면 중근 &nbsp; D&lt;0이면 허근',
     input_desc:'한 줄에 a b c가 주어진다. (double 형)',
     output_desc:'두 실근: <code>x1 = X.XX, x2 = X.XX</code> (x1 ≥ x2)<br>중근: <code>x = X.XX</code><br>허근: <code>No real roots</code><br>a=0 선형: <code>x = X.XX</code>',
@@ -332,7 +332,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'c4', week:'5주차 Practice', title:'Date Validator',
+    id:'c4', week:'6주차 Practice', title:'Date Validator',
     desc:'연도, 월, 일을 입력받아 유효한 날짜인지 확인하시오. 윤년 처리 포함. if-else-if + switch 조합으로 작성할 것.<br>검증 순서: ① 연도 > 0 &nbsp; ② 월 1-12 &nbsp; ③ 일 1 ~ 해당 월의 최대 일수 (2월은 윤년 적용)',
     input_desc:'한 줄에 year month day가 주어진다.',
     output_desc:'유효: <code>Valid date</code><br>무효: <code>Invalid date: invalid year</code> / <code>Invalid date: invalid month</code> / <code>Invalid date: invalid day</code>',
@@ -346,7 +346,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'c5', week:'5주차 Practice', title:'Mini ATM System',
+    id:'c5', week:'6주차 Practice', title:'Mini ATM System',
     desc:'PIN(1234)을 검증하고 메뉴를 처리하는 ATM을 작성하시오. 초기 잔액: 100,000원. switch로 메뉴 처리, if로 검증.',
     input_desc:'첫째 줄: PIN. 올바르면 둘째 줄: 메뉴(1.잔액 2.입금 3.출금 4.종료). 입금/출금이면 셋째 줄: 금액.',
     output_desc:'PIN 오류: <code>Wrong PIN</code><br>잔액 확인: <code>Balance: N won</code><br>입금: <code>Deposited. Balance: N won</code><br>출금 성공: <code>Withdrawn. Balance: N won</code><br>잔액 부족: <code>Insufficient funds</code>',
@@ -363,7 +363,7 @@ const PROBLEMS = [
 /* ── week01-04 연습문제 (noSubmit) ── */
 PROBLEMS.push(
   {
-    id:'r01', week:'1~4주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
+    id:'r01', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'두 정수의 합',
     desc:'정수 210과 324의 합을 출력하는 프로그램을 작성하시오.',
     input_desc:'없음 (입력 불필요)',
@@ -376,7 +376,7 @@ PROBLEMS.push(
     ]
   },
   {
-    id:'r02', week:'1~4주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
+    id:'r02', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'연산자 우선순위',
     desc:'67 - 75 * 3 의 결과를 출력하는 프로그램을 작성하시오.<br>* 와 - 중 어느 연산이 먼저 수행될까요?',
     input_desc:'없음 (입력 불필요)',
@@ -389,7 +389,7 @@ PROBLEMS.push(
     ]
   },
   {
-    id:'r03', week:'1~4주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
+    id:'r03', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'합계와 평균',
     desc:'사용자로부터 3개의 정수를 입력받은 뒤, 합계와 평균을 계산하여 출력하는 프로그램을 작성하라.',
     input_desc:'정수 3개를 공백으로 구분하여 입력한다.',
@@ -404,7 +404,7 @@ PROBLEMS.push(
     ]
   },
   {
-    id:'r04', week:'1~4주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
+    id:'r04', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'화씨→섭씨 변환',
     desc:'사용자로부터 화씨온도를 입력받아서, 섭씨온도로 변환하여 출력하라.<br>힌트: C = (5.0 / 9.0) * (F - 32)',
     input_desc:'화씨 온도(실수)를 입력한다.',
@@ -419,7 +419,7 @@ PROBLEMS.push(
     ]
   },
   {
-    id:'r05', week:'1~4주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
+    id:'r05', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'뺄셈',
     desc:'두 개의 숫자를 입력받아 첫 번째 숫자에서 두 번째 숫자를 뺀 값을 출력하라.',
     input_desc:'정수 두 개를 공백으로 구분하여 입력한다.',
@@ -434,7 +434,7 @@ PROBLEMS.push(
     ]
   },
   {
-    id:'r06', week:'1~4주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
+    id:'r06', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'실수 표기 변환',
     desc:'하나의 실수를 입력받아 소수점 표기방법과 지수 표기방법으로 동시에 출력하는 프로그램을 작성하라.',
     input_desc:'실수 하나를 입력한다.',
@@ -448,7 +448,7 @@ PROBLEMS.push(
     ]
   },
   {
-    id:'r07', week:'1~4주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
+    id:'r07', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'변수 값 교환 (swap)',
     desc:'int형의 변수 x와 y의 값을 서로 교환하는 프로그램.<br>변수 x와 y는 10, 20의 값으로 초기화하라.<br>힌트: 임시 변수 temp를 활용하세요.',
     input_desc:'없음 (입력 불필요)',
@@ -461,7 +461,7 @@ PROBLEMS.push(
     ]
   },
   {
-    id:'r08', week:'1~4주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
+    id:'r08', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'소수점 둘째 자리까지 출력',
     desc:'실수(float) 하나를 입력받아 저장한 후, 소수점 3째 자리에서 반올림해 2째 자리까지 출력하시오.',
     input_desc:'실수 하나를 입력한다.',
@@ -477,7 +477,7 @@ PROBLEMS.push(
   },
   /* ── OJ / P / CH 추가 (Week04_연습문제실습) ── */
   {
-    id:'r09', week:'1~4주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
+    id:'r09', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'나머지 연산',
     desc:'456 % 89 의 결과를 출력하는 프로그램을 작성하시오.',
     input_desc:'없음 (입력 불필요)',
@@ -488,7 +488,7 @@ PROBLEMS.push(
     cases:[{id:1, input:'', expected:'11', pts:100}]
   },
   {
-    id:'r10', week:'1~4주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
+    id:'r10', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'괄호 연산',
     desc:'(67 - 75) * 3 의 결과를 출력하는 프로그램을 작성하시오.<br>괄호가 있으면 결과가 어떻게 달라질까요?',
     input_desc:'없음 (입력 불필요)',
@@ -499,7 +499,7 @@ PROBLEMS.push(
     cases:[{id:1, input:'', expected:'-24', pts:100}]
   },
   {
-    id:'r11', week:'1~4주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
+    id:'r11', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'합과 곱',
     desc:'1부터 5까지 숫자들의 합, 곱을 한 줄에 출력하시오.<br>두 결과 사이에는 한 개의 공백만 존재한다.',
     input_desc:'없음 (입력 불필요)',
@@ -510,7 +510,7 @@ PROBLEMS.push(
     cases:[{id:1, input:'', expected:'15 120', pts:100}]
   },
   {
-    id:'r12', week:'1~4주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
+    id:'r12', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'나머지 출력',
     desc:'세 개의 숫자를 입력받아 각각을 2로 나눈 나머지를 순서대로 출력하라.',
     input_desc:'정수 3개를 공백으로 구분하여 입력한다.',
@@ -525,7 +525,7 @@ PROBLEMS.push(
     ]
   },
   {
-    id:'r13', week:'1~4주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
+    id:'r13', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'마일→미터 변환',
     desc:'마일을 미터로 환산하는 프로그램.<br>마일 단위로 입력을 받고 1609를 곱해 미터로 변환하여 출력하라.<br>힌트: float 자료형과 scanf("%f", &변수) 사용',
     input_desc:'마일 값(실수)을 입력한다.',
@@ -540,7 +540,7 @@ PROBLEMS.push(
     ]
   },
   {
-    id:'r14', week:'1~4주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
+    id:'r14', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'삼각형 넓이',
     desc:'삼각형의 높이와 밑변을 받아서 넓이를 계산하는 프로그램.<br>모든 데이터는 실수형 입력과 출력.<br>힌트: 넓이 = 0.5 × 밑변 × 높이',
     input_desc:'밑변과 높이(실수)를 공백으로 구분하여 입력한다.',
@@ -555,7 +555,7 @@ PROBLEMS.push(
     ]
   },
   {
-    id:'r15', week:'1~4주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
+    id:'r15', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'다항식 계산',
     desc:'3x² + 7x + 11 을 계산하는 프로그램을 작성하라.<br>x는 사용자로부터 입력받는다.<br>힌트: x*x 또는 pow(x, 2) 사용 가능',
     input_desc:'정수 x를 입력한다.',
@@ -570,7 +570,7 @@ PROBLEMS.push(
     ]
   },
   {
-    id:'r16', week:'1~4주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
+    id:'r16', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'진수 변환 출력',
     desc:'정수를 16진수로 입력받아서 8진수, 10진수, 16진수 형태로 출력하는 프로그램을 작성하라.<br>힌트: 입력: scanf("%x", &a) / 출력: %o, %d, %x',
     input_desc:'16진수 값을 입력한다. (예: ff)',
@@ -584,7 +584,7 @@ PROBLEMS.push(
     ]
   },
   {
-    id:'r17', week:'1~4주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
+    id:'r17', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'상자의 부피',
     desc:'double형의 실수로 길이, 너비, 높이를 입력받아 부피를 출력하는 프로그램을 작성하라.<br>힌트: double은 scanf("%lf", &변수)로 입력',
     input_desc:'길이, 너비, 높이(실수)를 공백으로 구분하여 입력한다.',
@@ -599,7 +599,7 @@ PROBLEMS.push(
   },
   /* ── Practice 문제 (Week04_Bitwise_IO) ── */
   {
-    id:'r18', week:'1~4주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
+    id:'r18', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'시간 변환기',
     desc:'총 초(seconds)를 입력받아 시:분:초 형식으로 출력하라.<br>예: 3725초 → 01:02:05',
     input_desc:'총 초(정수)를 입력한다.',
@@ -614,7 +614,7 @@ PROBLEMS.push(
     ]
   },
   {
-    id:'r19', week:'1~4주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
+    id:'r19', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'학생 성적표',
     desc:'학생 이름과 3개 과목 점수를 입력받아 형식에 맞게 출력하라.<br>힌트: <code>%-15s %8d</code>, <code>%8.2f</code>, <code>(double)</code> 형변환 사용',
     input_desc:'이름(공백 없는 문자열)과 점수 3개를 입력한다.',
@@ -629,7 +629,7 @@ PROBLEMS.push(
     ]
   },
   {
-    id:'r20', week:'1~4주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
+    id:'r20', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'진수 변환기 (Binary 포함)',
     desc:'0~255 범위의 정수를 입력받아 10진수, 16진수, 8진수, 2진수로 출력하라.<br>2진수는 4비트마다 공백으로 구분, 상위/하위 니블도 출력.',
     input_desc:'정수(0~255)를 입력한다.',
@@ -644,7 +644,7 @@ PROBLEMS.push(
     ]
   },
   {
-    id:'r21', week:'1~4주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
+    id:'r21', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'영수증 계산기',
     desc:'3개 상품의 가격(double)과 수량(int)을 입력받아 영수증을 출력하라.<br>소계, 세금(10%), 총계를 포함.<br>힌트: <code>%-12s %3d %8.2f</code> 포맷 사용',
     input_desc:'아이템 3개를 각 줄에 "가격 수량" 형식으로 입력한다.',
@@ -659,7 +659,7 @@ PROBLEMS.push(
     ]
   },
   {
-    id:'r22', week:'1~4주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
+    id:'r22', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'Hex 색상 디코더',
     desc:'24비트 hex 색상값(RRGGBB)을 입력받아 R, G, B 각 채널을 10진수, 16진수, 2진수로 출력하라.<br>추출: R=(color>>16)&0xFF, G=(color>>8)&0xFF, B=color&0xFF',
     input_desc:'hex 색상값을 입력한다. (예: FF8C00)',
@@ -674,7 +674,7 @@ PROBLEMS.push(
     ]
   },
   {
-    id:'r23', week:'1~4주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
+    id:'r23', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'임베디드 레지스터 시뮬레이터',
     desc:'8비트 하드웨어 레지스터를 시뮬레이션하라.<br>Bit0:POWER, Bit1:READY, Bit2:SENSOR, Bit3:MOTOR, Bit7:ERROR<br>SET/CLEAR/TOGGLE/CHECK 연산을 순서대로 수행하고 각 단계의 레지스터 상태(hex + 2진수)를 출력.',
     input_desc:'없음 (입력 불필요)',
