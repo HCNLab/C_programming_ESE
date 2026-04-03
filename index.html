@@ -1363,13 +1363,11 @@ function doGet(e) {
 
     const type = typeCol >= 0 ? String(rows[i][typeCol] || 'assignment').trim() : 'assignment';
 
-    // 문제별 제출자 수: 과제만
-    if (type === 'assignment') {
-      const keyPid = user + '|' + pid;
-      if (!seenPid.has(keyPid)) {
-        seenPid.add(keyPid);
-        counts[pid] = (counts[pid] || 0) + 1;
-      }
+    // 문제별 제출자 수: 과제+연습 모두
+    const keyPid = user + '|' + pid;
+    if (!seenPid.has(keyPid)) {
+      seenPid.add(keyPid);
+      counts[pid] = (counts[pid] || 0) + 1;
     }
 
     // 리더보드: 과제+연습 모두 합산
