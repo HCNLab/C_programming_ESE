@@ -105,7 +105,7 @@ code{font-family:'Menlo','Consolas',monospace;background:#f0f0ee;padding:1px 4px
 /* ============================================================
    ★ 교수님 설정 구역 ★
 ============================================================ */
-const SHEETS_URL  = 'https://script.google.com/macros/s/AKfycbzMQq9ZTsVSZwOgPbuYbmNAsChn3UsnQ8YLrJkPW-BpTxErIEfP3PUykPA_6ERfrKBt/exec';          // Google Sheets 웹앱 URL
+const SHEETS_URL  = 'https://script.google.com/macros/s/AKfycbyNWSG05boCM5Cl8-fhn6u7sFhAxuVl8NLdj-ri7dZaANYwHgU9lyin2GXBXYR7K-mN/exec';          // Google Sheets 웹앱 URL
 const COURSE_NAME = 'C Programming (1)';
 
 // 공지사항 (빈 문자열이면 숨김)
@@ -497,6 +497,23 @@ function renderHome(push=true){
     .sort((a,b) => new Date(a.deadline) - new Date(b.deadline));
   const showAll = window._sidebarAll || false;
   const display = showAll ? upcoming : upcoming.slice(0,5);
+  // 리더보드
+  const leaderboardHtml = _leaderboard.length === 0
+    ? `<div style="font-size:12px;color:#aaa">아직 제출 데이터 없음</div>`
+    : _leaderboard.slice(0,10).map((item, i) => {
+        const isMe = username && item.name.includes(username.split('_')[1] || username);
+        const rank = i+1;
+        const medal = rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':'';
+        return `<div style="display:flex;align-items:center;gap:8px;padding:.35rem 0;
+          border-bottom:1px solid #f0f0ee;${isMe?'background:#fff8e1;margin:0 -.5rem;padding:.35rem .5rem;border-radius:4px':''}">
+          <div style="font-size:11px;font-weight:600;color:#aaa;width:16px;text-align:center">${medal||rank}</div>
+          <div style="flex:1;font-size:12px;font-weight:${isMe?'700':'400'};
+            white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.name}</div>
+          <div style="font-size:12px;font-weight:600;color:#555">${item.count}문제</div>
+        </div>`;
+      }).join('')
+    + (_leaderboard.length > 10 ? `<div style="font-size:11px;color:#aaa;text-align:center;margin-top:.4rem">총 ${_leaderboard.length}명 참여</div>` : '');
+
   // 진행률
   const totalProbs = PROBLEMS.length;
   const doneProbs = PROBLEMS.filter(p => hist[p.id] && hist[p.id].length > 0).length;
@@ -616,6 +633,10 @@ function renderHome(push=true){
         <div class="sidebar-card">
           <div class="sidebar-title">내 진행률</div>
           ${progressHtml}
+        </div>
+        <div class="sidebar-card">
+          <div class="sidebar-title">제출 순위</div>
+          ${leaderboardHtml}
         </div>
         <div class="sidebar-card">
           <div class="sidebar-title">미제출 마감 예정</div>
@@ -915,19 +936,23 @@ function doReset(){
 let _submitCounts = {};  // { problemId: count }
 let _submitCountsLoaded = false;
 
+let _leaderboard = [];
+const EXCLUDE_NAMES = ['원경호', '황주옥'];
+
 async function fetchSubmitCounts(){
   if (!SHEETS_URL) return;
   try {
-    const url = SHEETS_URL.replace('/exec', '/exec') + '?action=counts';
-    const r = await fetch(url, { method:'GET', mode:'cors' });
+    const r = await fetch(SHEETS_URL, { method:'GET', mode:'cors' });
     if (!r.ok) return;
     const d = await r.json();
     if (d.counts) {
       _submitCounts = d.counts;
       _submitCountsLoaded = true;
-      // 홈이 열려있으면 카운트 업데이트
-      if (view === 'home') renderHome(false);
     }
+    if (d.leaderboard) {
+      _leaderboard = d.leaderboard;
+    }
+    if (view === 'home') renderHome(false);
   } catch {}
 }
 
@@ -1012,21 +1037,50 @@ function doPost(e) {
 function doGet(e) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   const rows = sheet.getDataRange().getValues();
-  // 문제ID(col4)별 유니크 학번(col2) 카운트
+  const EXCLUDE = ['원경호', '황주옥'];
+
+  // 문제ID별 유니크 제출자 수
   const counts = {};
-  const seen = new Set();
+  const seenPid = new Set();
+  // 학생별 유니크 제출 문제 수 (리더보드용)
+  const userProbs = {};
+  const seenUser = new Set();
+
   for (let i = 1; i < rows.length; i++) {
-    const user = rows[i][1];
-    const pid  = rows[i][3];
+    const user = String(rows[i][1] || '').trim();
+    const pid  = String(rows[i][3] || '').trim();
     if (!user || !pid) continue;
-    const key = user + '|' + pid;
-    if (!seen.has(key)) {
-      seen.add(key);
+
+    // 제외 이름 필터
+    const isExcluded = EXCLUDE.some(name => user.includes(name));
+    if (isExcluded) continue;
+
+    // 문제별 제출자 수
+    const keyPid = user + '|' + pid;
+    if (!seenPid.has(keyPid)) {
+      seenPid.add(keyPid);
       counts[pid] = (counts[pid] || 0) + 1;
     }
+
+    // 리더보드: 학생별 제출 문제 수
+    const keyUser = user + '|' + pid;
+    if (!seenUser.has(keyUser)) {
+      seenUser.add(keyUser);
+      userProbs[user] = (userProbs[user] || 0) + 1;
+    }
   }
+
+  // 이름만 표시 (학번 제거: 학번_이름 형식에서 이름만)
+  const leaderboard = Object.entries(userProbs)
+    .map(([full, count]) => {
+      const parts = full.split('_');
+      const name = parts.length > 1 ? parts.slice(1).join('_') : full;
+      return { name, count };
+    })
+    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+
   return ContentService
-    .createTextOutput(JSON.stringify({ counts }))
+    .createTextOutput(JSON.stringify({ counts, leaderboard }))
     .setMimeType(ContentService.MimeType.JSON);
 }
 
