@@ -340,8 +340,7 @@ function renderHome(){
     const cards = groups[w].map(p => {
       const open = isOpen(p);
       const entries = hist[p.id] || [];
-      const best = entries.length ? Math.max(...entries.map(e => e.score)) : null;
-      const bestMax = entries.length ? entries[0].max : null;
+
       return `<div class="prob-card" onclick="goProb('${p.id}')">
         <div class="prob-card-title">${p.title}</div>
         <div class="prob-card-dl">마감 ${p.deadline}</div>
@@ -399,7 +398,7 @@ function renderProb(pid){
   const p = PROBLEMS.find(x => x.id === pid);
   code = STARTER; tcResults = {}; submitting = false;
   const hist = (loadHistory()[pid] || []);
-  const best = hist.length ? hist.reduce((a,b) => a.score >= b.score ? a : b) : null;
+
 
   $('app').innerHTML = `
     <div class="topbar">
@@ -515,12 +514,10 @@ function renderHistory(){
       <td colspan="2" style="color:#ccc">미제출</td>
     </tr>`;
     return entries.map((e,i) => {
-      const pct = Math.round(e.score/e.max*100);
-      const c = e.score===e.max ? '#0f6e56' : e.score>0 ? '#b07d1a' : '#a32d2d';
       return `<tr>
         <td style="color:#aaa;font-size:12px">${i===0?p.week:''}</td>
         <td>${i===0?p.title:''}</td>
-        <td style="color:${c};font-weight:600">${e.score}/${e.max} (${pct}%)</td>
+        <td style="color:#0f6e56;font-weight:600">제출됨</td>
         <td style="color:#aaa;font-size:12px">${new Date(e.ts).toLocaleString('ko-KR')}</td>
       </tr>`;
     }).join('');
