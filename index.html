@@ -262,8 +262,7 @@ const PROBLEMS = [
 /* ============================================================
    내부 코드
 ============================================================ */
-const JUDGE0  = 'https://ce.judge0.com';
-const LANG_C  = 50;
+const WANDBOX = 'https://wandbox.org/api/compile.json';
 const STARTER = '#define _CRT_SECURE_NO_WARNINGS\n#include <stdio.h>\n// 추가 헤더가 필요하면 여기에 입력하세요 (예: #include <string.h>)\n\nint main(void)\n{\n    \n    return 0;\n}\n';
 const LS_USER = 'oj_username';
 const LS_HIST = 'oj_history';
@@ -295,33 +294,31 @@ function sendToSheets(payload){
     body: JSON.stringify(payload) }).catch(()=>{});
 }
 
-/* Judge0 */
+/* Wandbox */
 async function runCase(tc, src){
   try{
-    const r = await fetch(`${JUDGE0}/submissions?base64_encoded=false&wait=false`, {
+    const r = await fetch(WANDBOX, {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ source_code:src, language_id:LANG_C,
-        stdin:tc.input, expected_output:tc.expected }),
+      body: JSON.stringify({
+        compiler: 'gcc-head',
+        code: src,
+        stdin: tc.input,
+        options: 'warning',
+        compiler_option_raw: '-lm',
+      }),
     });
-    const { token } = await r.json();
-    if (!token) return { status:'fail', msg:'제출 실패' };
-    for (let i = 0; i < 20; i++){
-      await sleep(900);
-      const d = await (await fetch(`${JUDGE0}/submissions/${token}?base64_encoded=false`)).json();
-      if (d.status && d.status.id >= 3){
-        const sid = d.status.id;
-        const stdout = trim(d.stdout||''), exp = trim(tc.expected);
-        if (sid === 3) return { status:'pass', stdout, expected:exp,
-          time: d.time, memory: d.memory };
-        if (sid === 6) return { status:'fail', msg:'컴파일 오류',
-          detail: trim(d.compile_output||'').slice(0, 400) };
-        if (sid === 5) return { status:'fail', msg:'시간 초과' };
-        if (sid === 4) return { status:'fail', msg:'오답', stdout, expected:exp };
-        return { status:'fail', msg: d.status.description,
-          detail: trim(d.stderr||'').slice(0, 200) };
-      }
+    if (!r.ok) return { status:'fail', msg:'채점 서버 오류' };
+    const d = await r.json();
+    if (d.compiler_error && d.compiler_error.trim()){
+      return { status:'fail', msg:'컴파일 오류', detail: d.compiler_error.trim().slice(0, 400) };
     }
-    return { status:'fail', msg:'채점 서버 응답 없음' };
+    const stdout = trim(d.program_output || '');
+    const exp    = trim(tc.expected);
+    if (stdout === exp){
+      return { status:'pass', stdout, expected:exp };
+    } else {
+      return { status:'fail', msg:'오답', stdout, expected:exp };
+    }
   } catch { return { status:'fail', msg:'네트워크 오류' }; }
 }
 
