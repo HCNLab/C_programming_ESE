@@ -33,11 +33,14 @@ body.dark{
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;color:var(--text);background:var(--bg);min-height:100vh;transition:background .2s,color .2s}
+.wrap{max-width:1280px;margin:0 auto;padding:1.5rem 1rem}
 .user-chip{font-size:13px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 12px;display:flex;align-items:center;gap:8px;color:var(--text)}
 .link-btn{background:none;border:none;font-size:12px;color:var(--text3);cursor:pointer;padding:0}
 .link-btn:hover{color:var(--text6)}
 button{padding:.45rem 1rem;border:1px solid var(--border2);border-radius:8px;background:var(--surface);color:var(--text);font-size:13px;cursor:pointer;font-family:inherit}
 button:hover{background:var(--surface4)}
+button:active{transform:scale(.98)}
+button:disabled{opacity:.4;cursor:not-allowed}
 button.primary{background:var(--text);color:var(--surface);border-color:transparent}
 button.primary:hover{background:var(--text6)}
 .back-btn{background:none;border:none;font-size:13px;color:var(--text3);cursor:pointer;padding:0}
@@ -53,9 +56,12 @@ button.primary:hover{background:var(--text6)}
 .open-badge.open{background:var(--accent-bg);color:var(--accent-text)}
 .open-badge.closed{background:var(--surface4);color:var(--text3)}
 .section-lbl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.3rem;margin-top:.85rem}
+.section-lbl:first-child{margin-top:0}
+.body-text{font-size:14px;line-height:1.7;color:var(--text)}
 .io-box{font-family:'Menlo','Consolas',monospace;font-size:13px;padding:.55rem .8rem;background:var(--surface3);border:1px solid var(--border);border-radius:8px;white-space:pre-wrap;word-break:break-all;color:var(--text)}
 textarea{width:100%;min-height:200px;font-family:'Menlo','Consolas',monospace;font-size:13px;padding:.75rem;border:1px solid var(--border2);border-radius:8px;background:var(--surface);color:var(--text);resize:vertical;outline:none;line-height:1.6;margin-bottom:.75rem}
 textarea:focus{border-color:var(--text3)}
+.btn-row{display:flex;gap:8px;margin-bottom:1rem}
 .score-bar{display:flex;align-items:center;gap:10px;padding:.7rem 1rem;background:var(--surface3);border:1px solid var(--border);border-radius:8px;margin-bottom:.75rem;color:var(--text)}
 .tc-list{display:flex;flex-direction:column;gap:6px}
 .tc-row{display:flex;align-items:flex-start;gap:10px;padding:.55rem .85rem;border:1px solid var(--border);border-radius:8px;background:var(--surface)}
