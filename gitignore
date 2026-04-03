@@ -1,0 +1,16 @@
+# Python
+*.py
+__pycache__/
+*.pyc
+
+# Claude 관련
+claude-code-context.md
+project-context.md
+
+# 채점 결과
+grade_result*.csv
+submissions*.csv
+
+# OS
+.DS_Store
+Thumbs.db
