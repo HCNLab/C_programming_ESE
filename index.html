@@ -309,7 +309,6 @@ async function runCase(tc, src){
     });
     if (!r.ok) return { status:'fail', msg:'채점 서버 오류' };
     const d = await r.json();
-    // warning만 있는 경우는 오류 아님 — error: 문자열이 있을 때만 컴파일 오류
     const hasError = d.compiler_error && d.compiler_error.includes('error:');
     if (hasError){
       return { status:'fail', msg:'컴파일 오류',
@@ -320,7 +319,7 @@ async function runCase(tc, src){
     if (stdout === exp){
       return { status:'pass', stdout, expected:exp };
     } else {
-      return { status:'fail', msg:'오답', stdout, expected:exp };
+      return { status:'fail', msg:'오답', stdout, expected:exp, input:tc.input };
     }
   } catch { return { status:'fail', msg:'네트워크 오류' }; }
 }
@@ -356,7 +355,10 @@ function renderHome(push=true){
         <div class="prob-card-footer">
           <span class="open-badge ${open?'open':'closed'}">${open?'제출 가능':'마감'}</span>
           ${entries.length
-            ? `<span style="font-size:11px;color:#0f6e56;margin-left:auto;font-weight:600">제출됨</span>`
+            ? (() => {
+                const best = entries.find(e => e.score !== null && e.score !== undefined);
+                return `<span style="font-size:11px;color:#0f6e56;margin-left:auto;font-weight:600">제출됨${best ? ` (${best.score}/${best.max}점)` : ''}</span>`;
+              })()
             : `<span style="font-size:11px;color:#ccc;margin-left:auto">미제출</span>`}
         </div>
       </div>`;
@@ -511,8 +513,11 @@ function renderResults(){
       badge = `<span class="badge fail">${r.msg || '오답'}</span>`;
       if (r.detail)
         detail = `<div class="tc-detail">${r.detail}</div>`;
-      else if (r.stdout !== undefined)
-        detail = `<div class="tc-detail">출력: <code>${r.stdout||'(없음)'}</code>&nbsp;&nbsp;기댓값: <code>${r.expected}</code></div>`;
+      else if (r.stdout !== undefined){
+        const inputPreview = (r.input||'').replace(/\n/g,' / ').slice(0,40);
+        detail = `<div class="tc-detail">입력: <code>${inputPreview}</code></div>
+                  <div class="tc-detail">출력: <code>${r.stdout||'(없음)'}</code>&nbsp;&nbsp;기댓값: <code>${r.expected}</code></div>`;
+      }
     }
     return `<div class="tc-row ${cls}">
       ${badge}
@@ -544,9 +549,9 @@ function renderHistory(push=true){
       <td colspan="2" style="color:#ccc">미제출</td>
     </tr>`;
     return entries.map((e,i) => {
-      const scoreCell = (e.score !== undefined && !isNaN(e.score))
-        ? `<span style="color:#0f6e56;font-weight:600">${e.score}/${e.max}점</span>`
-        : `<span style="color:#0f6e56;font-weight:600">제출됨</span>`;
+      const hasScore = e.score !== null && e.score !== undefined && !isNaN(e.score);
+      const scoreColor = hasScore ? (e.score === e.max ? '#0f6e56' : e.score > 0 ? '#b07d1a' : '#a32d2d') : '#0f6e56';
+      const scoreCell = `<span style="color:${scoreColor};font-weight:600">제출됨${hasScore ? ` (${e.score}/${e.max}점)` : ''}</span>`;
       return `<tr>
         <td style="color:#aaa;font-size:12px">${i===0?p.week:''}</td>
         <td>${i===0?p.title:''}</td>
@@ -601,7 +606,17 @@ async function doSubmit(){
   if (btn){ btn.disabled = true; btn.textContent = '제출 중...'; }
 
   const ts = new Date().toISOString();
-  addHistory(p.id, { ts, submitted: true });
+  // 테스트 결과가 있으면 점수도 같이 저장
+  let submitScore = null, submitMax = null;
+  if (Object.keys(tcResults).length > 0){
+    let tot = 0, mx = 0;
+    p.cases.forEach(tc => {
+      mx += tc.pts;
+      if (tcResults[tc.id]?.status === 'pass') tot += tc.pts;
+    });
+    submitScore = tot; submitMax = mx;
+  }
+  addHistory(p.id, { ts, submitted: true, score: submitScore, max: submitMax });
   sendToSheets({ ts, username, week: p.week, problemId: p.id,
     problem: p.title, code: src });
 
