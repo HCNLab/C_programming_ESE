@@ -252,7 +252,7 @@ const PROBLEMS = [
   },
   {
     id:'p2', week:'5주차 Practice', title:'Season Finder',
-    desc:'월 번호(1-12)를 입력받아 계절을 출력하시오. <b>fall-through</b>를 이용한 switch로 작성할 것.',
+    desc:'월 번호(1-12)를 입력받아 계절을 출력하시오. <b>fall-through</b>를 이용한 switch로 작성할 것.<br>계절 매핑: 3, 4, 5월 → Spring &nbsp; 6, 7, 8월 → Summer &nbsp; 9, 10, 11월 → Autumn &nbsp; 12, 1, 2월 → Winter',
     input_desc:'첫째 줄에 월 번호(1-12)가 주어진다.',
     output_desc:'해당 계절을 출력한다: <code>Spring</code> / <code>Summer</code> / <code>Autumn</code> / <code>Winter</code><br>범위 외: <code>Invalid</code>',
     ex_in:'4', ex_out:'Spring', deadline:'2026-04-13',
@@ -278,7 +278,7 @@ const PROBLEMS = [
   },
   {
     id:'p4', week:'5주차 Practice', title:'Days in Month',
-    desc:'월과 연도를 입력받아 해당 월의 날 수를 출력하시오. switch로 월을 처리하고, 2월은 if-else-if로 윤년을 처리할 것.',
+    desc:'월과 연도를 입력받아 해당 월의 날 수를 출력하시오. switch로 월을 처리하고, 2월은 if-else-if로 윤년을 처리할 것.<br>31일: 1, 3, 5, 7, 8, 10, 12월 &nbsp; 30일: 4, 6, 9, 11월 &nbsp; 2월: 28 또는 29일<br>윤년 조건: 4의 배수이되 100의 배수는 아닌 해, 또는 400의 배수인 해',
     input_desc:'한 줄에 월(1-12)과 연도가 주어진다. (예: <code>2 2024</code>)',
     output_desc:'해당 월의 날 수를 출력한다.',
     ex_in:'2 2024', ex_out:'29', deadline:'2026-04-13',
@@ -306,7 +306,7 @@ const PROBLEMS = [
   },
   {
     id:'c2', week:'5주차 Practice', title:'Rock Paper Scissors',
-    desc:'두 플레이어가 각각 R(Rock), P(Paper), S(Scissors) 중 하나를 입력하면 승자를 결정하시오. 대소문자 모두 처리할 것.',
+    desc:'두 플레이어가 각각 R(Rock), P(Paper), S(Scissors) 중 하나를 입력하면 승자를 결정하시오. 대소문자 모두 처리할 것.<br>규칙: Rock beats Scissors &nbsp; Scissors beats Paper &nbsp; Paper beats Rock &nbsp; 같으면 Draw',
     input_desc:'첫째 줄에 Player 1의 선택, 둘째 줄에 Player 2의 선택이 주어진다.',
     output_desc:'<code>Player 1 wins</code> / <code>Player 2 wins</code> / <code>Draw</code>',
     ex_in:'R\nS', ex_out:'Player 1 wins', deadline:'2026-04-13',
@@ -319,8 +319,8 @@ const PROBLEMS = [
   },
   {
     id:'c3', week:'5주차 Practice', title:'Quadratic Equation Solver',
-    desc:'ax²+bx+c=0의 계수 a, b, c를 입력받아 근을 구하시오. <code>&lt;math.h&gt;</code>의 <code>sqrt()</code>를 사용하고, <code>gcc -lm</code>으로 컴파일.',
-    input_desc:'한 줄에 a b c가 주어진다.',
+    desc:'ax²+bx+c=0의 계수 a, b, c를 입력받아 근을 구하시오. <code>&lt;math.h&gt;</code>의 <code>sqrt()</code>를 사용하고, <code>gcc -lm</code>으로 컴파일.<br>판별식 D = b²−4ac 계산: a=0이면 선형 방정식(x = −c/b) &nbsp; D&gt;0이면 두 실근 &nbsp; D=0이면 중근 &nbsp; D&lt;0이면 허근',
+    input_desc:'한 줄에 a b c가 주어진다. (double 형)',
     output_desc:'두 실근: <code>x1 = X.XX, x2 = X.XX</code> (x1 ≥ x2)<br>중근: <code>x = X.XX</code><br>허근: <code>No real roots</code><br>a=0 선형: <code>x = X.XX</code>',
     ex_in:'1 -5 6', ex_out:'x1 = 3.00, x2 = 2.00', deadline:'2026-04-13',
     cases:[
@@ -332,15 +332,16 @@ const PROBLEMS = [
   },
   {
     id:'c4', week:'5주차 Practice', title:'Date Validator',
-    desc:'연도, 월, 일을 입력받아 유효한 날짜인지 확인하시오. 윤년 처리 포함. if-else-if + switch 조합으로 작성할 것.',
+    desc:'연도, 월, 일을 입력받아 유효한 날짜인지 확인하시오. 윤년 처리 포함. if-else-if + switch 조합으로 작성할 것.<br>검증 순서: ① 연도 > 0 &nbsp; ② 월 1-12 &nbsp; ③ 일 1 ~ 해당 월의 최대 일수 (2월은 윤년 적용)',
     input_desc:'한 줄에 year month day가 주어진다.',
     output_desc:'유효: <code>Valid date</code><br>무효: <code>Invalid date: invalid year</code> / <code>Invalid date: invalid month</code> / <code>Invalid date: invalid day</code>',
     ex_in:'2024 2 29', ex_out:'Valid date', deadline:'2026-04-13',
     cases:[
-      {id:1,input:'2024 2 29', expected:'Valid date',                 pts:25},
-      {id:2,input:'2023 2 29', expected:'Invalid date: invalid day',  pts:25},
-      {id:3,input:'2024 13 1', expected:'Invalid date: invalid month',pts:25},
-      {id:4,input:'2024 4 31', expected:'Invalid date: invalid day',  pts:25},
+      {id:1,input:'2024 2 29', expected:'Valid date',                  pts:20},
+      {id:2,input:'2023 2 29', expected:'Invalid date: invalid day',   pts:20},
+      {id:3,input:'2024 13 1', expected:'Invalid date: invalid month', pts:20},
+      {id:4,input:'2024 4 31', expected:'Invalid date: invalid day',   pts:20},
+      {id:5,input:'0 1 1',     expected:'Invalid date: invalid year',  pts:20},
     ]
   },
   {
@@ -810,22 +811,71 @@ function renderHome(push=true){
   const donePractice   = practiceProbs.filter(p => hist[p.id] && hist[p.id].length > 0).length;
   const totalAssign    = assignProbs.length;
   const totalPractice  = practiceProbs.length;
-  const pct = totalAssign > 0 ? Math.round(doneAssign/totalAssign*100) : 0;
+  const totalAll       = totalAssign + totalPractice;
+  const doneAll        = doneAssign  + donePractice;
+  const pctAssign      = totalAssign   > 0 ? Math.round(doneAssign   / totalAssign   * 100) : 0;
+  const pctPractice    = totalPractice > 0 ? Math.round(donePractice / totalPractice * 100) : 0;
+  const pctAll         = totalAll      > 0 ? Math.round(doneAll      / totalAll      * 100) : 0;
+  // 도넛 차트 계산
+  const _r = 36, _cx = 50, _cy = 50;
+  const _circ = parseFloat((2 * Math.PI * _r).toFixed(2));
+  const _aSlice = totalAll > 0 ? parseFloat(((doneAssign   / totalAll) * _circ).toFixed(2)) : 0;
+  const _pSlice = totalAll > 0 ? parseFloat(((donePractice / totalAll) * _circ).toFixed(2)) : 0;
+  const _rSlice = parseFloat((_circ - _aSlice - _pSlice).toFixed(2));
   const progressHtml = `
-    <div style="font-size:11px;font-weight:600;color:#555;margin-bottom:.3rem">과제</div>
-    <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:.5rem">
-      <span style="font-size:22px;font-weight:700">${doneAssign}</span>
-      <span style="font-size:13px;color:#888">/ ${totalAssign}문제</span>
-      <span style="font-size:12px;color:#aaa;margin-left:auto">${pct}%</span>
+    <div style="margin-bottom:.7rem">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.3rem">
+        <span style="font-size:11px;font-weight:600;color:#555">과제</span>
+        <span style="font-size:11px;color:#888">${doneAssign} / ${totalAssign}문제&nbsp;
+          <b style="color:#1a1a1a">${pctAssign}%</b></span>
+      </div>
+      <div style="height:7px;background:#f0f0ee;border-radius:4px;overflow:hidden">
+        <div style="height:100%;width:${pctAssign}%;background:${pctAssign===100?'#1D9E75':'#1a1a1a'};border-radius:4px;transition:width .4s"></div>
+      </div>
     </div>
-    <div style="height:8px;background:#f0f0ee;border-radius:4px;overflow:hidden">
-      <div style="height:100%;width:${pct}%;background:${pct===100?'#1D9E75':'#1a1a1a'};
-        border-radius:4px;transition:width .4s"></div>
+    <div style="margin-bottom:.85rem">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.3rem">
+        <span style="font-size:11px;font-weight:600;color:#555">연습문제</span>
+        <span style="font-size:11px;color:#888">${donePractice} / ${totalPractice}문제&nbsp;
+          <b style="color:#1a1a1a">${pctPractice}%</b></span>
+      </div>
+      <div style="height:7px;background:#f0f0ee;border-radius:4px;overflow:hidden">
+        <div style="height:100%;width:${pctPractice}%;background:#1D9E75;border-radius:4px;transition:width .4s"></div>
+      </div>
     </div>
-    ${pct===100 ? '<div style="font-size:12px;color:#0f6e56;margin-top:.4rem;font-weight:600">모두 제출 완료!</div>' : ''}
-    <div style="margin-top:.75rem;padding-top:.65rem;border-top:1px solid #f0f0ee;display:flex;align-items:center;justify-content:space-between">
-      <span style="font-size:11px;font-weight:600;color:#555">연습문제</span>
-      <span style="font-size:12px;color:#888"><b style="color:#1a1a1a">${donePractice}</b> / ${totalPractice} 풀이</span>
+    <div style="border-top:1px solid #f0f0ee;padding-top:.75rem">
+      <div style="font-size:11px;font-weight:600;color:#555;margin-bottom:.6rem">종합 진행률</div>
+      <div style="display:flex;align-items:center;gap:14px">
+        <svg width="84" height="84" viewBox="0 0 100 100" style="flex-shrink:0">
+          <circle cx="${_cx}" cy="${_cy}" r="${_r}" fill="none" stroke="#f0f0ee" stroke-width="16"/>
+          ${_rSlice > 0.01 ? `<circle cx="${_cx}" cy="${_cy}" r="${_r}" fill="none" stroke="#e8e8e6" stroke-width="16"
+            stroke-dasharray="${_rSlice} ${_circ}" stroke-dashoffset="${-(_aSlice+_pSlice)}"
+            transform="rotate(-90 ${_cx} ${_cy})"/>` : ''}
+          ${_aSlice > 0.01 ? `<circle cx="${_cx}" cy="${_cy}" r="${_r}" fill="none" stroke="#1a1a1a" stroke-width="16"
+            stroke-dasharray="${_aSlice} ${_circ}" stroke-dashoffset="0"
+            transform="rotate(-90 ${_cx} ${_cy})"/>` : ''}
+          ${_pSlice > 0.01 ? `<circle cx="${_cx}" cy="${_cy}" r="${_r}" fill="none" stroke="#1D9E75" stroke-width="16"
+            stroke-dasharray="${_pSlice} ${_circ}" stroke-dashoffset="${-_aSlice}"
+            transform="rotate(-90 ${_cx} ${_cy})"/>` : ''}
+          <text x="${_cx}" y="${_cy}" text-anchor="middle" dominant-baseline="middle"
+            font-size="15" font-weight="700" fill="#1a1a1a" font-family="-apple-system,BlinkMacSystemFont,sans-serif">${pctAll}%</text>
+        </svg>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;min-width:0">
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="width:9px;height:9px;border-radius:2px;background:#1a1a1a;flex-shrink:0"></div>
+            <span style="color:#555">과제&nbsp;<b>${doneAssign}</b><span style="color:#aaa">/${totalAssign}</span></span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="width:9px;height:9px;border-radius:2px;background:#1D9E75;flex-shrink:0"></div>
+            <span style="color:#555">연습&nbsp;<b>${donePractice}</b><span style="color:#aaa">/${totalPractice}</span></span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="width:9px;height:9px;border-radius:2px;background:#e8e8e6;border:1px solid #d4d4d0;flex-shrink:0"></div>
+            <span style="color:#aaa">미완료&nbsp;${totalAll - doneAll}</span>
+          </div>
+          ${pctAll===100 ? `<div style="font-size:11px;color:#0f6e56;font-weight:600;margin-top:2px">모두 완료!</div>` : ''}
+        </div>
+      </div>
     </div>`;
 
   const sidebarPinnedHtml = upcoming.length === 0
