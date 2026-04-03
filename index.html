@@ -347,8 +347,8 @@ function renderHome(){
         <div class="prob-card-dl">마감 ${p.deadline}</div>
         <div class="prob-card-footer">
           <span class="open-badge ${open?'open':'closed'}">${open?'제출 가능':'마감'}</span>
-          ${best !== null
-            ? `<span style="font-size:11px;color:#888;margin-left:auto">${best}/${bestMax}점</span>`
+          ${entries.length
+            ? `<span style="font-size:11px;color:#0f6e56;margin-left:auto;font-weight:600">제출됨</span>`
             : `<span style="font-size:11px;color:#ccc;margin-left:auto">미제출</span>`}
         </div>
       </div>`;
@@ -407,8 +407,8 @@ function renderProb(pid){
       <div class="topbar-title" style="font-size:15px">${p.week} — ${p.title}</div>
       ${userBar()}
     </div>
-    ${best ? `<div class="notice">이전 최고: <strong>${best.score}/${best.max}점</strong>
-      &nbsp;·&nbsp; 총 ${hist.length}회 제출
+    ${hist.length ? `<div class="notice">제출 이력: <strong>${hist.length}회</strong>
+      &nbsp;·&nbsp; 최근 ${new Date(hist[0].ts).toLocaleString('ko-KR')}
       &nbsp;·&nbsp; <span style="color:#378add;cursor:pointer" onclick="renderHistory()">이력 보기</span></div>` : ''}
     <div class="card" style="margin-bottom:1rem">
       <div class="section-lbl">문제</div>
