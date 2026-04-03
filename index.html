@@ -40,7 +40,8 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .body-text{font-size:14px;line-height:1.7}
 .io-box{font-family:'Menlo','Consolas',monospace;font-size:13px;padding:.55rem .8rem;background:#f5f5f4;border:1px solid #e2e2e0;border-radius:8px;white-space:pre-wrap;word-break:break-all}
 /* 에디터 */
-textarea{display:none}
+textarea{width:100%;min-height:200px;font-family:'Menlo','Consolas',monospace;font-size:13px;padding:.75rem;border:1px solid #d4d4d0;border-radius:8px;background:#fff;color:#1a1a1a;resize:vertical;outline:none;line-height:1.6;margin-bottom:.75rem}
+textarea:focus{border-color:#888}
 .btn-row{display:flex;gap:8px;margin-bottom:1rem}
 /* 결과 */
 .score-bar{display:flex;align-items:center;gap:10px;padding:.7rem 1rem;background:#f5f5f4;border:1px solid #e2e2e0;border-radius:8px;margin-bottom:.75rem}
@@ -97,7 +98,7 @@ const COURSE_NAME = 'C Programming (1)';
 const PROBLEMS = [
   /* ── 기존 예제 ──────────────────────────────────── */
   {
-    id:'hw1', week:'1주차', title:'A+B',
+    id:'hw1', week:'TEST', title:'A+B',
     desc:'두 정수 A와 B를 입력받은 다음, A+B를 출력하는 프로그램을 작성하시오.',
     input_desc:'첫째 줄에 A와 B가 주어진다. (0 &lt; A, B &lt; 10)',
     output_desc:'첫째 줄에 A+B를 출력한다.',
@@ -110,7 +111,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'hw2', week:'2주차', title:'최솟값 출력',
+    id:'hw2', week:'TEST', title:'최솟값 출력',
     desc:'정수 세 개를 입력받아 그 중 최솟값을 출력하시오.',
     input_desc:'첫째 줄에 세 정수 A, B, C가 주어진다. (-1000 ≤ A, B, C ≤ 1000)',
     output_desc:'첫째 줄에 최솟값을 출력한다.',
@@ -123,7 +124,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'hw3', week:'3주차', title:'팩토리얼',
+    id:'hw3', week:'TEST', title:'팩토리얼',
     desc:'정수 N이 주어졌을 때, N!을 출력하시오.',
     input_desc:'첫째 줄에 N이 주어진다. (0 ≤ N ≤ 12)',
     output_desc:'첫째 줄에 N!을 출력한다.',
