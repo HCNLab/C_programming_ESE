@@ -12,6 +12,9 @@ project-context.md
 grade_result*.csv
 submissions*.csv
 
+# 강의자료
+lecture_notes/
+
 # OS
 .DS_Store
 Thumbs.db
