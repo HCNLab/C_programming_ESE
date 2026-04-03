@@ -109,7 +109,7 @@ const SHEETS_URL  = 'https://script.google.com/macros/s/AKfycbyNWSG05boCM5Cl8-fh
 const COURSE_NAME = 'C Programming (1)';
 
 // 공지사항 (빈 문자열이면 숨김)
-const NOTICE = '5주차 Practice/Challenge 과제가 업로드됐습니다. 마감일을 확인하세요.';
+const NOTICE = '5주차 과제가 업로드됐습니다. 마감일을 확인하세요.';
 
 /* ── 랜덤 테스트케이스 생성기 ── */
 function ri(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
@@ -333,7 +333,7 @@ const PROBLEMS = [
 
   /* ── Week 5B Challenge ────────────────────────── */
   {
-    id:'c1', week:'5주차 Challenge', title:'Tax Bracket Calculator',
+    id:'c1', week:'5주차 Practice', title:'Tax Bracket Calculator',
     desc:'연소득(원)을 입력받아 누진세를 계산하시오.<br>세율 구간: ~1,400만원 6% / ~5,000만원 15% / ~8,800만원 24% / 초과 35%<br>세금은 누진 적용됨 (예: 6천만원 = 14M×6% + 36M×15% + 10M×24%)',
     input_desc:'첫째 줄에 연소득(원, 정수)이 주어진다.',
     output_desc:'형식: <code>Tax: {N} won</code>',
@@ -346,7 +346,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'c2', week:'5주차 Challenge', title:'Rock Paper Scissors',
+    id:'c2', week:'5주차 Practice', title:'Rock Paper Scissors',
     desc:'두 플레이어가 각각 R(Rock), P(Paper), S(Scissors) 중 하나를 입력하면 승자를 결정하시오. 대소문자 모두 처리할 것.',
     input_desc:'첫째 줄에 Player 1의 선택, 둘째 줄에 Player 2의 선택이 주어진다.',
     output_desc:'<code>Player 1 wins</code> / <code>Player 2 wins</code> / <code>Draw</code>',
@@ -359,7 +359,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'c3', week:'5주차 Challenge', title:'Quadratic Equation Solver',
+    id:'c3', week:'5주차 Practice', title:'Quadratic Equation Solver',
     desc:'ax²+bx+c=0의 계수 a, b, c를 입력받아 근을 구하시오. <code>&lt;math.h&gt;</code>의 <code>sqrt()</code>를 사용하고, <code>gcc -lm</code>으로 컴파일.',
     input_desc:'한 줄에 a b c가 주어진다.',
     output_desc:'두 실근: <code>x1 = X.XX, x2 = X.XX</code> (x1 ≥ x2)<br>중근: <code>x = X.XX</code><br>허근: <code>No real roots</code><br>a=0 선형: <code>x = X.XX</code>',
@@ -372,7 +372,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'c4', week:'5주차 Challenge', title:'Date Validator',
+    id:'c4', week:'5주차 Practice', title:'Date Validator',
     desc:'연도, 월, 일을 입력받아 유효한 날짜인지 확인하시오. 윤년 처리 포함. if-else-if + switch 조합으로 작성할 것.',
     input_desc:'한 줄에 year month day가 주어진다.',
     output_desc:'유효: <code>Valid date</code><br>무효: <code>Invalid date: invalid year</code> / <code>Invalid date: invalid month</code> / <code>Invalid date: invalid day</code>',
@@ -385,7 +385,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'c5', week:'5주차 Challenge', title:'Mini ATM System',
+    id:'c5', week:'5주차 Practice', title:'Mini ATM System',
     desc:'PIN(1234)을 검증하고 메뉴를 처리하는 ATM을 작성하시오. 초기 잔액: 100,000원. switch로 메뉴 처리, if로 검증.',
     input_desc:'첫째 줄: PIN. 올바르면 둘째 줄: 메뉴(1.잔액 2.입금 3.출금 4.종료). 입금/출금이면 셋째 줄: 금액.',
     output_desc:'PIN 오류: <code>Wrong PIN</code><br>잔액 확인: <code>Balance: N won</code><br>입금: <code>Deposited. Balance: N won</code><br>출금 성공: <code>Withdrawn. Balance: N won</code><br>잔액 부족: <code>Insufficient funds</code>',
