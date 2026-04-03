@@ -95,6 +95,130 @@ code{font-family:'Menlo','Consolas',monospace;background:#f0f0ee;padding:1px 4px
 const SHEETS_URL  = 'https://script.google.com/macros/s/AKfycbyd7v7QkMdA_jURaOBiyKPaPmstjTF5jl5Yrnu0TtsXBv9k4CORkvRBywNnpI5VpDxs/exec';          // Google Sheets 웹앱 URL
 const COURSE_NAME = 'C Programming (1)';
 
+/* ── 랜덤 테스트케이스 생성기 ── */
+function ri(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+const GEN = {
+  hw1: ()=>{ const a=ri(1,9),b=ri(1,9); return {input:`${a} ${b}`,expected:`${a+b}`}; },
+
+  hw2: ()=>{ const a=ri(-1000,1000),b=ri(-1000,1000),c=ri(-1000,1000);
+    return {input:`${a} ${b} ${c}`,expected:`${Math.min(a,b,c)}`}; },
+
+  hw3: ()=>{ const n=ri(0,12); let f=1; for(let i=2;i<=n;i++)f*=i;
+    return {input:`${n}`,expected:`${f}`}; },
+
+  p1: (slot)=>{
+    const ops=['+','-','*','/'];
+    const op = slot===3 ? '/' : (slot===4 ? '/' : ops[slot-1]);
+    const a=ri(1,20), b=(op==='/' && slot===4) ? 0 : ri(1,10);
+    let exp;
+    if(op==='+') exp=(a+b).toFixed(2);
+    else if(op==='-') exp=(a-b).toFixed(2);
+    else if(op==='*') exp=(a*b).toFixed(2);
+    else exp = b===0 ? 'Division by zero' : (a/b).toFixed(2);
+    return {input:`${a} ${op} ${b}`,expected:exp};
+  },
+
+  p2: (slot)=>{
+    const map={1:'Winter',2:'Winter',3:'Spring',4:'Spring',5:'Spring',
+               6:'Summer',7:'Summer',8:'Summer',9:'Autumn',10:'Autumn',11:'Autumn',12:'Winter'};
+    const seasons=[['3','4','5'],['6','7','8'],['9','10','11'],['12','1','2']];
+    const m=pick(seasons[slot-1]);
+    return {input:m,expected:map[parseInt(m)]};
+  },
+
+  p3: (slot)=>{
+    const items={1:{name:'Coffee',price:1500},2:{name:'Tea',price:1200},
+                 3:{name:'Juice',price:2000},4:{name:'Water',price:800}};
+    if(slot===4){return {input:`5
+${ri(500,3000)}`,expected:'Invalid selection'};}
+    const ch=slot, item=items[ch];
+    const enough=ri(1,2)===1;
+    const money=enough ? item.price+ri(0,500)*10 : ri(100,item.price-100);
+    const exp=money>=item.price
+      ? `${item.name} dispensed. Change: ${money-item.price} won`
+      : 'Insufficient funds';
+    return {input:`${ch}
+${money}`,expected:exp};
+  },
+
+  p4: (slot)=>{
+    const yr=ri(2000,2030);
+    if(slot===1){const m=pick([1,3,5,7,8,10,12]);return {input:`${m} ${yr}`,expected:'31'};}
+    if(slot===2){const m=pick([4,6,9,11]);return {input:`${m} ${yr}`,expected:'30'};}
+    if(slot===3){const ly=pick([2000,2004,2008,2012,2016,2020,2024]);return {input:`2 ${ly}`,expected:'29'};}
+    const nly=pick([2001,2002,2003,2005,2006,2007,2009,2010]);return {input:`2 ${nly}`,expected:'28'};
+  },
+
+  c1: (slot)=>{
+    const incomes=[[1000000,14000000],[14000001,50000000],[50000001,88000000],[88000001,200000000]];
+    const [lo,hi]=incomes[slot-1]; const inc=ri(lo,hi);
+    let tax=0;
+    if(inc>88000000) tax=840000+5400000+9120000+(inc-88000000)*0.35;
+    else if(inc>50000000) tax=840000+5400000+(inc-50000000)*0.24;
+    else if(inc>14000000) tax=840000+(inc-14000000)*0.15;
+    else tax=inc*0.06;
+    return {input:`${inc}`,expected:`Tax: ${Math.round(tax)} won`};
+  },
+
+  c2: (slot)=>{
+    const choices=['R','P','S'];
+    const wins={R:'S',S:'P',P:'R'};
+    if(slot===3){const c=pick(choices);return {input:`${c}
+${c}`,expected:'Draw'};}
+    if(slot===1){const p1=pick(choices);return {input:`${p1}
+${wins[p1]}`,expected:'Player 1 wins'};}
+    if(slot===2){const p2=pick(choices);return {input:`${wins[p2]}
+${p2}`,expected:'Player 2 wins'};}
+    const p1=pick(['r','p','s']),p2=pick(choices);
+    const p1u=p1.toUpperCase();
+    const exp=p1u===p2?'Draw':wins[p1u]===p2?'Player 1 wins':'Player 2 wins';
+    return {input:`${p1}
+${p2}`,expected:exp};
+  },
+
+  c3: (slot)=>{
+    if(slot===1){ // two roots
+      const x1=ri(-5,5),x2=ri(-5,5);
+      if(x1===x2) return GEN.c3(slot);
+      const [big,small]=[Math.max(x1,x2),Math.min(x1,x2)];
+      return {input:`1 ${-(x1+x2)} ${x1*x2}`,expected:`x1 = ${big.toFixed(2)}, x2 = ${small.toFixed(2)}`};
+    }
+    if(slot===2){ const x=ri(-5,5); return {input:`1 ${-2*x} ${x*x}`,expected:`x = ${x.toFixed(2)}`}; }
+    if(slot===3){ const c=ri(1,10); return {input:`1 0 ${c}`,expected:'No real roots'}; }
+    const x=ri(-5,5); const b_=ri(-5,5);
+    return {input:`0 ${b_===0?1:b_} ${-(b_===0?1:b_)*x}`,expected:`x = ${x.toFixed(2)}`};
+  },
+
+  c4: (slot)=>{
+    if(slot===1){ const ly=pick([2000,2004,2008,2024]); return {input:`${ly} 2 29`,expected:'Valid date'}; }
+    if(slot===2){ const nly=pick([2001,2003,2005,2007]); return {input:`${nly} 2 29`,expected:'Invalid date: invalid day'}; }
+    if(slot===3){ const d=ri(1,28); return {input:`2024 ${ri(13,20)} ${d}`,expected:'Invalid date: invalid month'}; }
+    const m=pick([4,6,9,11]); return {input:`2024 ${m} 31`,expected:'Invalid date: invalid day'};
+  },
+
+  c5: (slot)=>{
+    if(slot===1) return {input:`${ri(1000,9998)}
+1`,expected:'Wrong PIN'};
+    if(slot===2) return {input:`1234
+1`,expected:'Balance: 100000 won'};
+    if(slot===3){ const d=ri(1000,90000);
+      return {input:`1234
+2
+${d}`,expected:`Deposited. Balance: ${100000+d} won`}; }
+    return {input:`1234
+3
+${ri(100001,500000)}`,expected:'Insufficient funds'};
+  },
+};
+
+function buildCases(pid){
+  const gen=GEN[pid];
+  if(!gen) return null;
+  return [1,2,3,4].map((slot,i)=>({id:i+1,...gen(slot),pts:25}));
+}
+
 const PROBLEMS = [
   /* ── 기존 예제 ──────────────────────────────────── */
   {
@@ -413,6 +537,9 @@ function renderProb(pid, push=true){
   view = 'problem'; curPid = pid; curTab = 'prob';
   const p = PROBLEMS.find(x => x.id === pid);
   code = STARTER; tcResults = {}; submitting = false;
+  // 랜덤 케이스 생성
+  const generated = buildCases(pid);
+  if(generated) p = Object.assign({}, p, {cases: generated});
   const hist = (loadHistory()[pid] || []);
 
 
@@ -439,6 +566,9 @@ function renderProb(pid, push=true){
       
     </div>
     <div class="section-lbl" style="margin-top:1.25rem;margin-bottom:.4rem">코드 작성</div>
+    <div style="font-size:12px;color:#888;margin-bottom:.6rem;padding:.5rem .75rem;background:#fff8e1;border-radius:6px;border:1px solid #ffe082">
+      출력은 예제 출력과 <b>완전히 동일</b>해야 합니다. <code>printf("입력하세요: ")</code> 같은 안내 문구 없이 결과 값만 출력하세요.
+    </div>
     <textarea id="code-ta" spellcheck="false">${code}</textarea>
     <div class="btn-row">
       <button class="primary" id="sub-btn" onclick="doSubmit()">제출</button>
