@@ -514,6 +514,219 @@ PROBLEMS.push(
       {id:3, input:'1.005',  expected:'1.01', pts:33},
     ]
   },
+  /* ── OJ / P / CH 추가 (Week04_연습문제실습) ── */
+  {
+    id:'r09', week:'week01-04 연습문제 (과제 아님)', noSubmit:true,
+    title:'나머지 연산',
+    desc:'456 % 89 의 결과를 출력하는 프로그램을 작성하시오.',
+    input_desc:'없음 (입력 불필요)',
+    output_desc:'나머지 연산 결과를 출력한다.',
+    ex_in:'',
+    ex_out:'11',
+    deadline:'2099-12-31',
+    cases:[{id:1, input:'', expected:'11', pts:100}]
+  },
+  {
+    id:'r10', week:'week01-04 연습문제 (과제 아님)', noSubmit:true,
+    title:'괄호 연산',
+    desc:'(67 - 75) * 3 의 결과를 출력하는 프로그램을 작성하시오.<br>괄호가 있으면 결과가 어떻게 달라질까요?',
+    input_desc:'없음 (입력 불필요)',
+    output_desc:'계산 결과를 출력한다.',
+    ex_in:'',
+    ex_out:'-24',
+    deadline:'2099-12-31',
+    cases:[{id:1, input:'', expected:'-24', pts:100}]
+  },
+  {
+    id:'r11', week:'week01-04 연습문제 (과제 아님)', noSubmit:true,
+    title:'합과 곱',
+    desc:'1부터 5까지 숫자들의 합, 곱을 한 줄에 출력하시오.<br>두 결과 사이에는 한 개의 공백만 존재한다.',
+    input_desc:'없음 (입력 불필요)',
+    output_desc:'합과 곱을 공백으로 구분하여 한 줄에 출력한다.',
+    ex_in:'',
+    ex_out:'15 120',
+    deadline:'2099-12-31',
+    cases:[{id:1, input:'', expected:'15 120', pts:100}]
+  },
+  {
+    id:'r12', week:'week01-04 연습문제 (과제 아님)', noSubmit:true,
+    title:'나머지 출력',
+    desc:'세 개의 숫자를 입력받아 각각을 2로 나눈 나머지를 순서대로 출력하라.',
+    input_desc:'정수 3개를 공백으로 구분하여 입력한다.',
+    output_desc:'각 수를 2로 나눈 나머지를 한 줄씩 출력한다.',
+    ex_in:'1 2 3',
+    ex_out:'1\n0\n1',
+    deadline:'2099-12-31',
+    cases:[
+      {id:1, input:'1 2 3', expected:'1\n0\n1', pts:34},
+      {id:2, input:'4 5 6', expected:'0\n1\n0', pts:33},
+      {id:3, input:'7 8 9', expected:'1\n0\n1', pts:33},
+    ]
+  },
+  {
+    id:'r13', week:'week01-04 연습문제 (과제 아님)', noSubmit:true,
+    title:'마일→미터 변환',
+    desc:'마일을 미터로 환산하는 프로그램.<br>마일 단위로 입력을 받고 1609를 곱해 미터로 변환하여 출력하라.',
+    input_desc:'마일 값(실수)을 입력한다.',
+    output_desc:'미터 값을 소수점 둘째 자리까지 출력한다.',
+    ex_in:'1.0',
+    ex_out:'1609.00',
+    deadline:'2099-12-31',
+    cases:[
+      {id:1, input:'1.0',  expected:'1609.00',  pts:34},
+      {id:2, input:'2.0',  expected:'3218.00',  pts:33},
+      {id:3, input:'0.5',  expected:'804.50',   pts:33},
+    ]
+  },
+  {
+    id:'r14', week:'week01-04 연습문제 (과제 아님)', noSubmit:true,
+    title:'삼각형 넓이',
+    desc:'삼각형의 높이와 밑변을 받아서 넓이를 계산하는 프로그램.<br>모든 데이터는 실수형 입력과 출력.',
+    input_desc:'밑변과 높이(실수)를 공백으로 구분하여 입력한다.',
+    output_desc:'넓이를 소수점 둘째 자리까지 출력한다.',
+    ex_in:'3.0 4.0',
+    ex_out:'6.00',
+    deadline:'2099-12-31',
+    cases:[
+      {id:1, input:'3.0 4.0', expected:'6.00',  pts:34},
+      {id:2, input:'5.0 8.0', expected:'20.00', pts:33},
+      {id:3, input:'2.5 6.0', expected:'7.50',  pts:33},
+    ]
+  },
+  {
+    id:'r15', week:'week01-04 연습문제 (과제 아님)', noSubmit:true,
+    title:'다항식 계산',
+    desc:'3x² + 7x + 11 을 계산하는 프로그램을 작성하라.<br>x는 사용자로부터 입력받는다.',
+    input_desc:'정수 x를 입력한다.',
+    output_desc:'3x² + 7x + 11 의 계산 결과를 출력한다.',
+    ex_in:'2',
+    ex_out:'37',
+    deadline:'2099-12-31',
+    cases:[
+      {id:1, input:'2',  expected:'37',  pts:34},
+      {id:2, input:'0',  expected:'11',  pts:33},
+      {id:3, input:'3',  expected:'59',  pts:33},
+    ]
+  },
+  {
+    id:'r16', week:'week01-04 연습문제 (과제 아님)', noSubmit:true,
+    title:'진수 변환 출력',
+    desc:'정수를 16진수로 입력받아서 8진수, 10진수, 16진수 형태로 출력하는 프로그램을 작성하라.',
+    input_desc:'16진수 값을 입력한다. (예: ff)',
+    output_desc:'8진수, 10진수, 16진수 순서로 한 줄씩 출력한다.',
+    ex_in:'ff',
+    ex_out:'377\n255\nff',
+    deadline:'2099-12-31',
+    cases:[
+      {id:1, input:'ff', expected:'377\n255\nff',  pts:50},
+      {id:2, input:'1f', expected:'37\n31\n1f',    pts:50},
+    ]
+  },
+  {
+    id:'r17', week:'week01-04 연습문제 (과제 아님)', noSubmit:true,
+    title:'상자의 부피',
+    desc:'double형의 실수로 길이, 너비, 높이를 입력받아 부피를 출력하는 프로그램을 작성하라.',
+    input_desc:'길이, 너비, 높이(실수)를 공백으로 구분하여 입력한다.',
+    output_desc:'부피를 소수점 둘째 자리까지 출력한다.',
+    ex_in:'2.0 3.0 4.0',
+    ex_out:'24.00',
+    deadline:'2099-12-31',
+    cases:[
+      {id:1, input:'2.0 3.0 4.0', expected:'24.00', pts:50},
+      {id:2, input:'1.5 2.5 3.0', expected:'11.25', pts:50},
+    ]
+  },
+  /* ── Practice 문제 (Week04_Bitwise_IO) ── */
+  {
+    id:'r18', week:'week01-04 연습문제 (과제 아님)', noSubmit:true,
+    title:'시간 변환기',
+    desc:'총 초(seconds)를 입력받아 시:분:초 형식으로 출력하라.<br>예: 3725초 → 01:02:05',
+    input_desc:'총 초(정수)를 입력한다.',
+    output_desc:'%02d:%02d:%02d 형식으로 출력한다.',
+    ex_in:'3725',
+    ex_out:'01:02:05',
+    deadline:'2099-12-31',
+    cases:[
+      {id:1, input:'3725', expected:'01:02:05', pts:34},
+      {id:2, input:'7200', expected:'02:00:00', pts:33},
+      {id:3, input:'59',   expected:'00:00:59', pts:33},
+    ]
+  },
+  {
+    id:'r19', week:'week01-04 연습문제 (과제 아님)', noSubmit:true,
+    title:'학생 성적표',
+    desc:'학생 이름과 3개 과목 점수를 입력받아 형식에 맞게 출력하라.<br>힌트: <code>%-15s %8d</code>, <code>%8.2f</code>, <code>(double)</code> 형변환 사용',
+    input_desc:'이름(공백 없는 문자열)과 점수 3개를 입력한다.',
+    output_desc:'아래 형식에 맞게 출력한다.',
+    ex_in:'Alice 85 92 78',
+    ex_out:'===== Student Score Report =====\nName:           Alice\n--------------------------------\nSubject 1:            85\nSubject 2:            92\nSubject 3:            78\n--------------------------------\nTotal:               255\nAverage:           85.00\n================================',
+    deadline:'2099-12-31',
+    cases:[
+      {id:1, input:'Alice 85 92 78',
+       expected:'===== Student Score Report =====\nName:           Alice\n--------------------------------\nSubject 1:            85\nSubject 2:            92\nSubject 3:            78\n--------------------------------\nTotal:               255\nAverage:           85.00\n================================',
+       pts:100},
+    ]
+  },
+  {
+    id:'r20', week:'week01-04 연습문제 (과제 아님)', noSubmit:true,
+    title:'진수 변환기 (Binary 포함)',
+    desc:'0~255 범위의 정수를 입력받아 10진수, 16진수, 8진수, 2진수로 출력하라.<br>2진수는 4비트마다 공백으로 구분, 상위/하위 니블도 출력.',
+    input_desc:'정수(0~255)를 입력한다.',
+    output_desc:'형식에 맞게 Decimal, Hex, Octal, Binary, 니블 정보를 출력한다.',
+    ex_in:'255',
+    ex_out:'Decimal:  255\nHex:      0xFF\nOctal:    0377\nBinary:   1111 1111\n\nUpper nibble: 0xF  (15)\nLower nibble: 0xF  (15)',
+    deadline:'2099-12-31',
+    cases:[
+      {id:1, input:'255',
+       expected:'Decimal:  255\nHex:      0xFF\nOctal:    0377\nBinary:   1111 1111\n\nUpper nibble: 0xF  (15)\nLower nibble: 0xF  (15)',
+       pts:100},
+    ]
+  },
+  {
+    id:'r21', week:'week01-04 연습문제 (과제 아님)', noSubmit:true,
+    title:'영수증 계산기',
+    desc:'3개 상품의 가격(double)과 수량(int)을 입력받아 영수증을 출력하라.<br>소계, 세금(10%), 총계를 포함.<br>힌트: <code>%-12s %3d %8.2f</code> 포맷 사용',
+    input_desc:'아이템 3개를 각 줄에 "가격 수량" 형식으로 입력한다.',
+    output_desc:'형식에 맞는 영수증을 출력한다.',
+    ex_in:'4.5 2\n12 1\n3.75 3',
+    ex_out:'============ RECEIPT ============\nItem          Qty   Price  Amount\n--------------------------------\nItem 1          2    4.50    9.00\nItem 2          1   12.00   12.00\nItem 3          3    3.75   11.25\n--------------------------------\nSubtotal:                  32.25\nTax (10%):                  3.23\nTOTAL:                     35.48\n================================',
+    deadline:'2099-12-31',
+    cases:[
+      {id:1, input:'4.5 2\n12 1\n3.75 3',
+       expected:'============ RECEIPT ============\nItem          Qty   Price  Amount\n--------------------------------\nItem 1          2    4.50    9.00\nItem 2          1   12.00   12.00\nItem 3          3    3.75   11.25\n--------------------------------\nSubtotal:                  32.25\nTax (10%):                  3.23\nTOTAL:                     35.48\n================================',
+       pts:100},
+    ]
+  },
+  {
+    id:'r22', week:'week01-04 연습문제 (과제 아님)', noSubmit:true,
+    title:'Hex 색상 디코더',
+    desc:'24비트 hex 색상값(RRGGBB)을 입력받아 R, G, B 각 채널을 10진수, 16진수, 2진수로 출력하라.<br>추출: R=(color>>16)&0xFF, G=(color>>8)&0xFF, B=color&0xFF',
+    input_desc:'hex 색상값을 입력한다. (예: FF8C00)',
+    output_desc:'Color Decoder 형식으로 출력한다.',
+    ex_in:'FF8C00',
+    ex_out:'===== Color Decoder =====\nInput: 0xFF8C00\n-------------------------\nRed:  255 0xFF 11111111\nGreen: 140 0x8C 10001100\nBlue:   0 0x00 00000000\n========================\n\nReconstructed: 0xFF8C00',
+    deadline:'2099-12-31',
+    cases:[
+      {id:1, input:'FF8C00',
+       expected:'===== Color Decoder =====\nInput: 0xFF8C00\n-------------------------\nRed:  255 0xFF 11111111\nGreen: 140 0x8C 10001100\nBlue:   0 0x00 00000000\n========================\n\nReconstructed: 0xFF8C00',
+       pts:100},
+    ]
+  },
+  {
+    id:'r23', week:'week01-04 연습문제 (과제 아님)', noSubmit:true,
+    title:'임베디드 레지스터 시뮬레이터',
+    desc:'8비트 하드웨어 레지스터를 시뮬레이션하라.<br>Bit0:POWER, Bit1:READY, Bit2:SENSOR, Bit3:MOTOR, Bit7:ERROR<br>SET/CLEAR/TOGGLE/CHECK 연산을 순서대로 수행하고 각 단계의 레지스터 상태(hex + 2진수)를 출력.',
+    input_desc:'없음 (입력 불필요)',
+    output_desc:'각 연산 후 레지스터 상태를 출력한다.',
+    ex_in:'',
+    ex_out:'=== Embedded Register Simulator ===\nInitial:          0x00  00000000\nSET POWER:        0x01  00000001\nSET READY:        0x03  00000011\nSET SENSOR:       0x07  00000111\nSET MOTOR:        0x0F  00001111\n\nMotor is ON\n\nCLEAR SENSOR:     0x0B  00001011\nTOGGLE MOTOR:     0x03  00000011\nTOGGLE MOTOR:     0x0B  00001011\nSET ERROR:        0x8B  10001011\nEMERGENCY STOP:   0x80  10000000\n\nMotor is OFF\nError is SET',
+    deadline:'2099-12-31',
+    cases:[
+      {id:1, input:'',
+       expected:'=== Embedded Register Simulator ===\nInitial:          0x00  00000000\nSET POWER:        0x01  00000001\nSET READY:        0x03  00000011\nSET SENSOR:       0x07  00000111\nSET MOTOR:        0x0F  00001111\n\nMotor is ON\n\nCLEAR SENSOR:     0x0B  00001011\nTOGGLE MOTOR:     0x03  00000011\nTOGGLE MOTOR:     0x0B  00001011\nSET ERROR:        0x8B  10001011\nEMERGENCY STOP:   0x80  10000000\n\nMotor is OFF\nError is SET',
+       pts:100},
+    ]
+  },
 );
 
 /* ============================================================
