@@ -95,6 +95,9 @@ code{font-family:'Menlo','Consolas',monospace;background:#f0f0ee;padding:1px 4px
 const SHEETS_URL  = 'https://script.google.com/macros/s/AKfycbyd7v7QkMdA_jURaOBiyKPaPmstjTF5jl5Yrnu0TtsXBv9k4CORkvRBywNnpI5VpDxs/exec';          // Google Sheets 웹앱 URL
 const COURSE_NAME = 'C Programming (1)';
 
+// 공지사항 (빈 문자열이면 숨김)
+const NOTICE = '5주차 Practice/Challenge 과제가 업로드됐습니다. 마감일을 확인하세요.';
+
 /* ── 랜덤 테스트케이스 생성기 ── */
 function ri(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
 function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
@@ -468,6 +471,42 @@ function renderHome(push=true){
     if (!groups[w]) groups[w] = [];
     groups[w].push(p);
   });
+  // 공지사항
+  const noticeHtml = NOTICE ? `
+    <div style="display:flex;align-items:flex-start;gap:.6rem;padding:.7rem 1rem;
+      background:#fff8e1;border:1px solid #ffe082;border-radius:8px;margin-bottom:.85rem;font-size:13px;color:#5a4a00">
+      <span style="font-size:14px;flex-shrink:0">📢</span>
+      <span>${NOTICE}</span>
+    </div>` : '';
+
+  // 이번 주 과제 (마감일이 가장 가까운 미제출 오픈 문제들)
+  const now = new Date();
+  const upcoming = PROBLEMS
+    .filter(p => isOpen(p) && !(hist[p.id] && hist[p.id].length > 0))
+    .sort((a,b) => new Date(a.deadline) - new Date(b.deadline));
+  const pinnedProbs = upcoming.slice(0, 3);
+  const pinnedHtml = pinnedProbs.length ? `
+    <div style="margin-bottom:1.25rem">
+      <div style="font-size:12px;font-weight:600;color:#888;text-transform:uppercase;
+        letter-spacing:.05em;margin-bottom:.6rem">📌 미제출 과제</div>
+      <div class="card-grid">
+        ${pinnedProbs.map(p => {
+          const dday = Math.ceil((new Date(p.deadline) - now) / 86400000);
+          const ddayStr = dday === 0 ? 'D-day' : `D-${dday}`;
+          const ddayColor = dday <= 3 ? '#a32d2d' : '#888';
+          return `<div class="prob-card" onclick="goProb('${p.id}')"
+            style="border-left:3px solid #1a1a1a">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+              <div style="font-size:11px;color:#888">${p.week}</div>
+              <div style="font-size:11px;font-weight:600;color:${ddayColor}">${ddayStr}</div>
+            </div>
+            <div class="prob-card-title">${p.title}</div>
+            <div class="prob-card-dl">마감 ${p.deadline}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>` : '';
+
   const sectionsHtml = Object.keys(groups).map(w => {
     const cards = groups[w].map(p => {
       const open = isOpen(p);
@@ -528,6 +567,8 @@ function renderHome(push=true){
       <div class="topbar-title" style="font-size:15px">과제 목록</div>
       ${userBar()}
     </div>
+    ${noticeHtml}
+    ${pinnedHtml}
     ${sectionsHtml}`;
 }
 
