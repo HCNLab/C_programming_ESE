@@ -434,9 +434,9 @@ function renderProb(pid, push=true){
       <div class="body-text">${p.output_desc}</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
         <div><div class="section-lbl">예제 입력</div><div class="io-box">${p.ex_in}</div></div>
-        <div><div class="section-lbl">예제 출력</div><div class="io-box">${p.ex_out}</div></div>
+        <div><div class="section-lbl">예제 출력</div><div class="io-box">${p.ex_out.replace(/\n/g, '<span style="color:#aaa">↵</span>\n')}</div></div>
       </div>
-      <div style="margin-top:10px;font-size:12px;color:#888">출력 결과는 예제 출력과 띄어쓰기·줄바꿈까지 정확히 일치해야 합니다. 출력 마지막에 <code>\n</code>이 필요하면 <code>printf("...\n")</code> 형태로 작성하세요.</div>
+      <div style="margin-top:10px;font-size:12px;color:#888">출력은 예제 출력과 정확히 일치해야 합니다. <span style="color:#aaa">↵</span> 표시는 줄바꿈(<code>\n</code>)을 의미합니다.</div>
     </div>
     <div class="section-lbl" style="margin-top:1.25rem;margin-bottom:.4rem">코드 작성</div>
     <textarea id="code-ta" spellcheck="false">${code}</textarea>
