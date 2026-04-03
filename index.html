@@ -779,10 +779,10 @@ function renderHome(push=true){
         <span style="flex-shrink:0">📢</span><span>${NOTICE}</span></div>`
     : '';
 
-  // 사이드바 미제출 목록
+  // 사이드바 미제출 목록 (과제만, 연습문제 제외)
   const now = new Date();
   const upcoming = PROBLEMS
-    .filter(p => isOpen(p) && !(hist[p.id] && hist[p.id].length > 0))
+    .filter(p => !p.noSubmit && isOpen(p) && !(hist[p.id] && hist[p.id].length > 0))
     .sort((a,b) => new Date(a.deadline) - new Date(b.deadline));
   const showAll = window._sidebarAll || false;
   const display = showAll ? upcoming : upcoming.slice(0,5);
@@ -803,21 +803,30 @@ function renderHome(push=true){
       }).join('')
     + (_leaderboard.length > 10 ? `<div style="font-size:11px;color:#aaa;text-align:center;margin-top:.4rem">총 ${_leaderboard.length}명 참여</div>` : '');
 
-  // 진행률
-  const totalProbs = PROBLEMS.length;
-  const doneProbs = PROBLEMS.filter(p => hist[p.id] && hist[p.id].length > 0).length;
-  const pct = totalProbs > 0 ? Math.round(doneProbs/totalProbs*100) : 0;
+  // 진행률 (과제/연습 분리)
+  const assignProbs    = PROBLEMS.filter(p => !p.noSubmit);
+  const practiceProbs  = PROBLEMS.filter(p =>  p.noSubmit);
+  const doneAssign     = assignProbs.filter(p => hist[p.id] && hist[p.id].length > 0).length;
+  const donePractice   = practiceProbs.filter(p => hist[p.id] && hist[p.id].length > 0).length;
+  const totalAssign    = assignProbs.length;
+  const totalPractice  = practiceProbs.length;
+  const pct = totalAssign > 0 ? Math.round(doneAssign/totalAssign*100) : 0;
   const progressHtml = `
+    <div style="font-size:11px;font-weight:600;color:#555;margin-bottom:.3rem">과제</div>
     <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:.5rem">
-      <span style="font-size:22px;font-weight:700">${doneProbs}</span>
-      <span style="font-size:13px;color:#888">/ ${totalProbs}문제</span>
+      <span style="font-size:22px;font-weight:700">${doneAssign}</span>
+      <span style="font-size:13px;color:#888">/ ${totalAssign}문제</span>
       <span style="font-size:12px;color:#aaa;margin-left:auto">${pct}%</span>
     </div>
     <div style="height:8px;background:#f0f0ee;border-radius:4px;overflow:hidden">
       <div style="height:100%;width:${pct}%;background:${pct===100?'#1D9E75':'#1a1a1a'};
         border-radius:4px;transition:width .4s"></div>
     </div>
-    ${pct===100 ? '<div style="font-size:12px;color:#0f6e56;margin-top:.4rem;font-weight:600">모두 제출 완료!</div>' : ''}`;
+    ${pct===100 ? '<div style="font-size:12px;color:#0f6e56;margin-top:.4rem;font-weight:600">모두 제출 완료!</div>' : ''}
+    <div style="margin-top:.75rem;padding-top:.65rem;border-top:1px solid #f0f0ee;display:flex;align-items:center;justify-content:space-between">
+      <span style="font-size:11px;font-weight:600;color:#555">연습문제</span>
+      <span style="font-size:12px;color:#888"><b style="color:#1a1a1a">${donePractice}</b> / ${totalPractice} 풀이</span>
+    </div>`;
 
   const sidebarPinnedHtml = upcoming.length === 0
     ? `<div style="font-size:12px;color:#aaa">모두 제출 완료!</div>`
@@ -974,7 +983,7 @@ function renderProb(pid, push=true){
     </div>
     <textarea id="code-ta" spellcheck="false">${code}</textarea>
     <div class="btn-row">
-      ${p.noSubmit ? '<button class="primary" id="sub-btn" disabled title="이 문제는 제출 없이 테스트만 가능합니다">제출 불가</button>' : '<button class="primary" id="sub-btn" onclick="doSubmit()">제출</button>'}
+      ${p.noSubmit ? '<button class="primary" id="sub-btn" onclick="doSubmit()" style="background:#888" title="제출 순위에 반영됩니다 (성적 무관)">제출 (순위 반영)</button>' : '<button class="primary" id="sub-btn" onclick="doSubmit()">제출</button>'}
       <button id="test-btn" onclick="doTest()">테스트 실행</button>
       <button onclick="doReset()">초기화</button>
     </div>
@@ -1138,7 +1147,10 @@ async function doSubmit(){
   if (!src.trim() || src.trim() === STARTER.trim()){
     alert('코드를 작성한 후 제출하세요.'); return;
   }
-  if (!confirm(`${p.title} 과제를 제출하시겠습니까?\n\n제출 후에도 재제출이 가능합니다.`)) return;
+  const confirmMsg = p.noSubmit
+    ? `[연습문제] ${p.title}\n\n제출 순위에 반영됩니다. (성적 무관)\n계속하시겠습니까?`
+    : `${p.title} 과제를 제출하시겠습니까?\n\n제출 후에도 재제출이 가능합니다.`;
+  if (!confirm(confirmMsg)) return;
 
   submitting = true;
   const btn = $('sub-btn');
@@ -1170,7 +1182,8 @@ async function doSubmit(){
     ts, username, week: p.week, problemId: p.id, problem: p.title,
     code: src,
     score: submitScore, max: submitMax,
-    tc: tcSummary || '',   // 예) OOXO, EEEE, '' (테스트 안 함)
+    tc: tcSummary || '',
+    type: p.noSubmit ? 'practice' : 'assignment',
   });
 
   submitting = false;
@@ -1308,7 +1321,7 @@ function doPost(e) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   const d = JSON.parse(e.postData.contents);
   if (sheet.getLastRow() === 0) {
-    sheet.appendRow(['시각','학번_이름','주차','문제ID','문제명','점수','만점','TC결과','코드']);
+    sheet.appendRow(['시각','학번_이름','주차','문제ID','문제명','점수','만점','TC결과','코드','타입']);
   }
   sheet.appendRow([
     new Date(d.ts), d.username, d.week,
@@ -1316,7 +1329,8 @@ function doPost(e) {
     d.score !== null && d.score !== undefined ? d.score : '',
     d.max   !== null && d.max   !== undefined ? d.max   : '',
     d.tc || '',
-    d.code || ''
+    d.code || '',
+    d.type || 'assignment'
   ]);
   return ContentService
     .createTextOutput(JSON.stringify({ ok: true }))
@@ -1328,10 +1342,14 @@ function doGet(e) {
   const rows = sheet.getDataRange().getValues();
   const EXCLUDE = ['원경호', '황주옥'];
 
-  // 문제ID별 유니크 제출자 수
+  // 헤더에서 타입 컬럼 인덱스 찾기 (없으면 -1 → 기존 데이터는 assignment로 취급)
+  const header = rows[0] || [];
+  const typeCol = header.indexOf('타입');
+
+  // 문제ID별 유니크 제출자 수 (과제만)
   const counts = {};
   const seenPid = new Set();
-  // 학생별 유니크 제출 문제 수 (리더보드용)
+  // 학생별 유니크 제출 문제 수 (과제+연습 모두, 리더보드용)
   const userProbs = {};
   const seenUser = new Set();
 
@@ -1340,18 +1358,21 @@ function doGet(e) {
     const pid  = String(rows[i][3] || '').trim();
     if (!user || !pid) continue;
 
-    // 제외 이름 필터
     const isExcluded = EXCLUDE.some(name => user.includes(name));
     if (isExcluded) continue;
 
-    // 문제별 제출자 수
-    const keyPid = user + '|' + pid;
-    if (!seenPid.has(keyPid)) {
-      seenPid.add(keyPid);
-      counts[pid] = (counts[pid] || 0) + 1;
+    const type = typeCol >= 0 ? String(rows[i][typeCol] || 'assignment').trim() : 'assignment';
+
+    // 문제별 제출자 수: 과제만
+    if (type === 'assignment') {
+      const keyPid = user + '|' + pid;
+      if (!seenPid.has(keyPid)) {
+        seenPid.add(keyPid);
+        counts[pid] = (counts[pid] || 0) + 1;
+      }
     }
 
-    // 리더보드: 학생별 제출 문제 수
+    // 리더보드: 과제+연습 모두 합산
     const keyUser = user + '|' + pid;
     if (!seenUser.has(keyUser)) {
       seenUser.add(keyUser);
@@ -1359,7 +1380,7 @@ function doGet(e) {
     }
   }
 
-  // 이름만 표시 (학번 제거: 학번_이름 형식에서 이름만)
+  // 이름만 표시 (학번_이름 → 이름만)
   const leaderboard = Object.entries(userProbs)
     .map(([full, count]) => {
       const parts = full.split('_');
