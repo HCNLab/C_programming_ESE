@@ -137,6 +137,9 @@ const COURSE_NAME = 'C Programming (1)';
 // 공지사항 (빈 문자열이면 숨김)
 const NOTICE = '6주차 과제가 업로드됐습니다. 마감일을 확인하세요.';
 
+// 관리자 이메일 (이 이메일로 로그인 시 관리자 패널 표시)
+const ADMIN_EMAILS = ['khwon.public@gmail.com'];
+
 /* ── 랜덤 테스트케이스 생성기 ── */
 function ri(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
 function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
@@ -852,13 +855,16 @@ function toggleTheme(){
   else if (view === 'problem') renderProb(curPid, false);
 }
 
+function isAdmin(){ return firebaseUser && ADMIN_EMAILS.includes(firebaseUser.email); }
+
 function userBar(){
   const isDark = document.body.classList.contains('dark');
   const themeBtn = `<button onclick="toggleTheme()" title="테마 전환" style="font-size:15px;background:none;border:none;cursor:pointer;padding:2px 6px;line-height:1">${isDark ? '☀️' : '🌙'}</button>`;
+  const adminBtn = isAdmin() ? `<button onclick="renderAdmin()" style="color:#D85A30;font-weight:600">관리자</button>` : '';
   if (firebaseUser && username) return `<div class="user-chip">${username}
     <button class="link-btn" onclick="doLogout()">로그아웃</button></div>
-    <button onclick="renderHistory()">내 이력</button>${themeBtn}`;
-  if (firebaseUser && !username) return `<button onclick="doRegisterName()">학번_이름 등록</button>${themeBtn}`;
+    ${adminBtn}<button onclick="renderHistory()">내 이력</button>${themeBtn}`;
+  if (firebaseUser && !username) return `${adminBtn}<button onclick="doRegisterName()">학번_이름 등록</button>${themeBtn}`;
   return `<button onclick="doLogin()">Google 로그인</button>${themeBtn}`;
 }
 
@@ -1448,6 +1454,62 @@ function showCode(code, title, ts){
   document.body.appendChild(overlay);
 }
 
+/* 관리자 패널: 전체 사용자 매핑 조회 */
+async function renderAdmin(push=true){
+  if (!isAdmin()) { alert('관리자 권한이 없습니다.'); return; }
+  if (push) history.pushState({view:'admin'}, '', ' ');
+  view = 'admin';
+  const wrap = $('wrap');
+  wrap.innerHTML = `<div class="topbar"><button class="back-btn" onclick="renderHome()">← 목록</button>
+    <span class="prob-title">관리자 — 사용자 매핑</span><div class="topbar-right">${userBar()}</div></div>
+    <div id="admin-content" style="padding:1rem"><p>사용자 목록 불러오는 중...</p></div>`;
+  try {
+    const snap = await db.collection('usernames').get();
+    const users = [];
+    snap.forEach(doc => {
+      const d = doc.data();
+      users.push({ username: doc.id, email: d.email || '-', uid: d.uid || '-' });
+    });
+    users.sort((a, b) => a.username.localeCompare(b.username));
+    const adminEl = $('admin-content');
+    if (users.length === 0) {
+      adminEl.innerHTML = '<p>등록된 사용자가 없습니다.</p>';
+      return;
+    }
+    let duplicates = {};
+    users.forEach(u => {
+      const stuId = u.username.split('_')[0];
+      if (!duplicates[stuId]) duplicates[stuId] = [];
+      duplicates[stuId].push(u);
+    });
+    const dupWarnings = Object.entries(duplicates).filter(([,v]) => v.length > 1);
+    let html = dupWarnings.length > 0 ? `<div style="background:#faece7;border:1px solid #D85A30;border-radius:8px;padding:0.8rem 1rem;margin-bottom:1rem">
+      <b style="color:#D85A30">중복 의심 (${dupWarnings.length}건)</b><br>` +
+      dupWarnings.map(([id, arr]) => `학번 ${id}: ${arr.map(a => a.username + ' ('+a.email+')').join(', ')}`).join('<br>') + '</div>' : '';
+    html += `<p style="color:var(--muted);margin-bottom:0.5rem">총 ${users.length}명 등록</p>
+    <table style="width:100%;border-collapse:collapse;font-size:14px">
+    <thead><tr style="background:var(--card-bg);border-bottom:2px solid var(--border)">
+      <th style="padding:8px 12px;text-align:left">#</th>
+      <th style="padding:8px 12px;text-align:left">학번_이름</th>
+      <th style="padding:8px 12px;text-align:left">Google 이메일</th>
+      <th style="padding:8px 12px;text-align:left">상태</th>
+    </tr></thead><tbody>` +
+    users.map((u, i) => {
+      const stuId = u.username.split('_')[0];
+      const isDup = duplicates[stuId] && duplicates[stuId].length > 1;
+      return `<tr style="border-bottom:1px solid var(--border);${isDup ? 'background:#faece7' : ''}">
+        <td style="padding:8px 12px;color:var(--muted)">${i+1}</td>
+        <td style="padding:8px 12px;font-weight:500">${u.username}</td>
+        <td style="padding:8px 12px;font-family:monospace;font-size:13px">${u.email}</td>
+        <td style="padding:8px 12px">${isDup ? '<span style="color:#D85A30;font-weight:600">중복 의심</span>' : '<span style="color:#1D9E75">정상</span>'}</td>
+      </tr>`;
+    }).join('') + '</tbody></table>';
+    adminEl.innerHTML = html;
+  } catch(e) {
+    $('admin-content').innerHTML = '<p style="color:#D85A30">사용자 목록을 불러올 수 없습니다. Firestore 보안규칙에서 관리자 읽기를 허용했는지 확인하세요.</p>';
+  }
+}
+
 let _viewMode = 'grid';
 function setView(mode){
   _viewMode = mode;
@@ -1477,17 +1539,34 @@ async function doLogout(){
   localStorage.removeItem(LS_USER);
   renderHome(false);
 }
-/* 첫 로그인 시 학번_이름 등록 */
+/* 첫 로그인 시 학번_이름 등록 (중복 방지) */
 async function doRegisterName(cb){
   const v = prompt('학번_이름 형식으로 입력하세요\n예) 202312345_홍길동');
-  if (v && v.trim()){
-    username = v.trim();
-    localStorage.setItem(LS_USER, username);
-    // Firestore에 매핑 저장 (기기 무관하게 유지)
-    try { await db.collection('users').doc(firebaseUser.uid).set({ username, email: firebaseUser.email }, { merge: true }); } catch(e){}
-    if (cb) cb();
-    else { history.replaceState({view:'home'}, '', ' '); renderHome(false); }
-  }
+  if (!v || !v.trim()) return;
+  const newName = v.trim();
+  // 중복 체크: 다른 계정이 같은 학번_이름을 이미 사용 중인지
+  try {
+    const existing = await db.collection('usernames').doc(newName).get();
+    if (existing.exists && existing.data().uid !== firebaseUser.uid) {
+      alert('이미 다른 계정에서 사용 중인 학번_이름입니다.\n본인의 학번_이름이 맞다면 교수님께 문의하세요.');
+      return;
+    }
+  } catch(e){}
+  const oldName = username;
+  username = newName;
+  localStorage.setItem(LS_USER, username);
+  try {
+    // users 컬렉션에 프로필 저장
+    await db.collection('users').doc(firebaseUser.uid).set({ username, email: firebaseUser.email, updatedAt: new Date().toISOString() }, { merge: true });
+    // usernames 컬렉션에 역방향 매핑 저장 (중복 방지용)
+    await db.collection('usernames').doc(newName).set({ uid: firebaseUser.uid, email: firebaseUser.email });
+    // 이전 이름이 있었으면 삭제
+    if (oldName && oldName !== newName) {
+      await db.collection('usernames').doc(oldName).delete().catch(()=>{});
+    }
+  } catch(e){}
+  if (cb) cb();
+  else { history.replaceState({view:'home'}, '', ' '); renderHome(false); }
 }
 /* 기존 호환: doSetUser → 로그인 안 됐으면 로그인, 됐는데 이름 없으면 등록 */
 function doSetUser(cb){
@@ -1535,6 +1614,7 @@ window.addEventListener('popstate', function(e){
   if (!s || s.view === 'home') renderHome(false);
   else if (s.view === 'problem') renderProb(s.pid, false);
   else if (s.view === 'history') renderHistory(false);
+  else if (s.view === 'admin') renderAdmin(false);
 });
 history.replaceState({view:'home'}, '', ' ');
 // Apply saved theme
