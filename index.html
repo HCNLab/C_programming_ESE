@@ -1288,14 +1288,8 @@ async function doSubmit(){
 let testCooldown = 0;
 let testCooldownTimer = null;
 
-async function doTest(){
-  if (submitting || testCooldown > 0) return;
-  const p   = PROBLEMS.find(x => x.id === curPid);
-  const src = getCode();
-  submitting = true;
+function startTestCooldown() {
   const testBtn = $('test-btn');
-
-  // 10초 쿨다운 시작 (채점 완료 여부와 무관하게 독립 진행)
   testCooldown = 10;
   if (testBtn){ testBtn.disabled = true; testBtn.textContent = '10...'; }
   testCooldownTimer = setInterval(() => {
@@ -1305,13 +1299,18 @@ async function doTest(){
     } else {
       clearInterval(testCooldownTimer);
       testCooldownTimer = null;
-      if (!submitting && testBtn) {
-        testBtn.disabled = false;
-        testBtn.textContent = '테스트 실행';
-      }
+      if (testBtn) { testBtn.disabled = false; testBtn.textContent = '테스트 실행'; }
     }
   }, 1000);
+}
 
+async function doTest(){
+  if (submitting || testCooldown > 0) return;
+  const p   = PROBLEMS.find(x => x.id === curPid);
+  const src = getCode();
+  submitting = true;
+  const testBtn = $('test-btn');
+  if (testBtn){ testBtn.disabled = true; testBtn.textContent = '실행 중...'; }
   // 전체 TC 초기화
   p.cases.forEach(tc => { tcResults[tc.id] = { status:'running' }; });
   renderResults();
@@ -1327,11 +1326,8 @@ async function doTest(){
     renderResults();
   }));
   submitting = false;
-  // 쿨다운이 이미 끝났으면 바로 활성화, 아니면 쿨다운 타이머가 활성화 처리
-  if (testCooldown <= 0 && testBtn) {
-    testBtn.disabled = false;
-    testBtn.textContent = '테스트 실행';
-  }
+  // 채점 완료 후 10초 쿨다운 시작
+  startTestCooldown();
 }
 
 function getCode(){
