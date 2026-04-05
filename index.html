@@ -719,6 +719,19 @@ const STARTER = '#define _CRT_SECURE_NO_WARNINGS\n#include <stdio.h>\n// 추가 
 const LS_USER = 'oj_username';
 const LS_HIST = 'oj_history';
 
+/* Firebase 초기화 */
+firebase.initializeApp({
+  apiKey: "AIzaSyDM3eYScMxQeMY-AY7fmv1q-J4XbE_8dnM",
+  authDomain: "cprogramming-ese.firebaseapp.com",
+  projectId: "cprogramming-ese",
+  storageBucket: "cprogramming-ese.firebasestorage.app",
+  messagingSenderId: "445892894009",
+  appId: "1:445892894009:web:1e76ea8e04bc6de2731ce8"
+});
+const auth = firebase.auth();
+const db   = firebase.firestore();
+let firebaseUser = null;   // Firebase Auth 유저 객체
+
 let view = 'home', curPid = null, curTab = 'prob';
 let code = STARTER, tcResults = {}, submitting = false;
 let username = localStorage.getItem(LS_USER) || '';
@@ -788,10 +801,11 @@ function toggleTheme(){
 function userBar(){
   const isDark = document.body.classList.contains('dark');
   const themeBtn = `<button onclick="toggleTheme()" title="테마 전환" style="font-size:15px;background:none;border:none;cursor:pointer;padding:2px 6px;line-height:1">${isDark ? '☀️' : '🌙'}</button>`;
-  if (username) return `<div class="user-chip">${username}
-    <button class="link-btn" onclick="doChangeUser()">변경</button></div>
+  if (firebaseUser && username) return `<div class="user-chip">${username}
+    <button class="link-btn" onclick="doLogout()">로그아웃</button></div>
     <button onclick="renderHistory()">내 이력</button>${themeBtn}`;
-  return `<button onclick="doSetUser()">학번_이름 입력</button>${themeBtn}`;
+  if (firebaseUser && !username) return `<button onclick="doRegisterName()">학번_이름 등록</button>${themeBtn}`;
+  return `<button onclick="doLogin()">Google 로그인</button>${themeBtn}`;
 }
 
 /* 홈 */
@@ -1394,16 +1408,73 @@ function setView(mode){
   });
 }
 
-function doSetUser(cb){
+/* Google 로그인 */
+async function doLogin(){
+  try {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    await auth.signInWithPopup(provider);
+    // onAuthStateChanged 에서 후속 처리
+  } catch(e) {
+    if (e.code !== 'auth/popup-closed-by-user') alert('로그인 실패: ' + e.message);
+  }
+}
+/* 로그아웃 */
+async function doLogout(){
+  await auth.signOut();
+  firebaseUser = null;
+  username = '';
+  localStorage.removeItem(LS_USER);
+  renderHome(false);
+}
+/* 첫 로그인 시 학번_이름 등록 */
+async function doRegisterName(cb){
   const v = prompt('학번_이름 형식으로 입력하세요\n예) 202312345_홍길동');
   if (v && v.trim()){
     username = v.trim();
     localStorage.setItem(LS_USER, username);
-    if (cb){ cb(); }
+    // Firestore에 매핑 저장 (기기 무관하게 유지)
+    try { await db.collection('users').doc(firebaseUser.uid).set({ username, email: firebaseUser.email }, { merge: true }); } catch(e){}
+    if (cb) cb();
     else { history.replaceState({view:'home'}, '', ' '); renderHome(false); }
   }
 }
-function doChangeUser(){ doSetUser(() => renderHome()); }
+/* 기존 호환: doSetUser → 로그인 안 됐으면 로그인, 됐는데 이름 없으면 등록 */
+function doSetUser(cb){
+  if (!firebaseUser) { doLogin(); return; }
+  if (!username) { doRegisterName(cb); return; }
+  if (cb) cb();
+}
+function doChangeUser(){ doRegisterName(() => renderHome()); }
+
+/* Firebase Auth 상태 감지 */
+auth.onAuthStateChanged(async (user) => {
+  firebaseUser = user;
+  if (user) {
+    // Firestore에서 학번_이름 불러오기
+    try {
+      const doc = await db.collection('users').doc(user.uid).get();
+      if (doc.exists && doc.data().username) {
+        username = doc.data().username;
+        localStorage.setItem(LS_USER, username);
+      } else {
+        // Firestore에 없으면 localStorage 값 확인
+        const local = localStorage.getItem(LS_USER);
+        if (local) {
+          username = local;
+          try { await db.collection('users').doc(user.uid).set({ username, email: user.email }, { merge: true }); } catch(e){}
+        } else {
+          username = '';
+        }
+      }
+    } catch(e) {
+      username = localStorage.getItem(LS_USER) || '';
+    }
+  } else {
+    username = '';
+    localStorage.removeItem(LS_USER);
+  }
+  renderHome(false);
+});
 
 window.addEventListener('popstate', function(e){
   const s = e.state;
@@ -1414,7 +1485,7 @@ window.addEventListener('popstate', function(e){
 history.replaceState({view:'home'}, '', ' ');
 // Apply saved theme
 (function(){ const t=localStorage.getItem('oj_theme'); if(t==='dark') document.body.classList.add('dark'); })();
-renderHome(false);
+// 초기 렌더링은 onAuthStateChanged 콜백에서 수행
 fetchSubmitCounts();
 </script>
 
@@ -1510,5 +1581,9 @@ function doGet(e) {
 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
+<!-- Firebase SDK (compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </body>
 </html>
