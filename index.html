@@ -774,11 +774,32 @@ async function loadHistoryFromFirestore(){
   try {
     const snap = await db.collection('users').doc(firebaseUser.uid)
       .collection('history').get();
-    const h = {};
-    snap.forEach(doc => { h[doc.id] = doc.data().entries || []; });
-    // localStorage에도 동기화
-    localStorage.setItem(LS_HIST, JSON.stringify(h));
-    historyCache = h;
+    const cloudH = {};
+    snap.forEach(doc => { cloudH[doc.id] = doc.data().entries || []; });
+    const hasCloud = Object.keys(cloudH).length > 0;
+
+    // 기존 localStorage 이력 확인
+    let localH = {};
+    try { localH = JSON.parse(localStorage.getItem(LS_HIST) || '{}'); } catch(e){}
+    const hasLocal = Object.keys(localH).length > 0;
+
+    if (!hasCloud && hasLocal) {
+      // 첫 로그인: localStorage → Firestore 마이그레이션
+      const batch = db.batch();
+      for (const pid of Object.keys(localH)) {
+        const ref = db.collection('users').doc(firebaseUser.uid)
+          .collection('history').doc(pid);
+        batch.set(ref, { entries: localH[pid] });
+      }
+      await batch.commit().catch(() => {});
+      historyCache = localH;
+    } else if (hasCloud) {
+      // Firestore 데이터 사용
+      localStorage.setItem(LS_HIST, JSON.stringify(cloudH));
+      historyCache = cloudH;
+    } else {
+      historyCache = {};
+    }
   } catch(e) {
     historyCache = null; // fallback to localStorage
   }
