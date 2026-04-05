@@ -1455,13 +1455,27 @@ function showCode(code, title, ts){
 }
 
 /* 관리자 패널: 전체 사용자 매핑 조회 */
+let _adminTab = 'users';
 async function renderAdmin(push=true){
   if (!isAdmin()) { alert('관리자 권한이 없습니다.'); return; }
   if (push) history.pushState({view:'admin'}, '', ' ');
   view = 'admin';
+  const tabStyle = (t) => `padding:8px 16px;border:none;background:${_adminTab===t?'var(--text)':'var(--surface)'};color:${_adminTab===t?'var(--surface)':'var(--text)'};border-radius:8px 8px 0 0;cursor:pointer;font-weight:${_adminTab===t?'600':'400'};font-size:13px`;
   $('app').innerHTML = `<div class="topbar"><button class="back-btn" onclick="renderHome()">← 목록</button>
-    <span class="prob-title">관리자 — 사용자 매핑</span><div class="topbar-right">${userBar()}</div></div>
-    <div id="admin-content" style="padding:1rem"><p>사용자 목록 불러오는 중...</p></div>`;
+    <span class="prob-title">관리자 패널</span><div class="topbar-right">${userBar()}</div></div>
+    <div style="padding:1rem">
+      <div style="display:flex;gap:4px;border-bottom:2px solid var(--border);margin-bottom:1rem">
+        <button style="${tabStyle('users')}" onclick="_adminTab='users';renderAdmin(false)">사용자 매핑</button>
+        <button style="${tabStyle('submissions')}" onclick="_adminTab='submissions';renderAdmin(false)">제출 현황</button>
+      </div>
+      <div id="admin-content"><p>불러오는 중...</p></div>
+    </div>`;
+  if (_adminTab === 'users') await renderAdminUsers();
+  else await renderAdminSubmissions();
+}
+
+async function renderAdminUsers(){
+  const adminEl = $('admin-content');
   try {
     const snap = await db.collection('usernames').get();
     const users = [];
@@ -1470,11 +1484,7 @@ async function renderAdmin(push=true){
       users.push({ username: doc.id, email: d.email || '-', uid: d.uid || '-' });
     });
     users.sort((a, b) => a.username.localeCompare(b.username));
-    const adminEl = $('admin-content');
-    if (users.length === 0) {
-      adminEl.innerHTML = '<p>등록된 사용자가 없습니다.</p>';
-      return;
-    }
+    if (users.length === 0) { adminEl.innerHTML = '<p>등록된 사용자가 없습니다.</p>'; return; }
     let duplicates = {};
     users.forEach(u => {
       const stuId = u.username.split('_')[0];
@@ -1482,12 +1492,12 @@ async function renderAdmin(push=true){
       duplicates[stuId].push(u);
     });
     const dupWarnings = Object.entries(duplicates).filter(([,v]) => v.length > 1);
-    let html = dupWarnings.length > 0 ? `<div style="background:#faece7;border:1px solid #D85A30;border-radius:8px;padding:0.8rem 1rem;margin-bottom:1rem">
-      <b style="color:#D85A30">중복 의심 (${dupWarnings.length}건)</b><br>` +
+    let html = dupWarnings.length > 0 ? `<div style="background:var(--fail-bg);border:1px solid var(--fail);border-radius:8px;padding:0.8rem 1rem;margin-bottom:1rem">
+      <b style="color:var(--fail)">중복 의심 (${dupWarnings.length}건)</b><br>` +
       dupWarnings.map(([id, arr]) => `학번 ${id}: ${arr.map(a => a.username + ' ('+a.email+')').join(', ')}`).join('<br>') + '</div>' : '';
-    html += `<p style="color:var(--muted);margin-bottom:0.5rem">총 ${users.length}명 등록</p>
+    html += `<p style="color:var(--text3);margin-bottom:0.5rem">총 ${users.length}명 등록</p>
     <table style="width:100%;border-collapse:collapse;font-size:14px">
-    <thead><tr style="background:var(--card-bg);border-bottom:2px solid var(--border)">
+    <thead><tr style="border-bottom:2px solid var(--border)">
       <th style="padding:8px 12px;text-align:left">#</th>
       <th style="padding:8px 12px;text-align:left">학번_이름</th>
       <th style="padding:8px 12px;text-align:left">Google 이메일</th>
@@ -1496,16 +1506,96 @@ async function renderAdmin(push=true){
     users.map((u, i) => {
       const stuId = u.username.split('_')[0];
       const isDup = duplicates[stuId] && duplicates[stuId].length > 1;
-      return `<tr style="border-bottom:1px solid var(--border);${isDup ? 'background:#faece7' : ''}">
-        <td style="padding:8px 12px;color:var(--muted)">${i+1}</td>
+      return `<tr style="border-bottom:1px solid var(--border);${isDup ? 'background:var(--fail-bg)' : ''}">
+        <td style="padding:8px 12px;color:var(--text3)">${i+1}</td>
         <td style="padding:8px 12px;font-weight:500">${u.username}</td>
         <td style="padding:8px 12px;font-family:monospace;font-size:13px">${u.email}</td>
-        <td style="padding:8px 12px">${isDup ? '<span style="color:#D85A30;font-weight:600">중복 의심</span>' : '<span style="color:#1D9E75">정상</span>'}</td>
+        <td style="padding:8px 12px">${isDup ? '<span style="color:var(--fail);font-weight:600">중복 의심</span>' : '<span style="color:var(--accent)">정상</span>'}</td>
       </tr>`;
     }).join('') + '</tbody></table>';
     adminEl.innerHTML = html;
   } catch(e) {
-    $('admin-content').innerHTML = '<p style="color:#D85A30">사용자 목록을 불러올 수 없습니다. Firestore 보안규칙에서 관리자 읽기를 허용했는지 확인하세요.</p>';
+    adminEl.innerHTML = '<p style="color:var(--fail)">사용자 목록을 불러올 수 없습니다. Firestore 보안규칙을 확인하세요.</p>';
+  }
+}
+
+async function renderAdminSubmissions(){
+  const adminEl = $('admin-content');
+  adminEl.innerHTML = '<p>제출 데이터 불러오는 중...</p>';
+  try {
+    const r = await fetch(SHEETS_URL + '?mode=admin', { method:'GET', mode:'cors' });
+    if (!r.ok) throw new Error('fetch failed');
+    const d = await r.json();
+    if (!d.submissions || d.submissions.length === 0) {
+      adminEl.innerHTML = '<p>제출 데이터가 없습니다.</p>';
+      return;
+    }
+    const subs = d.submissions;
+    // 주차별 문제 목록 (PROBLEMS 기준)
+    const weekGroups = {};
+    PROBLEMS.forEach(p => {
+      if (!weekGroups[p.week]) weekGroups[p.week] = [];
+      weekGroups[p.week].push(p);
+    });
+    // 학생별 최고점 매핑: { username: { pid: { score, max, ts } } }
+    const bestByUser = {};
+    subs.forEach(s => {
+      if (!bestByUser[s.username]) bestByUser[s.username] = {};
+      const prev = bestByUser[s.username][s.pid];
+      if (!prev || s.score > prev.score) {
+        bestByUser[s.username][s.pid] = { score: s.score, max: s.max, ts: s.ts };
+      }
+    });
+    const students = Object.keys(bestByUser).sort();
+    // 주차 필터
+    const weeks = Object.keys(weekGroups);
+    let html = `<div style="margin-bottom:1rem;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span style="font-size:13px;color:var(--text3)">주차 필터:</span>
+      <button onclick="document.querySelectorAll('.admin-week').forEach(e=>e.style.display='')" style="font-size:12px;padding:4px 10px">전체</button>`;
+    weeks.forEach((w,i) => {
+      html += `<button onclick="document.querySelectorAll('.admin-week').forEach(e=>e.style.display='none');document.querySelectorAll('.admin-week-${i}').forEach(e=>e.style.display='')" style="font-size:12px;padding:4px 10px">${w}</button>`;
+    });
+    html += `</div><p style="color:var(--text3);margin-bottom:0.5rem">총 ${students.length}명 제출</p>`;
+    weeks.forEach((w,wi) => {
+      const probs = weekGroups[w];
+      html += `<div class="admin-week admin-week-${wi}" style="margin-bottom:1.5rem">
+        <h3 style="font-size:14px;font-weight:600;margin-bottom:0.5rem;color:var(--text)">${w}</h3>
+        <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px;min-width:${200+probs.length*100}px">
+        <thead><tr style="border-bottom:2px solid var(--border)">
+          <th style="padding:6px 10px;text-align:left;position:sticky;left:0;background:var(--surface);z-index:1">학번_이름</th>`;
+      probs.forEach(p => {
+        html += `<th style="padding:6px 10px;text-align:center;font-size:12px" title="${p.title}">${p.id}</th>`;
+      });
+      html += `<th style="padding:6px 10px;text-align:center">합계</th></tr></thead><tbody>`;
+      students.forEach(stu => {
+        let total = 0, maxTotal = 0, hasAny = false;
+        probs.forEach(p => {
+          if (bestByUser[stu][p.id]) { hasAny = true; }
+        });
+        if (!hasAny) return;
+        html += `<tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:6px 10px;font-weight:500;white-space:nowrap;position:sticky;left:0;background:var(--surface);z-index:1">${stu}</td>`;
+        probs.forEach(p => {
+          const b = bestByUser[stu][p.id];
+          if (b) {
+            const pct = b.max > 0 ? b.score / b.max : 0;
+            const color = pct >= 1 ? 'var(--accent)' : pct >= 0.5 ? 'var(--partial)' : 'var(--fail)';
+            html += `<td style="padding:6px 10px;text-align:center;color:${color};font-weight:500" title="${b.ts}">${b.score}/${b.max}</td>`;
+            total += b.score; maxTotal += b.max;
+          } else {
+            html += `<td style="padding:6px 10px;text-align:center;color:var(--text4)">-</td>`;
+            maxTotal += (p.cases||[]).reduce((s,c)=>s+c.pts,0);
+          }
+        });
+        const tPct = maxTotal > 0 ? total / maxTotal : 0;
+        const tColor = tPct >= 1 ? 'var(--accent)' : tPct >= 0.5 ? 'var(--partial)' : 'var(--fail)';
+        html += `<td style="padding:6px 10px;text-align:center;font-weight:600;color:${tColor}">${total}/${maxTotal}</td></tr>`;
+      });
+      html += '</tbody></table></div></div>';
+    });
+    adminEl.innerHTML = html;
+  } catch(e) {
+    adminEl.innerHTML = '<p style="color:var(--fail)">제출 데이터를 불러올 수 없습니다. Sheets doGet에 admin 모드가 설정되어 있는지 확인하세요.</p>';
   }
 }
 
@@ -1654,17 +1744,20 @@ function doGet(e) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   const rows = sheet.getDataRange().getValues();
   const EXCLUDE = ['원경호', '황주옥'];
+  const mode = (e && e.parameter && e.parameter.mode) || '';
 
   // 헤더에서 타입 컬럼 인덱스 찾기 (없으면 -1 → 기존 데이터는 assignment로 취급)
   const header = rows[0] || [];
   const typeCol = header.indexOf('타입');
 
-  // 문제ID별 유니크 제출자 수 (과제만)
+  // 문제ID별 유니크 제출자 수
   const counts = {};
   const seenPid = new Set();
-  // 학생별 유니크 제출 문제 수 (과제+연습 모두, 리더보드용)
+  // 학생별 유니크 제출 문제 수 (리더보드용)
   const userProbs = {};
   const seenUser = new Set();
+  // 관리자 모드: 전체 제출 목록
+  const submissions = [];
 
   for (let i = 1; i < rows.length; i++) {
     const user = String(rows[i][1] || '').trim();
@@ -1674,20 +1767,27 @@ function doGet(e) {
     const isExcluded = EXCLUDE.some(name => user.includes(name));
     if (isExcluded) continue;
 
-    const type = typeCol >= 0 ? String(rows[i][typeCol] || 'assignment').trim() : 'assignment';
+    const score = rows[i][5];
+    const max   = rows[i][6];
+    const ts    = rows[i][0] ? new Date(rows[i][0]).toLocaleString('ko-KR') : '';
 
-    // 문제별 제출자 수: 과제+연습 모두
+    // 문제별 제출자 수
     const keyPid = user + '|' + pid;
     if (!seenPid.has(keyPid)) {
       seenPid.add(keyPid);
       counts[pid] = (counts[pid] || 0) + 1;
     }
 
-    // 리더보드: 과제+연습 모두 합산
+    // 리더보드
     const keyUser = user + '|' + pid;
     if (!seenUser.has(keyUser)) {
       seenUser.add(keyUser);
       userProbs[user] = (userProbs[user] || 0) + 1;
+    }
+
+    // 관리자 모드: 제출 상세
+    if (mode === 'admin') {
+      submissions.push({ username: user, pid: pid, score: score, max: max, ts: ts });
     }
   }
 
@@ -1700,8 +1800,11 @@ function doGet(e) {
     })
     .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
 
+  const result = { counts, leaderboard };
+  if (mode === 'admin') result.submissions = submissions;
+
   return ContentService
-    .createTextOutput(JSON.stringify({ counts, leaderboard }))
+    .createTextOutput(JSON.stringify(result))
     .setMimeType(ContentService.MimeType.JSON);
 }
 
