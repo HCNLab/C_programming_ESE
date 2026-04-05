@@ -746,13 +746,42 @@ function $(id){ return document.getElementById(id); }
 function isOpen(p){ return new Date() <= new Date(p.deadline); }
 
 /* 이력 */
-function loadHistory(){ try{ return JSON.parse(localStorage.getItem(LS_HIST)||'{}'); }catch{ return {}; } }
+/* 이력: Firestore 우선, fallback localStorage */
+let historyCache = null;  // 메모리 캐시
+
+function loadHistory(){
+  if (historyCache) return historyCache;
+  try{ return JSON.parse(localStorage.getItem(LS_HIST)||'{}'); }catch{ return {}; }
+}
+
 function addHistory(pid, entry){
   const h = loadHistory();
   if (!h[pid]) h[pid] = [];
   h[pid].unshift(entry);
   if (h[pid].length > 20) h[pid] = h[pid].slice(0, 20);
   localStorage.setItem(LS_HIST, JSON.stringify(h));
+  historyCache = h;
+  // Firestore에 비동기 저장
+  if (firebaseUser) {
+    db.collection('users').doc(firebaseUser.uid)
+      .collection('history').doc(pid).set({ entries: h[pid] })
+      .catch(() => {});
+  }
+}
+
+async function loadHistoryFromFirestore(){
+  if (!firebaseUser) { historyCache = null; return; }
+  try {
+    const snap = await db.collection('users').doc(firebaseUser.uid)
+      .collection('history').get();
+    const h = {};
+    snap.forEach(doc => { h[doc.id] = doc.data().entries || []; });
+    // localStorage에도 동기화
+    localStorage.setItem(LS_HIST, JSON.stringify(h));
+    historyCache = h;
+  } catch(e) {
+    historyCache = null; // fallback to localStorage
+  }
 }
 
 /* Google Sheets */
@@ -1213,7 +1242,7 @@ function renderHistory(push=true){
       ${userBar()}
     </div>
     <div class="notice" style="display:flex;align-items:center">
-      <span>${username||'(이름 없음)'} · 브라우저 저장 (최대 20회/문제)</span>
+      <span>${username||'(이름 없음)'} · ${firebaseUser ? '클라우드 저장' : '브라우저 저장'} (최대 20회/문제)</span>
       <button onclick="if(confirm('제출 이력을 모두 삭제할까요?')){localStorage.removeItem('oj_history');renderHistory();}" 
         style="margin-left:auto;font-size:11px;padding:2px 8px;color:var(--error);border-color:var(--fail-badge-bg)">이력 초기화</button>
     </div>
@@ -1470,8 +1499,11 @@ auth.onAuthStateChanged(async (user) => {
     } catch(e) {
       username = localStorage.getItem(LS_USER) || '';
     }
+    // Firestore에서 이력 불러오기
+    await loadHistoryFromFirestore();
   } else {
     username = '';
+    historyCache = null;
     localStorage.removeItem(LS_USER);
   }
   renderHome(false);
