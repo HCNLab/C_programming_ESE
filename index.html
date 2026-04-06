@@ -166,7 +166,7 @@ const GEN = {
     if(op==='+') exp=(a+b).toFixed(2);
     else if(op==='-') exp=(a-b).toFixed(2);
     else if(op==='*') exp=(a*b).toFixed(2);
-    else exp=b===0?'Division by zero':(a/b).toFixed(2);
+    else exp=b===0?'Error: division by zero':(a/b).toFixed(2);
     return {input:`${a} ${op} ${b}`,expected:exp};
   },
 
