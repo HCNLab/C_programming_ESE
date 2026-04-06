@@ -207,15 +207,12 @@ const GEN = {
   },
 
   c2: (slot)=>{
-    const choices=['R','P','S'];
-    const wins={R:'S',S:'P',P:'R'};
-    if(slot===3){const c=pick(choices);return {input:`${c}\n${c}`,expected:'Draw'};}
-    if(slot===1){const p1=pick(choices);return {input:`${p1}\n${wins[p1]}`,expected:'Player 1 wins'};}
-    if(slot===2){const p2=pick(choices);return {input:`${wins[p2]}\n${p2}`,expected:'Player 2 wins'};}
-    const p1=pick(['r','p','s']),p2=pick(choices);
-    const p1u=p1.toUpperCase();
-    const exp=p1u===p2?'Draw':wins[p1u]===p2?'Player 1 wins':'Player 2 wins';
-    return {input:`${p1}\n${p2}`,expected:exp};
+    const gv=c=>{c=c.toUpperCase();return c==='A'?11:('2'<=c&&c<='9'?c.charCodeAt(0)-48:10);};
+    const fmt=(c1,c2)=>{const v1=gv(c1),v2=gv(c2),t=v1+v2;const s=t===21?' (Blackjack!)':t>21?' (Bust)':'';return {input:`${c1}\n${c2}`,expected:`Card 1: ${v1}\nCard 2: ${v2}\nTotal: ${t}${s}`};};
+    if(slot===1) return fmt('A',pick(['T','J','Q','K']));
+    if(slot===2) return fmt('A','A');
+    if(slot===3){const c=pick(['5','6','7','8','9']);return fmt(c,pick(['T','J','Q','K']));}
+    return fmt(pick(['t','j','q','k']),pick(['2','3','4','5','6','7']));
   },
 
   c3: (slot)=>{
@@ -317,16 +314,16 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'c2', week:'6주차 Practice', title:'Rock Paper Scissors',
-    desc:'두 플레이어가 각각 R(Rock), P(Paper), S(Scissors) 중 하나를 입력하면 승자를 결정하시오. 대소문자 모두 처리할 것.<br>규칙: Rock beats Scissors &nbsp; Scissors beats Paper &nbsp; Paper beats Rock &nbsp; 같으면 Draw',
-    input_desc:'첫째 줄에 Player 1의 선택, 둘째 줄에 Player 2의 선택이 주어진다.',
-    output_desc:'<code>Player 1 wins</code> / <code>Player 2 wins</code> / <code>Draw</code>',
-    ex_in:'R\nS', ex_out:'Player 1 wins', deadline:'2026-04-13T23:59',
+    id:'c2', week:'6주차 Practice', title:'Blackjack Hand Evaluator',
+    desc:'카드 문자 2개를 입력받아 블랙잭 핸드 점수를 계산하시오.<br>카드 값: <code>A</code>=11 &nbsp; <code>2-9</code>=면 값 &nbsp; <code>T, J, Q, K</code>=10 (fall-through 활용)<br>대소문자 모두 처리. 숫자 카드는 <code>c - \'0\'</code> 트릭 사용.',
+    input_desc:'첫째 줄에 Card 1, 둘째 줄에 Card 2 문자를 입력한다. (A, 2-9, T, J, Q, K)',
+    output_desc:'<code>Card 1: N</code><br><code>Card 2: N</code><br>합계 21: <code>Total: 21 (Blackjack!)</code><br>합계 &gt;21: <code>Total: N (Bust)</code><br>그 외: <code>Total: N</code><br>유효하지 않은 카드: <code>Invalid card</code>',
+    ex_in:'A\nK', ex_out:'Card 1: 11\nCard 2: 10\nTotal: 21 (Blackjack!)', deadline:'2026-04-13T23:59',
     cases:[
-      {id:1,input:'R\nS', expected:'Player 1 wins', pts:25},
-      {id:2,input:'P\nR', expected:'Player 1 wins', pts:25},
-      {id:3,input:'R\nR', expected:'Draw',           pts:25},
-      {id:4,input:'s\nP', expected:'Player 1 wins', pts:25},
+      {id:1,input:'A\nK', expected:'Card 1: 11\nCard 2: 10\nTotal: 21 (Blackjack!)', pts:25},
+      {id:2,input:'T\nJ', expected:'Card 1: 10\nCard 2: 10\nTotal: 20',              pts:25},
+      {id:3,input:'A\nA', expected:'Card 1: 11\nCard 2: 11\nTotal: 22 (Bust)',       pts:25},
+      {id:4,input:'7\n9', expected:'Card 1: 7\nCard 2: 9\nTotal: 16',               pts:25},
     ]
   },
   {
