@@ -231,10 +231,10 @@ const GEN = {
   },
 
   c5: (slot)=>{
-    if(slot===1) return {input:`${ri(1,2)===1?ri(1000,1233):ri(1235,9999)}\n1`,expected:'Wrong PIN'};
+    if(slot===1) return {input:`${ri(1,2)===1?ri(1000,1233):ri(1235,9999)}\n1`,expected:'Wrong PIN!'};
     if(slot===2) return {input:`1234\n1`,expected:'Balance: 100000 won'};
-    if(slot===3){ const d=ri(1000,90000); return {input:`1234\n2\n${d}`,expected:`Deposited. Balance: ${100000+d} won`}; }
-    return {input:`1234\n3\n${ri(100001,500000)}`,expected:'Insufficient funds'};
+    if(slot===3){ const d=ri(1000,90000); return {input:`1234\n2\n${d}`,expected:`Balance: ${100000+d} won`}; }
+    return {input:`1234\n3\n${ri(100001,500000)}`,expected:'Insufficient!\nBalance: 100000 won'};
   },
 };
 
@@ -356,13 +356,13 @@ const PROBLEMS = [
     id:'c5', week:'6주차 Practice', title:'Mini ATM System',
     desc:'PIN(1234)을 검증하고 메뉴를 처리하는 ATM을 작성하시오. 초기 잔액: 100,000원. switch로 메뉴 처리, if로 검증.',
     input_desc:'첫째 줄: PIN. 올바르면 둘째 줄: 메뉴(1.잔액 2.입금 3.출금 4.종료). 입금/출금이면 셋째 줄: 금액.',
-    output_desc:'PIN 오류: <code>Wrong PIN</code><br>잔액 확인: <code>Balance: N won</code><br>입금: <code>Deposited. Balance: N won</code><br>출금 성공: <code>Withdrawn. Balance: N won</code><br>잔액 부족: <code>Insufficient funds</code>',
+    output_desc:'PIN 오류: <code>Wrong PIN!</code><br>잔액 확인: <code>Balance: N won</code><br>입금 후: <code>Balance: N won</code><br>출금 성공: <code>Dispensed N won</code> 후 <code>Balance: N won</code><br>잔액 부족: <code>Insufficient!</code> 후 <code>Balance: N won</code><br>종료: <code>Goodbye!</code>',
     ex_in:'1234\n1', ex_out:'Balance: 100000 won', deadline:'2026-04-13T23:59',
     cases:[
-      {id:1,input:'9999\n1',          expected:'Wrong PIN',                    pts:25},
-      {id:2,input:'1234\n1',          expected:'Balance: 100000 won',          pts:25},
-      {id:3,input:'1234\n2\n50000',   expected:'Deposited. Balance: 150000 won',pts:25},
-      {id:4,input:'1234\n3\n200000',  expected:'Insufficient funds',           pts:25},
+      {id:1,input:'9999\n1',          expected:'Wrong PIN!',                          pts:25},
+      {id:2,input:'1234\n1',          expected:'Balance: 100000 won',                 pts:25},
+      {id:3,input:'1234\n2\n50000',   expected:'Balance: 150000 won',                 pts:25},
+      {id:4,input:'1234\n3\n200000',  expected:'Insufficient!\nBalance: 100000 won',  pts:25},
     ]
   },
 ];
