@@ -1018,7 +1018,8 @@ function renderHome(push=true){
       const entries = hist[p.id] || [];
 
       return `<div class="prob-card" onclick="goProb('${p.id}')">
-        <div class="prob-card-title">${p.title}</div>
+        <div class="prob-card-title">
+          <span style="font-family:'Menlo','Consolas',monospace;font-size:11px;font-weight:500;color:var(--text4);margin-right:5px;background:var(--surface3);border:1px solid var(--border);border-radius:3px;padding:1px 4px">${p.id}</span>${p.title}</div>
         <div class="prob-card-dl">마감 ${p.deadline}</div>
         <div class="prob-card-footer">
           <span class="open-badge ${open?'open':'closed'}">${open?'제출 가능':'마감'}</span>
@@ -1118,7 +1119,7 @@ function renderProb(pid, push=true){
   $('app').innerHTML = `
     <div class="topbar">
       <button class="back-btn" onclick="renderHome()">← 목록</button>
-      <div class="topbar-title" style="font-size:15px">${p.week} — ${p.title}</div>
+      <div class="topbar-title" style="font-size:15px">${p.week} — <span style="font-family:'Menlo','Consolas',monospace;font-size:12px;color:var(--text4);background:var(--surface3);border:1px solid var(--border);border-radius:3px;padding:1px 5px;margin-right:4px">${p.id}</span>${p.title}</div>
       ${userBar()}
     </div>
     ${hist.length ? (()=>{
