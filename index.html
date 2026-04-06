@@ -746,6 +746,7 @@ let firebaseUser = null;   // Firebase Auth 유저 객체
 
 let view = 'home', curPid = null, curTab = 'prob';
 let code = STARTER, tcResults = {}, submitting = false;
+let _curProb = null;
 let username = localStorage.getItem(LS_USER) || '';
 
 function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
@@ -1120,6 +1121,7 @@ function renderProb(pid, push=true){
   const _pBase = PROBLEMS.find(x => x.id === pid);
   const generated = buildCases(pid);
   const p = generated ? Object.assign({}, _pBase, {cases: generated}) : _pBase;
+  _curProb = p;
   code = STARTER; tcResults = {}; submitting = false;
   const hist = (loadHistory()[pid] || []);
 
@@ -1155,6 +1157,7 @@ function renderProb(pid, push=true){
     <div class="section-lbl" style="margin-top:1.25rem;margin-bottom:.4rem">코드 작성</div>
     <div style="font-size:12px;color:var(--text3);margin-bottom:.6rem;padding:.5rem .75rem;background:var(--warn-bg);border-radius:6px;border:1px solid var(--warn-border)">
       출력은 예제 출력과 <b>완전히 동일</b>해야 합니다. <code>printf("입력하세요: ")</code> 같은 안내 문구 없이 결과 값만 출력하세요.
+      ${GEN[p.id] ? '<br>테스트는 <b>매번 다른 랜덤 입력값</b>으로 실행됩니다. 테스트를 통과해도 모든 경우에 대응하지 못할 수 있으니, 다양한 케이스를 직접 고려해보세요.' : ''}
     </div>
     <textarea id="code-ta" spellcheck="false">${code}</textarea>
     <div class="btn-row">
@@ -1233,7 +1236,7 @@ function switchTab(t){
 }
 
 function renderResults(){
-  const p = PROBLEMS.find(x => x.id === curPid);
+  const p = _curProb || PROBLEMS.find(x => x.id === curPid);
   if (!p || !$('results')) return;
   let total = 0, max = 0;
   p.cases.forEach(tc => {
@@ -1355,7 +1358,7 @@ function goProb(pid){
 async function doSubmit(){
   if (submitting) return;
   if (!username){ doSetUser(() => doSubmit()); return; }
-  const p   = PROBLEMS.find(x => x.id === curPid);
+  const p   = _curProb || PROBLEMS.find(x => x.id === curPid);
   const src = getCode();
   if (!src.trim() || src.trim() === STARTER.trim()){
     alert('코드를 작성한 후 제출하세요.'); return;
@@ -1436,7 +1439,10 @@ function startTestCooldown() {
 
 async function doTest(){
   if (submitting || testCooldown > 0) return;
-  const p   = PROBLEMS.find(x => x.id === curPid);
+  const _base = PROBLEMS.find(x => x.id === curPid);
+  const _newCases = buildCases(curPid);
+  if (_newCases) _curProb = Object.assign({}, _base, {cases: _newCases});
+  const p = _curProb || _base;
   const src = getCode();
   submitting = true;
   const testBtn = $('test-btn');
