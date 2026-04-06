@@ -411,7 +411,7 @@ PROBLEMS.push(
     title:'합계와 평균',
     desc:'사용자로부터 3개의 정수를 입력받은 뒤, 합계와 평균을 계산하여 출력하는 프로그램을 작성하라.',
     input_desc:'정수 3개를 공백으로 구분하여 입력한다.',
-    output_desc:'합계를 첫 줄에, 평균을 둘째 줄에 출력한다.',
+    output_desc:'합계를 첫 줄에, 평균을 둘째 줄에 출력한다. 평균은 정수 나눗셈 결과를 그대로 출력한다. (소수점 없음)',
     ex_in:'10 20 30',
     ex_out:'60\n20',
     deadline:'2099-12-31',
@@ -490,7 +490,7 @@ PROBLEMS.push(
     cases:[
       {id:1, input:'3.141',  expected:'3.14', pts:34},
       {id:2, input:'2.719',  expected:'2.72', pts:33},
-      {id:3, input:'1.005',  expected:'1.01', pts:33},
+      {id:3, input:'1.786',  expected:'1.79', pts:33},
     ]
   },
   /* ── OJ / P / CH 추가 (Week04_연습문제실습) ── */
@@ -634,7 +634,7 @@ PROBLEMS.push(
   {
     id:'r19', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'학생 성적표',
-    desc:'학생 이름과 3개 과목 점수를 입력받아 형식에 맞게 출력하라.<br>힌트: <code>%-15s %8d</code>, <code>%8.2f</code>, <code>(double)</code> 형변환 사용',
+    desc:'학생 이름과 3개 과목 점수를 입력받아 형식에 맞게 출력하라.<br>힌트: Name 행은 <code>printf("Name: %15s\\n", name)</code> (우측정렬), 과목/합계/평균 행은 <code>%-15s %8d</code> / <code>%-15s %8.2f</code>, 평균 계산 시 <code>(double)</code> 형변환 사용',
     input_desc:'이름(공백 없는 문자열)과 점수 3개를 입력한다.',
     output_desc:'아래 형식에 맞게 출력한다.',
     ex_in:'Alice 85 92 78',
@@ -649,7 +649,7 @@ PROBLEMS.push(
   {
     id:'r20', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'진수 변환기 (Binary 포함)',
-    desc:'0~255 범위의 정수를 입력받아 10진수, 16진수, 8진수, 2진수로 출력하라.<br>2진수는 4비트마다 공백으로 구분, 상위/하위 니블도 출력.',
+    desc:'0~255 범위의 정수를 입력받아 10진수, 16진수, 8진수, 2진수로 출력하라.<br>2진수는 4비트마다 공백으로 구분, 상위/하위 니블도 출력.<br>힌트: C 표준 printf에 <code>%b</code>가 없으므로, 반복문과 비트 연산(<code>&gt;&gt;</code>, <code>&amp; 1</code>)으로 2진수 문자열을 직접 만들어야 한다.',
     input_desc:'정수(0~255)를 입력한다.',
     output_desc:'형식에 맞게 Decimal, Hex, Octal, Binary, 니블 정보를 출력한다.',
     ex_in:'255',
@@ -664,7 +664,7 @@ PROBLEMS.push(
   {
     id:'r21', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'영수증 계산기',
-    desc:'3개 상품의 가격(double)과 수량(int)을 입력받아 영수증을 출력하라.<br>소계, 세금(10%), 총계를 포함.<br>힌트: <code>%-12s %3d %8.2f</code> 포맷 사용',
+    desc:'3개 상품의 가격(double)과 수량(int)을 입력받아 영수증을 출력하라.<br>소계, 세금(10%), 총계를 포함.<br>아이템 이름은 순서대로 <code>Item 1</code>, <code>Item 2</code>, <code>Item 3</code>으로 하드코딩한다.<br>힌트: <code>%-12s %3d %8.2f</code> 포맷 사용',
     input_desc:'아이템 3개를 각 줄에 "가격 수량" 형식으로 입력한다.',
     output_desc:'형식에 맞는 영수증을 출력한다.',
     ex_in:'4.5 2\n12 1\n3.75 3',
@@ -679,15 +679,15 @@ PROBLEMS.push(
   {
     id:'r22', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'Hex 색상 디코더',
-    desc:'24비트 hex 색상값(RRGGBB)을 입력받아 R, G, B 각 채널을 10진수, 16진수, 2진수로 출력하라.<br>추출: R=(color>>16)&0xFF, G=(color>>8)&0xFF, B=color&0xFF',
-    input_desc:'hex 색상값을 입력한다. (예: FF8C00)',
+    desc:'24비트 hex 색상값(RRGGBB)을 입력받아 R, G, B 각 채널을 10진수, 16진수, 2진수로 출력하라.<br>추출: R=(color>>16)&0xFF, G=(color>>8)&0xFF, B=color&0xFF<br>힌트: 입력은 <code>scanf("%X", &color)</code>, R/G/B 행은 <code>printf("%-7s%3d 0x%02X %s\\n", label, val, val, bits)</code> 사용. 2진수 문자열은 반복문과 비트 연산으로 직접 만들 것.',
+    input_desc:'hex 색상값을 입력한다. (예: FF8C00) — <code>scanf("%X", &color)</code>로 읽는다.',
     output_desc:'Color Decoder 형식으로 출력한다.',
     ex_in:'FF8C00',
-    ex_out:'===== Color Decoder =====\nInput: 0xFF8C00\n-------------------------\nRed:  255 0xFF 11111111\nGreen: 140 0x8C 10001100\nBlue:   0 0x00 00000000\n========================\n\nReconstructed: 0xFF8C00',
+    ex_out:'===== Color Decoder =====\nInput: 0xFF8C00\n-------------------------\nRed:   255 0xFF 11111111\nGreen: 140 0x8C 10001100\nBlue:    0 0x00 00000000\n=========================\n\nReconstructed: 0xFF8C00',
     deadline:'2099-12-31',
     cases:[
       {id:1, input:'FF8C00',
-       expected:'===== Color Decoder =====\nInput: 0xFF8C00\n-------------------------\nRed:  255 0xFF 11111111\nGreen: 140 0x8C 10001100\nBlue:   0 0x00 00000000\n========================\n\nReconstructed: 0xFF8C00',
+       expected:'===== Color Decoder =====\nInput: 0xFF8C00\n-------------------------\nRed:   255 0xFF 11111111\nGreen: 140 0x8C 10001100\nBlue:    0 0x00 00000000\n=========================\n\nReconstructed: 0xFF8C00',
        pts:100},
     ]
   },
