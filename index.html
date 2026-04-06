@@ -33,7 +33,7 @@ body.dark{
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;color:var(--text);background:var(--bg);min-height:100vh;transition:background .2s,color .2s}
-.wrap{max-width:1280px;margin:0 auto;padding:1.5rem 1rem}
+.wrap{max-width:1440px;margin:0 auto;padding:1.5rem 1rem}
 .user-chip{font-size:13px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 12px;display:flex;align-items:center;gap:8px;color:var(--text)}
 .link-btn{background:none;border:none;font-size:12px;color:var(--text3);cursor:pointer;padding:0}
 .link-btn:hover{color:var(--text6)}
@@ -107,6 +107,11 @@ textarea:focus{border-color:var(--text3)}
 .list-view .prob-card-dl{font-size:11px;color:var(--text4);white-space:nowrap}
 .notice{font-size:12px;color:var(--text3);background:var(--surface3);border-left:3px solid var(--border2);padding:.55rem .8rem;border-radius:0 6px 6px 0;margin-bottom:1rem}
 code{font-family:'Menlo','Consolas',monospace;background:var(--surface4);padding:1px 4px;border-radius:3px;font-size:12px;color:var(--text)}
+.mobile-user-bar{display:none}
+@media(max-width:959px){
+  .mobile-user-bar{display:flex;justify-content:flex-end;margin-bottom:.85rem}
+  .desktop-user-bar{display:none}
+}
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
@@ -1067,6 +1072,8 @@ function renderHome(push=true){
       </div>
     </div>
 
+    <div class="mobile-user-bar">${userBar()}</div>
+
     <div class="layout">
       <div id="main-col">
         <div class="topbar" style="margin-bottom:1rem">
@@ -1075,7 +1082,7 @@ function renderHome(push=true){
             <button class="view-btn active" id="btn-grid" onclick="setView('grid')" title="그리드">⊞</button>
             <button class="view-btn" id="btn-list" onclick="setView('list')" title="목록">☰</button>
           </div>
-          ${userBar()}
+          <span class="desktop-user-bar">${userBar()}</span>
         </div>
         <div id="prob-sections">${sectionsHtml}</div>
       </div>
