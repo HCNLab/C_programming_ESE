@@ -50,11 +50,11 @@ button.primary:hover{background:var(--text6)}
 .prob-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.9rem 1rem;cursor:pointer;transition:border-color .15s,box-shadow .15s}
 .prob-card:hover{border-color:var(--text4);box-shadow:0 2px 8px var(--shadow)}
 .prob-card-title{font-size:14px;font-weight:600;margin-bottom:.3rem;color:var(--text)}
-.prob-card-dl{font-size:11px;color:var(--text4)}
+.prob-card-dl{font-size:11px;color:var(--text3)}
 .prob-card-footer{display:flex;align-items:center;margin-top:8px;padding-top:7px;border-top:1px solid var(--surface4)}
 .open-badge{font-size:11px;padding:2px 6px;border-radius:3px;font-weight:600}
 .open-badge.open{background:var(--accent-bg);color:var(--accent-text)}
-.open-badge.closed{background:var(--surface4);color:var(--text3)}
+.open-badge.closed{background:var(--surface4);color:var(--text2)}
 .section-lbl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.3rem;margin-top:.85rem}
 .section-lbl:first-child{margin-top:0}
 .body-text{font-size:14px;line-height:1.7;color:var(--text)}
@@ -1039,7 +1039,7 @@ function renderHome(push=true){
                 })()
               : sessionStorage.getItem('draft:'+p.id)
                 ? `<span style="font-size:11px;color:var(--link)">작성중</span>`
-                : `<span style="font-size:11px;color:var(--text5)">미제출</span>`}
+                : `<span style="font-size:11px;color:var(--text3)">미제출</span>`}
             ${_submitCountsLoaded && _submitCounts[p.id] !== undefined
               ? `<span style="font-size:10px;color:var(--text8)">${_submitCounts[p.id]}명 제출</span>`
               : ''}
@@ -1158,7 +1158,7 @@ function renderProb(pid, push=true){
     </div>
     <textarea id="code-ta" spellcheck="false">${code}</textarea>
     <div class="btn-row">
-      ${p.noSubmit ? '<button class="primary" id="sub-btn" onclick="doSubmit()" style="background:var(--text3)" title="제출 순위에 반영됩니다 (성적 무관)">제출 (순위 반영)</button>' : '<button class="primary" id="sub-btn" onclick="doSubmit()">제출</button>'}
+      ${p.noSubmit ? '<button class="primary" id="sub-btn" onclick="doSubmit()" style="background:var(--link);border-color:var(--link)" title="제출 순위에 반영됩니다 (성적 무관)">제출 (순위 반영)</button>' : '<button class="primary" id="sub-btn" onclick="doSubmit()">제출</button>'}
       <button id="test-btn" onclick="doTest()">테스트 실행</button>
       <button onclick="doReset()">초기화</button>
     </div>
