@@ -248,9 +248,9 @@ const PROBLEMS = [
   /* ── Week 5B Practice ─────────────────────────── */
   {
     id:'p1', week:'6주차 Practice', title:'Calculator with switch',
-    desc:'<code>double a</code>, <code>char op</code>, <code>double b</code>를 입력받아 사칙연산 결과를 출력하시오. 연산자는 <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>이며, 0으로 나눌 경우 별도 처리.',
-    input_desc:'한 줄에 a op b 순서로 주어진다. (예: <code>10 / 3</code>)',
-    output_desc:'결과를 소수점 둘째 자리까지 출력한다. 형식: <code>3.33</code><br>0으로 나누면: <code>Error: division by zero</code>',
+    desc:'한 줄로 <code>a op b</code>를 입력받아 switch(op)로 연산 결과를 출력하시오. 연산자: <code>+</code> <code>-</code> <code>*</code> <code>/</code>. 0으로 나누기는 <code>/</code> 케이스 안에서 if로 처리.',
+    input_desc:'한 줄에 <code>a op b</code> 형식으로 주어진다. (예: <code>5 + 3</code>)',
+    output_desc:'결과를 소수점 둘째 자리까지 출력 (숫자만, 레이블 없음):<br><code>5 + 3</code> → <code>8.00</code><br><code>10 - 4</code> → <code>6.00</code><br><code>10 / 3</code> → <code>3.33</code><br>0으로 나누기: <code>5 / 0</code> → <code>Error: division by zero</code>',
     ex_in:'10 / 3', ex_out:'3.33', deadline:'2026-04-13T23:59',
     cases:[
       {id:1,input:'5 + 3',  expected:'8.00',                   pts:25},
@@ -302,9 +302,9 @@ const PROBLEMS = [
   /* ── Week 5B Challenge ────────────────────────── */
   {
     id:'c1', week:'6주차 Practice', title:'Tax Bracket Calculator',
-    desc:'연소득(원)을 입력받아 누진세를 계산하시오.<br>세율 구간: ~1,400만원 6% / ~5,000만원 15% / ~8,800만원 24% / 초과 35%<br>세금은 누진 적용됨 (예: 6천만원 = 14M×6% + 36M×15% + 10M×24%)',
+    desc:'연소득(원, 정수)을 입력받아 누진세를 계산하시오.<br>세율 구간 (각 구간 금액에만 해당 세율 적용):<br>~14,000,000 → 6% / ~50,000,000 → 15% / ~88,000,000 → 24% / 초과 → 35%<br>예: 60,000,000원 = 14M×6% + 36M×15% + 10M×24% = 8,640,000원 (60M×24% 아님!)',
     input_desc:'첫째 줄에 연소득(원, 정수)이 주어진다.',
-    output_desc:'형식: <code>Tax: {N} won</code>',
+    output_desc:'형식: <code>Tax: N won</code><br><code>14000000</code> → <code>Tax: 840000 won</code><br><code>60000000</code> → <code>Tax: 8640000 won</code><br><code>100000000</code> → <code>Tax: 19560000 won</code>',
     ex_in:'60000000', ex_out:'Tax: 8640000 won', deadline:'2026-04-13T23:59',
     cases:[
       {id:1,input:'14000000',  expected:'Tax: 840000 won',   pts:25},
@@ -330,7 +330,7 @@ const PROBLEMS = [
     id:'c3', week:'6주차 Practice', title:'Membership Discount Calculator',
     desc:'멤버십 등급과 구매 금액을 입력받아 할인 금액과 최종 가격을 출력하시오.<br>등급별 기본 할인율: 1.Bronze 5% &nbsp; 2.Silver 10% &nbsp; 3.Gold 15% &nbsp; 4.Platinum 20%<br>구매 금액이 100,000원 이상이면 추가 5% 할인 적용<br>잘못된 등급 번호: <code>Invalid membership</code>',
     input_desc:'첫째 줄에 멤버십 등급(1-4), 둘째 줄에 구매 금액(원, 양의 정수)이 주어진다.',
-    output_desc:'<code>Discount: X%</code><br><code>Final: NNNNN won</code>',
+    output_desc:'<code>Discount: X%</code><br><code>Final: N won</code><br>예: 등급 1, 50000원 → <code>Discount: 5%</code> / <code>Final: 47500 won</code><br>예: 등급 3, 150000원 → <code>Discount: 20%</code> / <code>Final: 120000 won</code>',
     ex_in:'2\n150000', ex_out:'Discount: 15%\nFinal: 127500 won', deadline:'2026-04-13T23:59',
     cases:[
       {id:1,input:'1\n50000',  expected:'Discount: 5%\nFinal: 47500 won',   pts:25},
@@ -356,7 +356,7 @@ const PROBLEMS = [
     id:'c5', week:'6주차 Practice', title:'Mini ATM System',
     desc:'PIN(1234)을 검증하고 메뉴를 처리하는 ATM을 작성하시오. 초기 잔액: 100,000원. switch로 메뉴 처리, if로 검증.<br><b>각 메뉴 출력 형식:</b><br>1. 잔액 확인 → <code>Balance: N won</code><br>2. 입금 (금액 입력) → <code>Balance: N won</code> (잔액만 출력)<br>3. 출금 (금액 입력) → 성공: <code>Dispensed N won</code> 후 <code>Balance: N won</code> / 부족: <code>Insufficient!</code> 후 <code>Balance: N won</code><br>4. 종료 → <code>Goodbye!</code>',
     input_desc:'첫째 줄: PIN. 올바르면 둘째 줄: 메뉴(1-4). 메뉴 2·3이면 셋째 줄: 금액.',
-    output_desc:'PIN 오류: <code>Wrong PIN!</code><br>출금 성공 예시 (잔액 100000, 출금 30000): <code>Dispensed 30000 won</code><br><code>Balance: 70000 won</code>',
+    output_desc:'PIN 오류: <code>Wrong PIN!</code><br>메뉴 1 (잔액): <code>Balance: N won</code><br>메뉴 2 (입금 후): <code>Balance: N won</code><br>메뉴 3 성공: <code>Dispensed N won</code> → <code>Balance: N won</code><br>메뉴 3 부족: <code>Insufficient!</code> → <code>Balance: N won</code><br>메뉴 4: <code>Goodbye!</code>',
     ex_in:'1234\n1', ex_out:'Balance: 100000 won', deadline:'2026-04-13T23:59',
     cases:[
       {id:1,input:'9999\n1',         expected:'Wrong PIN!',                         pts:25},
