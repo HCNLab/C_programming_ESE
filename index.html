@@ -179,13 +179,12 @@ const GEN = {
   },
 
   p3: (slot)=>{
-    const items={1:{name:'Coffee',price:1500},2:{name:'Tea',price:1200},
-                 3:{name:'Juice',price:2000},4:{name:'Water',price:800}};
-    if(slot===4) return {input:`5\n${ri(500,3000)}`,expected:'Invalid selection'};
-    const ch=slot, item=items[ch];
+    const prices={1:1500,2:1200,3:2000,4:800};
+    if(slot===4) return {input:`5\n${ri(500,3000)}`,expected:'Invalid selection!'};
+    const ch=slot, price=prices[ch];
     const enough=ri(1,2)===1;
-    const money=enough?item.price+ri(0,50)*10:ri(100,item.price-100);
-    const exp=money>=item.price?`${item.name} dispensed. Change: ${money-item.price} won`:'Insufficient funds';
+    const money=enough?price+ri(0,50)*10:ri(100,price-100);
+    const exp=money>=price?`Dispensing... Change: ${money-price} won`:`Insufficient! Need ${price-money} more won`;
     return {input:`${ch}\n${money}`,expected:exp};
   },
 
@@ -254,20 +253,20 @@ const PROBLEMS = [
     id:'p1', week:'6주차 Practice', title:'Calculator with switch',
     desc:'<code>double a</code>, <code>char op</code>, <code>double b</code>를 입력받아 사칙연산 결과를 출력하시오. 연산자는 <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>이며, 0으로 나눌 경우 별도 처리.',
     input_desc:'한 줄에 a op b 순서로 주어진다. (예: <code>10 / 3</code>)',
-    output_desc:'결과를 소수점 둘째 자리까지 출력한다. 형식: <code>3.33</code><br>0으로 나누면: <code>Division by zero</code>',
+    output_desc:'결과를 소수점 둘째 자리까지 출력한다. 형식: <code>3.33</code><br>0으로 나누면: <code>Error: division by zero</code>',
     ex_in:'10 / 3', ex_out:'3.33', deadline:'2026-04-13T23:59',
     cases:[
-      {id:1,input:'5 + 3',  expected:'8.00',             pts:25},
-      {id:2,input:'10 - 4', expected:'6.00',             pts:25},
-      {id:3,input:'10 / 3', expected:'3.33',             pts:25},
-      {id:4,input:'5 / 0',  expected:'Division by zero', pts:25},
+      {id:1,input:'5 + 3',  expected:'8.00',                   pts:25},
+      {id:2,input:'10 - 4', expected:'6.00',                   pts:25},
+      {id:3,input:'10 / 3', expected:'3.33',                   pts:25},
+      {id:4,input:'5 / 0',  expected:'Error: division by zero',pts:25},
     ]
   },
   {
     id:'p2', week:'6주차 Practice', title:'Season Finder',
     desc:'월 번호(1-12)를 입력받아 계절을 출력하시오. <b>fall-through</b>를 이용한 switch로 작성할 것.<br>계절 매핑: 3, 4, 5월 → Spring &nbsp; 6, 7, 8월 → Summer &nbsp; 9, 10, 11월 → Autumn &nbsp; 12, 1, 2월 → Winter',
     input_desc:'첫째 줄에 월 번호(1-12)가 주어진다.',
-    output_desc:'해당 계절을 출력한다: <code>Spring</code> / <code>Summer</code> / <code>Autumn</code> / <code>Winter</code><br>범위 외: <code>Invalid</code>',
+    output_desc:'해당 계절을 출력한다: <code>Spring</code> / <code>Summer</code> / <code>Autumn</code> / <code>Winter</code><br>범위 외: <code>Invalid month</code>',
     ex_in:'4', ex_out:'Spring', deadline:'2026-04-13T23:59',
     cases:[
       {id:1,input:'4',  expected:'Spring', pts:25},
@@ -278,15 +277,15 @@ const PROBLEMS = [
   },
   {
     id:'p3', week:'6주차 Practice', title:'Vending Machine',
-    desc:'자판기 프로그램을 작성하시오.<br>메뉴: 1. Coffee (1500원) &nbsp; 2. Tea (1200원) &nbsp; 3. Juice (2000원) &nbsp; 4. Water (800원)',
+    desc:'자판기 프로그램을 작성하시오.<br>메뉴: 1. Coffee (1500원) &nbsp; 2. Tea (1200원) &nbsp; 3. Juice (2000원) &nbsp; 4. Water (800원)<br>switch로 가격을 설정하고, if로 투입 금액을 확인할 것.',
     input_desc:'첫째 줄에 선택 번호, 둘째 줄에 투입 금액(원)이 주어진다.',
-    output_desc:'충분: <code>{품목} dispensed. Change: {N} won</code><br>부족: <code>Insufficient funds</code><br>잘못된 선택: <code>Invalid selection</code>',
-    ex_in:'1\n2000', ex_out:'Coffee dispensed. Change: 500 won', deadline:'2026-04-13T23:59',
+    output_desc:'충분: <code>Dispensing... Change: N won</code><br>부족: <code>Insufficient! Need N more won</code><br>잘못된 선택: <code>Invalid selection!</code>',
+    ex_in:'1\n2000', ex_out:'Dispensing... Change: 500 won', deadline:'2026-04-13T23:59',
     cases:[
-      {id:1,input:'1\n2000', expected:'Coffee dispensed. Change: 500 won',  pts:25},
-      {id:2,input:'2\n1000', expected:'Insufficient funds',                  pts:25},
-      {id:3,input:'3\n5000', expected:'Juice dispensed. Change: 3000 won',  pts:25},
-      {id:4,input:'5\n1000', expected:'Invalid selection',                   pts:25},
+      {id:1,input:'1\n2000', expected:'Dispensing... Change: 500 won',      pts:25},
+      {id:2,input:'2\n1000', expected:'Insufficient! Need 200 more won',    pts:25},
+      {id:3,input:'3\n5000', expected:'Dispensing... Change: 3000 won',     pts:25},
+      {id:4,input:'5\n1000', expected:'Invalid selection!',                  pts:25},
     ]
   },
   {
