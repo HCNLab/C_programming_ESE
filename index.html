@@ -677,18 +677,18 @@ PROBLEMS.push(
   {
     id:'r22', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'Hex 색상 디코더',
-    desc:'24비트 hex 색상값(RRGGBB)을 입력받아 R, G, B 각 채널을 10진수, 16진수, 2진수로 출력하라.<br>추출: <code>R=(color&gt;&gt;16)&amp;0xFF</code>, <code>G=(color&gt;&gt;8)&amp;0xFF</code>, <code>B=color&amp;0xFF</code><br>힌트: 입력 <code>scanf("%x", &amp;color)</code> · 채널 출력 <code>printf("Red:   %3d  0x%02X  ", r, r)</code> · 2진수는 비트 7→0 반복문으로 직접 출력 · 재구성 <code>printf("Reconstructed: 0x%06X\\n", (r&lt;&lt;16)|(g&lt;&lt;8)|b)</code>',
+    desc:'24비트 hex 색상값(RRGGBB)을 입력받아 R, G, B 각 채널을 10진수, 16진수, 2진수로 출력하라.<br>추출: <code>R=(color&gt;&gt;16)&amp;0xFF</code>, <code>G=(color&gt;&gt;8)&amp;0xFF</code>, <code>B=color&amp;0xFF</code><br>힌트: 입력 <code>scanf("%x", &amp;color)</code> · 채널 출력 <code>printf("Red:   %3d  0x%02X  ", r, r)</code> 후 아래 루프로 2진수 출력 (g, b도 동일하게 반복):<br><code>int i; for (i = 7; i &gt;= 0; i--) { printf("%d", (r &gt;&gt; i) &amp; 1); if (i == 4) printf(" "); }</code><br>재구성: <code>printf("Reconstructed: 0x%06X\\n", (r&lt;&lt;16)|(g&lt;&lt;8)|b)</code>',
     input_desc:'hex 색상값을 입력한다. (예: FF8C00) — <code>scanf("%x", &color)</code>로 읽는다.',
-    output_desc:'Color Decoder 형식으로 출력한다. R/G/B 행: 10진(%3d) · 16진(0x%02X) · 2진(8비트) 사이는 공백 2칸.',
+    output_desc:'Color Decoder 형식으로 출력한다. R/G/B 행: 10진(%3d) · 16진(0x%02X) · 2진(4비트 공백 구분) 사이는 공백 2칸.',
     ex_in:'FF8C00',
-    ex_out:'===== Color Decoder =====\nInput: 0xFF8C00\n--------------------------\nRed:   255  0xFF  11111111\nGreen: 140  0x8C  10001100\nBlue:    0  0x00  00000000\n==========================\n\nReconstructed: 0xFF8C00',
+    ex_out:'===== Color Decoder =====\nInput: 0xFF8C00\n---------------------------\nRed:   255  0xFF  1111 1111\nGreen: 140  0x8C  1000 1100\nBlue:    0  0x00  0000 0000\n===========================\n\nReconstructed: 0xFF8C00',
     deadline:'2099-12-31',
     cases:[
       {id:1, input:'FF8C00',
-       expected:'===== Color Decoder =====\nInput: 0xFF8C00\n--------------------------\nRed:   255  0xFF  11111111\nGreen: 140  0x8C  10001100\nBlue:    0  0x00  00000000\n==========================\n\nReconstructed: 0xFF8C00',
+       expected:'===== Color Decoder =====\nInput: 0xFF8C00\n---------------------------\nRed:   255  0xFF  1111 1111\nGreen: 140  0x8C  1000 1100\nBlue:    0  0x00  0000 0000\n===========================\n\nReconstructed: 0xFF8C00',
        pts:50},
       {id:2, input:'0000FF',
-       expected:'===== Color Decoder =====\nInput: 0x0000FF\n--------------------------\nRed:     0  0x00  00000000\nGreen:   0  0x00  00000000\nBlue:  255  0xFF  11111111\n==========================\n\nReconstructed: 0x0000FF',
+       expected:'===== Color Decoder =====\nInput: 0x0000FF\n---------------------------\nRed:     0  0x00  0000 0000\nGreen:   0  0x00  0000 0000\nBlue:  255  0xFF  1111 1111\n===========================\n\nReconstructed: 0x0000FF',
        pts:50},
     ]
   },
