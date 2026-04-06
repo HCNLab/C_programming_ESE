@@ -220,16 +220,11 @@ const GEN = {
   },
 
   c3: (slot)=>{
-    if(slot===1){
-      let x1,x2;
-      do{x1=ri(-5,5);x2=ri(-5,5);}while(x1===x2);
-      const [big,small]=[Math.max(x1,x2),Math.min(x1,x2)];
-      return {input:`1 ${-(x1+x2)} ${x1*x2}`,expected:`x1 = ${big.toFixed(2)}, x2 = ${small.toFixed(2)}`};
-    }
-    if(slot===2){ const x=ri(-5,5); return {input:`1 ${-2*x} ${x*x}`,expected:`x = ${x.toFixed(2)}`}; }
-    if(slot===3){ const c=ri(1,10); return {input:`1 0 ${c}`,expected:'No real roots'}; }
-    const b_=ri(-5,5)||1, x=ri(-5,5);
-    return {input:`0 ${b_} ${-b_*x}`,expected:`x = ${x.toFixed(2)}`};
+    const base=[0,5,10,15,20];
+    if(slot===1){const m=pick([1,2]);const amt=ri(1,9)*10000;const d=base[m];return {input:`${m}\n${amt}`,expected:`Discount: ${d}%\nFinal: ${amt-amt*d/100} won`};}
+    if(slot===2){const m=pick([3,4]);const amt=ri(1,9)*10000;const d=base[m];return {input:`${m}\n${amt}`,expected:`Discount: ${d}%\nFinal: ${amt-amt*d/100} won`};}
+    if(slot===3){const m=pick([1,2,3,4]);const amt=ri(10,20)*10000;const d=base[m]+5;return {input:`${m}\n${amt}`,expected:`Discount: ${d}%\nFinal: ${amt-amt*d/100} won`};}
+    const m=4;const amt=ri(10,30)*10000;const d=25;return {input:`${m}\n${amt}`,expected:`Discount: ${d}%\nFinal: ${amt-amt*d/100} won`};
   },
 
   c4: (slot)=>{
@@ -336,16 +331,16 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'c3', week:'6주차 Practice', title:'Quadratic Equation Solver',
-    desc:'ax²+bx+c=0의 계수 a, b, c를 입력받아 근을 구하시오. <code>&lt;math.h&gt;</code>의 <code>sqrt()</code>를 사용하고, <code>gcc -lm</code>으로 컴파일.<br>판별식 D = b²−4ac 계산: a=0이면 선형 방정식(x = −c/b) &nbsp; D&gt;0이면 두 실근 &nbsp; D=0이면 중근 &nbsp; D&lt;0이면 허근',
-    input_desc:'한 줄에 a b c가 주어진다. (double 형)',
-    output_desc:'두 실근: <code>x1 = X.XX, x2 = X.XX</code> (x1 ≥ x2)<br>중근: <code>x = X.XX</code><br>허근: <code>No real roots</code><br>a=0 선형: <code>x = X.XX</code>',
-    ex_in:'1 -5 6', ex_out:'x1 = 3.00, x2 = 2.00', deadline:'2026-04-13T23:59',
+    id:'c3', week:'6주차 Practice', title:'Membership Discount Calculator',
+    desc:'멤버십 등급과 구매 금액을 입력받아 할인 금액과 최종 가격을 출력하시오.<br>등급별 기본 할인율: 1.Bronze 5% &nbsp; 2.Silver 10% &nbsp; 3.Gold 15% &nbsp; 4.Platinum 20%<br>구매 금액이 100,000원 이상이면 추가 5% 할인 적용<br>잘못된 등급 번호: <code>Invalid membership</code>',
+    input_desc:'첫째 줄에 멤버십 등급(1-4), 둘째 줄에 구매 금액(원, 양의 정수)이 주어진다.',
+    output_desc:'<code>Discount: X%</code><br><code>Final: NNNNN won</code>',
+    ex_in:'2\n150000', ex_out:'Discount: 15%\nFinal: 127500 won', deadline:'2026-04-13T23:59',
     cases:[
-      {id:1,input:'1 -5 6', expected:'x1 = 3.00, x2 = 2.00', pts:25},
-      {id:2,input:'1 -2 1', expected:'x = 1.00',              pts:25},
-      {id:3,input:'1 0 1',  expected:'No real roots',         pts:25},
-      {id:4,input:'0 2 -4', expected:'x = 2.00',              pts:25},
+      {id:1,input:'1\n50000',  expected:'Discount: 5%\nFinal: 47500 won',   pts:25},
+      {id:2,input:'3\n150000', expected:'Discount: 20%\nFinal: 120000 won', pts:25},
+      {id:3,input:'4\n80000',  expected:'Discount: 20%\nFinal: 64000 won',  pts:25},
+      {id:4,input:'2\n100000', expected:'Discount: 15%\nFinal: 85000 won',  pts:25},
     ]
   },
   {
