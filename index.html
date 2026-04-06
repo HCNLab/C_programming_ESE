@@ -276,7 +276,7 @@ const PROBLEMS = [
     desc:'<code>double a</code>, <code>char op</code>, <code>double b</code>를 입력받아 사칙연산 결과를 출력하시오. 연산자는 <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>이며, 0으로 나눌 경우 별도 처리.',
     input_desc:'한 줄에 a op b 순서로 주어진다. (예: <code>10 / 3</code>)',
     output_desc:'결과를 소수점 둘째 자리까지 출력한다. 형식: <code>3.33</code><br>0으로 나누면: <code>Division by zero</code>',
-    ex_in:'10 / 3', ex_out:'3.33', deadline:'2026-04-13',
+    ex_in:'10 / 3', ex_out:'3.33', deadline:'2026-04-13T23:59',
     cases:[
       {id:1,input:'5 + 3',  expected:'8.00',             pts:25},
       {id:2,input:'10 - 4', expected:'6.00',             pts:25},
@@ -289,7 +289,7 @@ const PROBLEMS = [
     desc:'월 번호(1-12)를 입력받아 계절을 출력하시오. <b>fall-through</b>를 이용한 switch로 작성할 것.<br>계절 매핑: 3, 4, 5월 → Spring &nbsp; 6, 7, 8월 → Summer &nbsp; 9, 10, 11월 → Autumn &nbsp; 12, 1, 2월 → Winter',
     input_desc:'첫째 줄에 월 번호(1-12)가 주어진다.',
     output_desc:'해당 계절을 출력한다: <code>Spring</code> / <code>Summer</code> / <code>Autumn</code> / <code>Winter</code><br>범위 외: <code>Invalid</code>',
-    ex_in:'4', ex_out:'Spring', deadline:'2026-04-13',
+    ex_in:'4', ex_out:'Spring', deadline:'2026-04-13T23:59',
     cases:[
       {id:1,input:'4',  expected:'Spring', pts:25},
       {id:2,input:'7',  expected:'Summer', pts:25},
@@ -302,7 +302,7 @@ const PROBLEMS = [
     desc:'자판기 프로그램을 작성하시오.<br>메뉴: 1. Coffee (1500원) &nbsp; 2. Tea (1200원) &nbsp; 3. Juice (2000원) &nbsp; 4. Water (800원)',
     input_desc:'첫째 줄에 선택 번호, 둘째 줄에 투입 금액(원)이 주어진다.',
     output_desc:'충분: <code>{품목} dispensed. Change: {N} won</code><br>부족: <code>Insufficient funds</code><br>잘못된 선택: <code>Invalid selection</code>',
-    ex_in:'1\n2000', ex_out:'Coffee dispensed. Change: 500 won', deadline:'2026-04-13',
+    ex_in:'1\n2000', ex_out:'Coffee dispensed. Change: 500 won', deadline:'2026-04-13T23:59',
     cases:[
       {id:1,input:'1\n2000', expected:'Coffee dispensed. Change: 500 won',  pts:25},
       {id:2,input:'2\n1000', expected:'Insufficient funds',                  pts:25},
@@ -315,7 +315,7 @@ const PROBLEMS = [
     desc:'월과 연도를 입력받아 해당 월의 날 수를 출력하시오. switch로 월을 처리하고, 2월은 if-else-if로 윤년을 처리할 것.<br>31일: 1, 3, 5, 7, 8, 10, 12월 &nbsp; 30일: 4, 6, 9, 11월 &nbsp; 2월: 28 또는 29일<br>윤년 조건: 4의 배수이되 100의 배수는 아닌 해, 또는 400의 배수인 해',
     input_desc:'한 줄에 월(1-12)과 연도가 주어진다. (예: <code>2 2024</code>)',
     output_desc:'해당 월의 날 수를 출력한다.',
-    ex_in:'2 2024', ex_out:'29', deadline:'2026-04-13',
+    ex_in:'2 2024', ex_out:'29', deadline:'2026-04-13T23:59',
     cases:[
       {id:1,input:'1 2024', expected:'31', pts:25},
       {id:2,input:'2 2024', expected:'29', pts:25},
@@ -330,7 +330,7 @@ const PROBLEMS = [
     desc:'연소득(원)을 입력받아 누진세를 계산하시오.<br>세율 구간: ~1,400만원 6% / ~5,000만원 15% / ~8,800만원 24% / 초과 35%<br>세금은 누진 적용됨 (예: 6천만원 = 14M×6% + 36M×15% + 10M×24%)',
     input_desc:'첫째 줄에 연소득(원, 정수)이 주어진다.',
     output_desc:'형식: <code>Tax: {N} won</code>',
-    ex_in:'60000000', ex_out:'Tax: 8640000 won', deadline:'2026-04-13',
+    ex_in:'60000000', ex_out:'Tax: 8640000 won', deadline:'2026-04-13T23:59',
     cases:[
       {id:1,input:'14000000',  expected:'Tax: 840000 won',   pts:25},
       {id:2,input:'60000000',  expected:'Tax: 8640000 won',  pts:25},
@@ -343,7 +343,7 @@ const PROBLEMS = [
     desc:'두 플레이어가 각각 R(Rock), P(Paper), S(Scissors) 중 하나를 입력하면 승자를 결정하시오. 대소문자 모두 처리할 것.<br>규칙: Rock beats Scissors &nbsp; Scissors beats Paper &nbsp; Paper beats Rock &nbsp; 같으면 Draw',
     input_desc:'첫째 줄에 Player 1의 선택, 둘째 줄에 Player 2의 선택이 주어진다.',
     output_desc:'<code>Player 1 wins</code> / <code>Player 2 wins</code> / <code>Draw</code>',
-    ex_in:'R\nS', ex_out:'Player 1 wins', deadline:'2026-04-13',
+    ex_in:'R\nS', ex_out:'Player 1 wins', deadline:'2026-04-13T23:59',
     cases:[
       {id:1,input:'R\nS', expected:'Player 1 wins', pts:25},
       {id:2,input:'P\nR', expected:'Player 1 wins', pts:25},
@@ -356,7 +356,7 @@ const PROBLEMS = [
     desc:'ax²+bx+c=0의 계수 a, b, c를 입력받아 근을 구하시오. <code>&lt;math.h&gt;</code>의 <code>sqrt()</code>를 사용하고, <code>gcc -lm</code>으로 컴파일.<br>판별식 D = b²−4ac 계산: a=0이면 선형 방정식(x = −c/b) &nbsp; D&gt;0이면 두 실근 &nbsp; D=0이면 중근 &nbsp; D&lt;0이면 허근',
     input_desc:'한 줄에 a b c가 주어진다. (double 형)',
     output_desc:'두 실근: <code>x1 = X.XX, x2 = X.XX</code> (x1 ≥ x2)<br>중근: <code>x = X.XX</code><br>허근: <code>No real roots</code><br>a=0 선형: <code>x = X.XX</code>',
-    ex_in:'1 -5 6', ex_out:'x1 = 3.00, x2 = 2.00', deadline:'2026-04-13',
+    ex_in:'1 -5 6', ex_out:'x1 = 3.00, x2 = 2.00', deadline:'2026-04-13T23:59',
     cases:[
       {id:1,input:'1 -5 6', expected:'x1 = 3.00, x2 = 2.00', pts:25},
       {id:2,input:'1 -2 1', expected:'x = 1.00',              pts:25},
@@ -369,7 +369,7 @@ const PROBLEMS = [
     desc:'연도, 월, 일을 입력받아 유효한 날짜인지 확인하시오. 윤년 처리 포함. if-else-if + switch 조합으로 작성할 것.<br>검증 순서: ① 연도 > 0 &nbsp; ② 월 1-12 &nbsp; ③ 일 1 ~ 해당 월의 최대 일수 (2월은 윤년 적용)',
     input_desc:'한 줄에 year month day가 주어진다.',
     output_desc:'유효: <code>Valid date</code><br>무효: <code>Invalid date: invalid year</code> / <code>Invalid date: invalid month</code> / <code>Invalid date: invalid day</code>',
-    ex_in:'2024 2 29', ex_out:'Valid date', deadline:'2026-04-13',
+    ex_in:'2024 2 29', ex_out:'Valid date', deadline:'2026-04-13T23:59',
     cases:[
       {id:1,input:'2024 2 29', expected:'Valid date',                  pts:20},
       {id:2,input:'2023 2 29', expected:'Invalid date: invalid day',   pts:20},
@@ -383,7 +383,7 @@ const PROBLEMS = [
     desc:'PIN(1234)을 검증하고 메뉴를 처리하는 ATM을 작성하시오. 초기 잔액: 100,000원. switch로 메뉴 처리, if로 검증.',
     input_desc:'첫째 줄: PIN. 올바르면 둘째 줄: 메뉴(1.잔액 2.입금 3.출금 4.종료). 입금/출금이면 셋째 줄: 금액.',
     output_desc:'PIN 오류: <code>Wrong PIN</code><br>잔액 확인: <code>Balance: N won</code><br>입금: <code>Deposited. Balance: N won</code><br>출금 성공: <code>Withdrawn. Balance: N won</code><br>잔액 부족: <code>Insufficient funds</code>',
-    ex_in:'1234\n1', ex_out:'Balance: 100000 won', deadline:'2026-04-13',
+    ex_in:'1234\n1', ex_out:'Balance: 100000 won', deadline:'2026-04-13T23:59',
     cases:[
       {id:1,input:'9999\n1',          expected:'Wrong PIN',                    pts:25},
       {id:2,input:'1234\n1',          expected:'Balance: 100000 won',          pts:25},
@@ -752,6 +752,14 @@ function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 function trim(s){ return (s || '').replace(/\r/g, '').trimEnd(); }
 function $(id){ return document.getElementById(id); }
 function isOpen(p){ return new Date() <= new Date(p.deadline); }
+function fmtDL(dl){
+  if(!dl || dl.startsWith('2099')) return '';
+  if(dl.includes('T')){
+    const d=new Date(dl);
+    return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  }
+  return dl;
+}
 
 /* 이력 */
 /* 이력: Firestore 우선, fallback localStorage */
@@ -1020,7 +1028,7 @@ function renderHome(push=true){
       return `<div class="prob-card" onclick="goProb('${p.id}')">
         <div class="prob-card-title">
           <span style="font-family:'Menlo','Consolas',monospace;font-size:11px;font-weight:500;color:var(--text4);margin-right:5px;background:var(--surface3);border:1px solid var(--border);border-radius:3px;padding:1px 4px">${p.id}</span>${p.title}</div>
-        <div class="prob-card-dl">마감 ${p.deadline}</div>
+        ${fmtDL(p.deadline) ? `<div class="prob-card-dl">마감 ${fmtDL(p.deadline)}</div>` : ''}
         <div class="prob-card-footer">
           <span class="open-badge ${open?'open':'closed'}">${open?'제출 가능':'마감'}</span>
           <div style="margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:2px">
