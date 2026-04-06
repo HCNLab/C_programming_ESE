@@ -190,11 +190,10 @@ const GEN = {
   },
 
   p4: (slot)=>{
-    const yr=ri(2000,2030);
-    if(slot===1){const m=pick([1,3,5,7,8,10,12]);return {input:`${m} ${yr}`,expected:'31'};}
-    if(slot===2){const m=pick([4,6,9,11]);return {input:`${m} ${yr}`,expected:'30'};}
-    if(slot===3){const ly=pick([2000,2004,2008,2012,2016,2020,2024]);return {input:`2 ${ly}`,expected:'29'};}
-    const nly=pick([2001,2002,2003,2005,2006,2007,2009,2010]);return {input:`2 ${nly}`,expected:'28'};
+    if(slot===1){const s=ri(90,100);return {input:`${s}`,expected:'Grade: A'};}
+    if(slot===2){const s=ri(60,69);return {input:`${s}`,expected:'Grade: D'};}
+    if(slot===3){const s=ri(0,59);return {input:`${s}`,expected:'Grade: F'};}
+    return {input:`${-ri(1,50)}`,expected:'Invalid score'};
   },
 
   c1: (slot)=>{
@@ -234,10 +233,10 @@ const GEN = {
   },
 
   c4: (slot)=>{
-    if(slot===1){ const ly=pick([2000,2004,2008,2012,2016,2020,2024]); return {input:`${ly} 2 29`,expected:'Valid date'}; }
-    if(slot===2){ const nly=pick([2001,2002,2003,2005,2006,2007,2009,2010]); return {input:`${nly} 2 29`,expected:'Invalid date: invalid day'}; }
-    if(slot===3){ return {input:`${ri(2000,2030)} ${ri(13,20)} ${ri(1,28)}`,expected:'Invalid date: invalid month'}; }
-    const m=pick([4,6,9,11]); return {input:`${ri(2000,2030)} ${m} 31`,expected:'Invalid date: invalid day'};
+    if(slot===1){const km=ri(1,100);return {input:`1\n${km}`,expected:`${km.toFixed(2)} km = ${(km*0.621371).toFixed(2)} mi`};}
+    if(slot===2){const c_=ri(-20,40);return {input:`2\n${c_}`,expected:`${c_.toFixed(2)} C = ${(c_*9.0/5.0+32).toFixed(2)} F`};}
+    if(slot===3){const kg=ri(1,100);return {input:`3\n${kg}`,expected:`${kg.toFixed(2)} kg = ${(kg*2.20462).toFixed(2)} lb`};}
+    const cm=ri(1,200);return {input:`4\n${cm}`,expected:`${cm.toFixed(2)} cm = ${(cm/2.54).toFixed(2)} in`};
   },
 
   c5: (slot)=>{
@@ -296,16 +295,16 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'p4', week:'6주차 Practice', title:'Days in Month',
-    desc:'월과 연도를 입력받아 해당 월의 날 수를 출력하시오. switch로 월을 처리하고, 2월은 if-else-if로 윤년을 처리할 것.<br>31일: 1, 3, 5, 7, 8, 10, 12월 &nbsp; 30일: 4, 6, 9, 11월 &nbsp; 2월: 28 또는 29일<br>윤년 조건: 4의 배수이되 100의 배수는 아닌 해, 또는 400의 배수인 해',
-    input_desc:'한 줄에 월(1-12)과 연도가 주어진다. (예: <code>2 2024</code>)',
-    output_desc:'해당 월의 날 수를 출력한다.',
-    ex_in:'2 2024', ex_out:'29', deadline:'2026-04-13T23:59',
+    id:'p4', week:'6주차 Practice', title:'Grade Classifier',
+    desc:'점수(0-100)를 입력받아 학점을 출력하시오. <code>switch(score / 10)</code>을 이용할 것.<br>90~100 → Grade: A &nbsp; 80~89 → Grade: B &nbsp; 70~79 → Grade: C &nbsp; 60~69 → Grade: D &nbsp; 0~59 → Grade: F<br>Hint: score=100일 때 score/10은 10',
+    input_desc:'한 줄에 점수(정수)가 주어진다.',
+    output_desc:'형식: <code>Grade: A</code> / <code>Grade: B</code> / <code>Grade: C</code> / <code>Grade: D</code> / <code>Grade: F</code><br>범위 외(음수 또는 100 초과): <code>Invalid score</code>',
+    ex_in:'85', ex_out:'Grade: B', deadline:'2026-04-13T23:59',
     cases:[
-      {id:1,input:'1 2024', expected:'31', pts:25},
-      {id:2,input:'2 2024', expected:'29', pts:25},
-      {id:3,input:'2 2023', expected:'28', pts:25},
-      {id:4,input:'4 2024', expected:'30', pts:25},
+      {id:1,input:'95', expected:'Grade: A', pts:25},
+      {id:2,input:'82', expected:'Grade: B', pts:25},
+      {id:3,input:'75', expected:'Grade: C', pts:25},
+      {id:4,input:'45', expected:'Grade: F', pts:25},
     ]
   },
 
@@ -350,17 +349,16 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'c4', week:'6주차 Practice', title:'Date Validator',
-    desc:'연도, 월, 일을 입력받아 유효한 날짜인지 확인하시오. 윤년 처리 포함. if-else-if + switch 조합으로 작성할 것.<br>검증 순서: ① 연도 > 0 &nbsp; ② 월 1-12 &nbsp; ③ 일 1 ~ 해당 월의 최대 일수 (2월은 윤년 적용)',
-    input_desc:'한 줄에 year month day가 주어진다.',
-    output_desc:'유효: <code>Valid date</code><br>무효: <code>Invalid date: invalid year</code> / <code>Invalid date: invalid month</code> / <code>Invalid date: invalid day</code>',
-    ex_in:'2024 2 29', ex_out:'Valid date', deadline:'2026-04-13T23:59',
+    id:'c4', week:'6주차 Practice', title:'Unit Converter',
+    desc:'switch로 단위 변환 메뉴를 구현하시오.<br>1. km → mi &nbsp; 2. °C → °F &nbsp; 3. kg → lb &nbsp; 4. cm → in<br>변환 공식: mi=km×0.621371, F=C×9/5+32, lb=kg×2.20462, in=cm÷2.54',
+    input_desc:'첫째 줄에 메뉴 번호(1-4), 둘째 줄에 변환할 값(double)이 주어진다.',
+    output_desc:'소수점 둘째 자리: <code>50.00 km = 31.07 mi</code> 형식<br>잘못된 번호: <code>Invalid!</code>',
+    ex_in:'1\n50', ex_out:'50.00 km = 31.07 mi', deadline:'2026-04-13T23:59',
     cases:[
-      {id:1,input:'2024 2 29', expected:'Valid date',                  pts:20},
-      {id:2,input:'2023 2 29', expected:'Invalid date: invalid day',   pts:20},
-      {id:3,input:'2024 13 1', expected:'Invalid date: invalid month', pts:20},
-      {id:4,input:'2024 4 31', expected:'Invalid date: invalid day',   pts:20},
-      {id:5,input:'0 1 1',     expected:'Invalid date: invalid year',  pts:20},
+      {id:1,input:'1\n50',  expected:'50.00 km = 31.07 mi',   pts:25},
+      {id:2,input:'2\n20',  expected:'20.00 C = 68.00 F',     pts:25},
+      {id:3,input:'3\n70',  expected:'70.00 kg = 154.32 lb',  pts:25},
+      {id:4,input:'4\n100', expected:'100.00 cm = 39.37 in',  pts:25},
     ]
   },
   {
@@ -619,16 +617,16 @@ PROBLEMS.push(
   {
     id:'r18', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'시간 변환기',
-    desc:'총 초(seconds)를 입력받아 시:분:초 형식으로 출력하라.<br>예: 3725초 → 01:02:05',
+    desc:'총 초(seconds)를 입력받아 <code>N seconds = HH:MM:SS</code> 형식으로 출력하라.<br>시 = total/3600, 분 = (total%3600)/60, 초 = total%60<br>예: 3725 → <code>3725 seconds = 01:02:05</code>',
     input_desc:'총 초(정수)를 입력한다.',
-    output_desc:'%02d:%02d:%02d 형식으로 출력한다.',
+    output_desc:'<code>N seconds = %02d:%02d:%02d</code> 형식으로 출력한다.',
     ex_in:'3725',
-    ex_out:'01:02:05',
+    ex_out:'3725 seconds = 01:02:05',
     deadline:'2099-12-31',
     cases:[
-      {id:1, input:'3725', expected:'01:02:05', pts:34},
-      {id:2, input:'7200', expected:'02:00:00', pts:33},
-      {id:3, input:'59',   expected:'00:00:59', pts:33},
+      {id:1, input:'3725', expected:'3725 seconds = 01:02:05', pts:34},
+      {id:2, input:'7200', expected:'7200 seconds = 02:00:00', pts:33},
+      {id:3, input:'59',   expected:'59 seconds = 00:00:59',   pts:33},
     ]
   },
   {
@@ -649,16 +647,16 @@ PROBLEMS.push(
   {
     id:'r20', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'진수 변환기 (Binary 포함)',
-    desc:'0~255 범위의 정수를 입력받아 10진수, 16진수, 8진수, 2진수로 출력하라.<br>2진수는 4비트마다 공백으로 구분, 상위/하위 니블도 출력.<br>힌트: C 표준 printf에 <code>%b</code>가 없으므로, 반복문과 비트 연산(<code>&gt;&gt;</code>, <code>&amp; 1</code>)으로 2진수 문자열을 직접 만들어야 한다.',
+    desc:'0~255 범위의 정수를 입력받아 10진수, 16진수, 8진수, 2진수로 출력하라.<br>힌트: C 표준 printf에 <code>%b</code>가 없으므로 비트 7부터 0까지 반복문으로 <code>(val &gt;&gt; i) &amp; 1</code> 을 출력하고, <code>i == 4</code> 일 때 공백을 삽입한다.',
     input_desc:'정수(0~255)를 입력한다.',
-    output_desc:'형식에 맞게 Decimal, Hex, Octal, Binary, 니블 정보를 출력한다.',
+    output_desc:'<code>Decimal</code>, <code>Hex</code>, <code>Octal</code>, <code>Binary</code> 순서로 출력한다. (Binary는 4비트마다 공백)',
     ex_in:'255',
-    ex_out:'Decimal:  255\nHex:      0xFF\nOctal:    0377\nBinary:   1111 1111\n\nUpper nibble: 0xF  (15)\nLower nibble: 0xF  (15)',
+    ex_out:'Decimal:  255\nHex:      0xFF\nOctal:    0377\nBinary:   1111 1111',
     deadline:'2099-12-31',
     cases:[
-      {id:1, input:'255',
-       expected:'Decimal:  255\nHex:      0xFF\nOctal:    0377\nBinary:   1111 1111\n\nUpper nibble: 0xF  (15)\nLower nibble: 0xF  (15)',
-       pts:100},
+      {id:1, input:'255', expected:'Decimal:  255\nHex:      0xFF\nOctal:    0377\nBinary:   1111 1111', pts:34},
+      {id:2, input:'170', expected:'Decimal:  170\nHex:      0xAA\nOctal:    0252\nBinary:   1010 1010', pts:33},
+      {id:3, input:'60',  expected:'Decimal:  60\nHex:      0x3C\nOctal:    074\nBinary:   0011 1100',  pts:33},
     ]
   },
   {
@@ -679,30 +677,33 @@ PROBLEMS.push(
   {
     id:'r22', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'Hex 색상 디코더',
-    desc:'24비트 hex 색상값(RRGGBB)을 입력받아 R, G, B 각 채널을 10진수, 16진수, 2진수로 출력하라.<br>추출: R=(color>>16)&0xFF, G=(color>>8)&0xFF, B=color&0xFF<br>힌트: 입력은 <code>scanf("%X", &color)</code>, R/G/B 행은 <code>printf("%-7s%3d 0x%02X %s\\n", label, val, val, bits)</code> 사용. 2진수 문자열은 반복문과 비트 연산으로 직접 만들 것.',
-    input_desc:'hex 색상값을 입력한다. (예: FF8C00) — <code>scanf("%X", &color)</code>로 읽는다.',
-    output_desc:'Color Decoder 형식으로 출력한다.',
+    desc:'24비트 hex 색상값(RRGGBB)을 입력받아 R, G, B 각 채널을 10진수, 16진수, 2진수로 출력하라.<br>추출: <code>R=(color&gt;&gt;16)&amp;0xFF</code>, <code>G=(color&gt;&gt;8)&amp;0xFF</code>, <code>B=color&amp;0xFF</code><br>힌트: 입력 <code>scanf("%x", &amp;color)</code> · 채널 출력 <code>printf("Red:   %3d  0x%02X  ", r, r)</code> · 2진수는 비트 7→0 반복문으로 직접 출력 · 재구성 <code>printf("Reconstructed: 0x%06X\\n", (r&lt;&lt;16)|(g&lt;&lt;8)|b)</code>',
+    input_desc:'hex 색상값을 입력한다. (예: FF8C00) — <code>scanf("%x", &color)</code>로 읽는다.',
+    output_desc:'Color Decoder 형식으로 출력한다. R/G/B 행: 10진(%3d) · 16진(0x%02X) · 2진(8비트) 사이는 공백 2칸.',
     ex_in:'FF8C00',
-    ex_out:'===== Color Decoder =====\nInput: 0xFF8C00\n-------------------------\nRed:   255 0xFF 11111111\nGreen: 140 0x8C 10001100\nBlue:    0 0x00 00000000\n=========================\n\nReconstructed: 0xFF8C00',
+    ex_out:'===== Color Decoder =====\nInput: 0xFF8C00\n--------------------------\nRed:   255  0xFF  11111111\nGreen: 140  0x8C  10001100\nBlue:    0  0x00  00000000\n==========================\n\nReconstructed: 0xFF8C00',
     deadline:'2099-12-31',
     cases:[
       {id:1, input:'FF8C00',
-       expected:'===== Color Decoder =====\nInput: 0xFF8C00\n-------------------------\nRed:   255 0xFF 11111111\nGreen: 140 0x8C 10001100\nBlue:    0 0x00 00000000\n=========================\n\nReconstructed: 0xFF8C00',
-       pts:100},
+       expected:'===== Color Decoder =====\nInput: 0xFF8C00\n--------------------------\nRed:   255  0xFF  11111111\nGreen: 140  0x8C  10001100\nBlue:    0  0x00  00000000\n==========================\n\nReconstructed: 0xFF8C00',
+       pts:50},
+      {id:2, input:'0000FF',
+       expected:'===== Color Decoder =====\nInput: 0x0000FF\n--------------------------\nRed:     0  0x00  00000000\nGreen:   0  0x00  00000000\nBlue:  255  0xFF  11111111\n==========================\n\nReconstructed: 0x0000FF',
+       pts:50},
     ]
   },
   {
     id:'r23', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'임베디드 레지스터 시뮬레이터',
-    desc:'8비트 하드웨어 레지스터를 시뮬레이션하라.<br>Bit0:POWER, Bit1:READY, Bit2:SENSOR, Bit3:MOTOR, Bit7:ERROR<br>SET/CLEAR/TOGGLE/CHECK 연산을 순서대로 수행하고 각 단계의 레지스터 상태(hex + 2진수)를 출력.',
+    desc:'8비트 하드웨어 레지스터를 시뮬레이션하라.<br><code>#define BIT_POWER 0</code>, <code>BIT_READY 1</code>, <code>BIT_SENSOR 2</code>, <code>BIT_MOTOR 3</code>, <code>BIT_ERROR 7</code><br>SET: <code>reg |= (1 &lt;&lt; BIT_X)</code> · CLEAR: <code>reg &amp;= ~(1 &lt;&lt; BIT_X)</code> · TOGGLE: <code>reg ^= (1 &lt;&lt; BIT_X)</code> · CHECK: <code>reg &amp; (1 &lt;&lt; BIT_X)</code><br>각 단계에서 <code>printf("%-18s 0x%02X  ", label, reg)</code> 후 비트 7→0 반복문으로 2진수 출력.',
     input_desc:'없음 (입력 불필요)',
-    output_desc:'각 연산 후 레지스터 상태를 출력한다.',
+    output_desc:'각 연산 후 레지스터 상태를 출력한다. 레이블은 %-18s (18칸 좌정렬) 후 <code> 0x%02X  </code> + 8비트 2진수.',
     ex_in:'',
-    ex_out:'=== Embedded Register Simulator ===\nInitial:          0x00  00000000\nSET POWER:        0x01  00000001\nSET READY:        0x03  00000011\nSET SENSOR:       0x07  00000111\nSET MOTOR:        0x0F  00001111\n\nMotor is ON\n\nCLEAR SENSOR:     0x0B  00001011\nTOGGLE MOTOR:     0x03  00000011\nTOGGLE MOTOR:     0x0B  00001011\nSET ERROR:        0x8B  10001011\nEMERGENCY STOP:   0x80  10000000\n\nMotor is OFF\nError is SET',
+    ex_out:'=== Embedded Register Simulator ===\nInitial:           0x00  00000000\nSET POWER:         0x01  00000001\nSET READY:         0x03  00000011\nSET SENSOR:        0x07  00000111\nSET MOTOR:         0x0F  00001111\n\nMotor is ON\n\nCLEAR SENSOR:      0x0B  00001011\nTOGGLE MOTOR:      0x03  00000011\nTOGGLE MOTOR:      0x0B  00001011\nSET ERROR:         0x8B  10001011\nEMERGENCY STOP:    0x80  10000000\n\nMotor is OFF\nError is SET',
     deadline:'2099-12-31',
     cases:[
       {id:1, input:'',
-       expected:'=== Embedded Register Simulator ===\nInitial:          0x00  00000000\nSET POWER:        0x01  00000001\nSET READY:        0x03  00000011\nSET SENSOR:       0x07  00000111\nSET MOTOR:        0x0F  00001111\n\nMotor is ON\n\nCLEAR SENSOR:     0x0B  00001011\nTOGGLE MOTOR:     0x03  00000011\nTOGGLE MOTOR:     0x0B  00001011\nSET ERROR:        0x8B  10001011\nEMERGENCY STOP:   0x80  10000000\n\nMotor is OFF\nError is SET',
+       expected:'=== Embedded Register Simulator ===\nInitial:           0x00  00000000\nSET POWER:         0x01  00000001\nSET READY:         0x03  00000011\nSET SENSOR:        0x07  00000111\nSET MOTOR:         0x0F  00001111\n\nMotor is ON\n\nCLEAR SENSOR:      0x0B  00001011\nTOGGLE MOTOR:      0x03  00000011\nTOGGLE MOTOR:      0x0B  00001011\nSET ERROR:         0x8B  10001011\nEMERGENCY STOP:    0x80  10000000\n\nMotor is OFF\nError is SET',
        pts:100},
     ]
   },
