@@ -1460,8 +1460,8 @@ let testCooldownTimer = null;
 
 function startTestCooldown() {
   const testBtn = $('test-btn');
-  testCooldown = 15;
-  if (testBtn){ testBtn.disabled = true; testBtn.textContent = '15...'; }
+  testCooldown = 5;
+  if (testBtn){ testBtn.disabled = true; testBtn.textContent = '5...'; }
   testCooldownTimer = setInterval(() => {
     testCooldown--;
     if (testCooldown > 0) {
