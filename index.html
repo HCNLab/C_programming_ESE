@@ -2085,8 +2085,10 @@ async function renderAdminSubmissions(){
     subs.forEach(s => {
       if (!bestByUser[s.username]) bestByUser[s.username] = {};
       const prev = bestByUser[s.username][s.pid];
-      if (!prev || s.score > prev.score) {
-        bestByUser[s.username][s.pid] = { score: s.score, max: s.max, ts: s.ts };
+      const sScore = !isNaN(Number(s.score)) ? Number(s.score) : null;
+      const pScore = prev ? (!isNaN(Number(prev.score)) ? Number(prev.score) : null) : null;
+      if (!prev || (sScore !== null && (pScore === null || sScore > pScore))) {
+        bestByUser[s.username][s.pid] = { score: sScore, max: Number(s.max)||0, ts: s.ts };
       }
     });
     const students = Object.keys(bestByUser).sort();
@@ -2121,9 +2123,10 @@ async function renderAdminSubmissions(){
         probs.forEach(p => {
           const b = bestByUser[stu][p.id];
           if (b) {
-            const pct = b.max > 0 ? b.score / b.max : 0;
+            const pct = (b.score !== null && b.max > 0) ? b.score / b.max : 0;
             const color = pct >= 1 ? 'var(--accent)' : pct >= 0.5 ? 'var(--partial)' : 'var(--fail)';
-            html += `<td style="padding:6px 10px;text-align:center;color:${color};font-weight:500" title="${b.ts}">${b.score}/${b.max}</td>`;
+            const scoreLabel = b.score !== null ? `${b.score}/${b.max}` : '?';
+            html += `<td style="padding:6px 10px;text-align:center;color:${color};font-weight:500" title="${b.ts}">${scoreLabel}</td>`;
             total += b.score; maxTotal += b.max;
           } else {
             html += `<td style="padding:6px 10px;text-align:center;color:var(--text4)">-</td>`;
