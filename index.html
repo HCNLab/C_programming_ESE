@@ -736,6 +736,7 @@ let firebaseUser = null;   // Firebase Auth 유저 객체
 let view = 'home', curPid = null, curTab = 'prob';
 let code = STARTER, tcResults = {}, submitting = false;
 let _curProb = null;
+let _taActive = false, _taStart = null, _taTimer = null; // 타임어택
 let username = localStorage.getItem(LS_USER) || '';
 
 function resizeProb(mode){
@@ -911,6 +912,7 @@ function userBar(){
 
 /* 홈 */
 function renderHome(push=true){
+  _taCleanup();
   if(push) history.pushState({view:'home'},'',' ');
   view = 'home';
   const hist = loadHistory();
@@ -1289,10 +1291,16 @@ function renderProb(pid, push=true){
           <br>※ 테스트 실행은 코드 작성 후 확인 용도로만 사용하세요. 반복 실행은 서버에 부하를 줄 수 있습니다.
         </div>
         <textarea id="code-ta" spellcheck="false">${code}</textarea>
+        <div id="ta-display" style="display:none;align-items:center;gap:10px;padding:.5rem .8rem;margin-bottom:.5rem;background:#1a1a2e;border-radius:8px;border:2px solid #e94560">
+          <span style="font-size:11px;font-weight:600;color:#e94560;letter-spacing:.05em">⏱ TIME ATTACK</span>
+          <span id="ta-clock" style="font-family:'Menlo','Consolas',monospace;font-size:22px;font-weight:700;color:#fff;letter-spacing:.05em">00:00</span>
+          <button onclick="stopTimeAttack()" style="margin-left:auto;font-size:11px;padding:2px 8px;color:#e94560;border:1px solid #e94560;background:none;border-radius:4px;cursor:pointer">종료</button>
+        </div>
         <div class="btn-row">
           ${p.noSubmit ? '<button class="primary" id="sub-btn" onclick="doSubmit()" style="background:var(--link);border-color:var(--link)" title="제출 순위에 반영됩니다 (성적 무관)">제출 (순위 반영)</button>' : '<button class="primary" id="sub-btn" onclick="doSubmit()">제출</button>'}
           <button id="test-btn" onclick="doTest()">테스트 실행</button>
           <button onclick="doReset()">초기화</button>
+          <button id="ta-btn" onclick="startTimeAttack()" style="margin-left:auto;font-size:12px;color:#e94560;border-color:#e94560" title="타임어택: 복붙 차단 후 타이머 시작">⏱ 타임어택</button>
         </div>
         <details style="margin-bottom:.75rem;font-size:12px;color:var(--text3)">
           <summary style="cursor:pointer;user-select:none;list-style:none;display:flex;align-items:center;gap:4px">
@@ -1648,6 +1656,49 @@ async function doTest(){
 function getCode(){
   return window._cm ? window._cm.getValue() : ($('code-ta')?.value || code);
 }
+/* ── 타임어택 ── */
+function _taFmt(sec){
+  const h = Math.floor(sec/3600), m = Math.floor((sec%3600)/60), s = sec%60;
+  return h > 0
+    ? `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`
+    : `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+function _blockPaste(e){ e.preventDefault(); return false; }
+function startTimeAttack(){
+  if (_taActive) return;
+  if (!confirm('타임어택을 시작하면 코드 붙여넣기(Ctrl+V)가 차단됩니다.\n타이머는 종료 버튼을 누를 때까지 계속 흘러갑니다.\n\n시작하시겠습니까?')) return;
+  _taActive = true; _taStart = Date.now();
+  // CodeMirror paste 차단
+  if (window._cm) window._cm.on('paste', _blockPaste);
+  // 일반 paste 이벤트 차단
+  document.addEventListener('paste', _blockPaste, true);
+  // UI 전환
+  const disp = document.getElementById('ta-display');
+  const btn  = document.getElementById('ta-btn');
+  if (disp) disp.style.display = 'flex';
+  if (btn)  btn.style.display  = 'none';
+  // 타이머 tick
+  _taTimer = setInterval(() => {
+    const el = document.getElementById('ta-clock');
+    if (el) el.textContent = _taFmt(Math.floor((Date.now() - _taStart) / 1000));
+  }, 1000);
+}
+function stopTimeAttack(){
+  if (!_taActive) return;
+  clearInterval(_taTimer); _taTimer = null;
+  const elapsed = Math.floor((Date.now() - _taStart) / 1000);
+  _taActive = false; _taStart = null;
+  if (window._cm) window._cm.off('paste', _blockPaste);
+  document.removeEventListener('paste', _blockPaste, true);
+  const disp = document.getElementById('ta-display');
+  const btn  = document.getElementById('ta-btn');
+  if (disp) disp.style.display = 'none';
+  if (btn)  btn.style.display  = '';
+  alert(`타임어택 종료\n소요 시간: ${_taFmt(elapsed)}`);
+}
+// 문제 페이지 이탈 시 타이머 정리
+function _taCleanup(){ if(_taActive){ clearInterval(_taTimer); _taTimer=null; _taActive=false; _taStart=null; document.removeEventListener('paste',_blockPaste,true); } }
+
 function doReset(){
   const s = (_curProb && _curProb.starter) ? _curProb.starter : STARTER;
   code = s;
