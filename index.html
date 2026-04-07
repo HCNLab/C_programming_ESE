@@ -700,7 +700,7 @@ PROBLEMS.push(
   {
     id:'r23', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'임베디드 레지스터 시뮬레이터',
-    desc:'8비트 하드웨어 레지스터를 시뮬레이션하라.<br>비트 상수는 각각 별도 <code>#define</code>으로 정의한다 (<code>#define</code>은 콤마로 이어 쓸 수 없음):<br><code>#define BIT_POWER  0</code><br><code>#define BIT_READY  1</code><br><code>#define BIT_SENSOR 2</code><br><code>#define BIT_MOTOR  3</code><br><code>#define BIT_ERROR  7</code><br>SET: <code>reg |= (1 &lt;&lt; BIT_X)</code> · CLEAR: <code>reg &amp;= ~(1 &lt;&lt; BIT_X)</code> · TOGGLE: <code>reg ^= (1 &lt;&lt; BIT_X)</code> · CHECK: <code>reg &amp; (1 &lt;&lt; BIT_X)</code><br>각 단계에서 <code>printf("%-18s 0x%02X  ", label, reg)</code> 후 비트 7→0 반복문으로 2진수 출력.',
+    desc:'8비트 하드웨어 레지스터를 시뮬레이션하라.<br>비트 상수는 각각 별도 <code>#define</code>으로 정의한다 (<code>#define</code>은 콤마로 이어 쓸 수 없음):<br><code>#define BIT_POWER  0</code><br><code>#define BIT_READY  1</code><br><code>#define BIT_SENSOR 2</code><br><code>#define BIT_MOTOR  3</code><br><code>#define BIT_ERROR  7</code><br>SET: <code>reg |= (1 &lt;&lt; BIT_X)</code> · CLEAR: <code>reg &amp;= ~(1 &lt;&lt; BIT_X)</code> · TOGGLE: <code>reg ^= (1 &lt;&lt; BIT_X)</code> · CHECK: <code>reg &amp; (1 &lt;&lt; BIT_X)</code><br>각 단계에서 <code>printf("%-18s 0x%02X  ", label, reg)</code> 후 비트 7→0 반복문으로 2진수 출력.<br>💡 지금은 레이블을 각 <code>printf</code>에 직접 써야 하지만, 8주차 배열을 배우고 나면 훨씬 간결하게 만들 수 있습니다. 나중에 다시 도전해보세요!',
     input_desc:'없음 (입력 불필요)',
     output_desc:'각 연산 후 레지스터 상태를 출력한다. 레이블은 %-18s (18칸 좌정렬) 후 <code> 0x%02X  </code> + 8비트 2진수.',
     ex_in:'',
