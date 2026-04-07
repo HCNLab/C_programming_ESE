@@ -141,6 +141,13 @@ body.dark .CodeMirror-focused{border-color:#888}
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 <body>
+<button id="theme-fab" onclick="toggleTheme()" title="테마 전환"
+  style="position:fixed;top:14px;right:16px;z-index:9000;display:flex;align-items:center;gap:5px;
+    font-size:12px;font-weight:600;color:var(--text3);background:var(--surface);
+    border:1px solid var(--border);border-radius:20px;padding:5px 11px;cursor:pointer;
+    box-shadow:0 1px 4px var(--shadow)">
+  <span id="theme-fab-icon">🌙</span><span>테마</span>
+</button>
 <div class="wrap"><div id="app"></div></div>
 <script>
 /* ============================================================
@@ -154,6 +161,7 @@ const NOTICE = '6주차 과제가 업로드됐습니다. 마감일을 확인하�
 
 // 관리자 이메일 (이 이메일로 로그인 시 관리자 패널 표시)
 const ADMIN_EMAILS = ['khwon.public@gmail.com'];
+const TA_EMAILS    = ['ghkdwndhr227@inu.ac.kr'];
 
 /* ── 랜덤 테스트케이스 생성기 ── */
 function ri(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
@@ -888,11 +896,14 @@ function toggleTheme(){
   const dark = document.body.classList.toggle('dark');
   localStorage.setItem('oj_theme', dark ? 'dark' : 'light');
   if (window._cm) window._cm.setOption('theme', dark ? 'dracula' : 'default');
+  const fab = document.getElementById('theme-fab-icon');
+  if (fab) fab.textContent = dark ? '☀️' : '🌙';
   if (view === 'home') renderHome(false);
   else if (view === 'problem') renderProb(curPid, false);
 }
 
 function isAdmin(){ return firebaseUser && ADMIN_EMAILS.includes(firebaseUser.email); }
+function isTA()   { return firebaseUser && TA_EMAILS.includes(firebaseUser.email); }
 
 function userBar(){
   const isDark = document.body.classList.contains('dark');
@@ -918,8 +929,6 @@ function renderHome(push=true){
     groups[w].push(p);
   });
   // 유저 환영 카드
-  const _isDark = document.body.classList.contains('dark');
-  const _themeBtn = `<button onclick="toggleTheme()" title="테마 전환" style="font-size:15px;background:none;border:none;cursor:pointer;padding:2px 4px;line-height:1">${_isDark?'☀️':'🌙'}</button>`;
   const userCardHtml = (() => {
     if (!firebaseUser) return `
       <div style="font-size:13px;color:var(--text3);margin-bottom:.7rem;line-height:1.5">로그인 후<br>과제를 제출하세요</div>
@@ -933,6 +942,11 @@ function renderHome(push=true){
       <div style="font-size:14px;font-weight:700;color:#D85A30">관리자</div>
       <div style="font-size:12px;color:var(--text2);margin:.25rem 0 .7rem;line-height:1.5">원경호 교수님<br>환영합니다</div>
       <button onclick="renderAdmin()" style="font-size:12px;padding:5px 0;color:#D85A30;border:1px solid #D85A30;font-weight:600;width:100%;border-radius:5px;cursor:pointer;background:none;margin-bottom:.4rem">관리자 패널</button>
+      <button onclick="doLogout()" class="link-btn" style="font-size:11px;color:var(--text5)">로그아웃</button>`;
+    if (isTA()) return `
+      <div style="font-size:22px;margin-bottom:.3rem">🧑‍💻</div>
+      <div style="font-size:14px;font-weight:700;color:var(--link)">TA</div>
+      <div style="font-size:12px;color:var(--text2);margin:.25rem 0 .7rem;line-height:1.5">황주옥님<br>환영합니다</div>
       <button onclick="doLogout()" class="link-btn" style="font-size:11px;color:var(--text5)">로그아웃</button>`;
     const parts = username.split('_');
     const sid = parts[0] || '';
@@ -1159,7 +1173,7 @@ function renderHome(push=true){
           <div class="how-step"><span class="step-num">5</span><span>완성 후 <b>제출</b> 클릭 &nbsp;→&nbsp; 제출 완료 ✓ 확인</span></div>
         </div>
       </div>
-      <div class="how-to-user">${userCardHtml}<div style="margin-top:.5rem">${_themeBtn}</div></div>
+      <div class="how-to-user">${userCardHtml}</div>
     </div>
 
     <div class="layout">
@@ -1933,7 +1947,10 @@ window.addEventListener('popstate', function(e){
 });
 history.replaceState({view:'home'}, '', ' ');
 // Apply saved theme
-(function(){ const t=localStorage.getItem('oj_theme'); if(t==='dark') document.body.classList.add('dark'); })();
+(function(){
+  const t=localStorage.getItem('oj_theme');
+  if(t==='dark'){ document.body.classList.add('dark'); const f=document.getElementById('theme-fab-icon'); if(f) f.textContent='☀️'; }
+})();
 // 초기 렌더링은 onAuthStateChanged 콜백에서 수행
 fetchSubmitCounts();
 </script>
