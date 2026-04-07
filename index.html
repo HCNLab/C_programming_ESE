@@ -58,7 +58,7 @@ button.primary:hover{background:var(--text6)}
 .section-lbl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.3rem;margin-top:.85rem}
 .section-lbl:first-child{margin-top:0}
 .body-text{font-size:14px;line-height:1.7;color:var(--text)}
-.io-box{font-family:'Menlo','Consolas',monospace;font-size:13px;padding:.55rem .8rem;background:var(--surface3);border:1px solid var(--border);border-radius:8px;white-space:pre-wrap;word-break:break-all;color:var(--text)}
+.io-box{font-family:'Menlo','Consolas',monospace;font-size:13px;padding:.55rem .8rem;background:var(--surface3);border:1px solid var(--border);border-radius:8px;white-space:pre-wrap;word-break:break-word;color:var(--text)}
 textarea{width:100%;min-height:200px;font-family:'Menlo','Consolas',monospace;font-size:13px;padding:.75rem;border:1px solid var(--border2);border-radius:8px;background:var(--surface);color:var(--text);resize:vertical;outline:none;line-height:1.6;margin-bottom:.75rem}
 textarea:focus{border-color:var(--text3)}
 .btn-row{display:flex;gap:8px;margin-bottom:1rem}
@@ -1437,8 +1437,11 @@ function renderResults(){
         perf = `<div class="tc-perf">${r.time ? r.time+'s' : ''}${r.time && r.memory ? ' · ' : ''}${r.memory ? r.memory+'KB' : ''}</div>`;
       if (r.stdout !== undefined){
         const inputPreview = (r.input||'').replace(/\n/g,' / ').slice(0,40);
+        const isMulti = (r.stdout||'').includes('\n');
         detail = (inputPreview ? `<div class="tc-detail">입력: <code>${inputPreview}</code></div>` : '')
-               + `<div class="tc-detail">출력: <code>${r.stdout||'(없음)'}</code></div>`;
+               + (isMulti
+                  ? `<div class="tc-detail">출력:<br><code style="display:block;white-space:pre-wrap;margin-top:2px;padding:4px 6px;background:var(--surface3);border-radius:4px">${r.stdout||'(없음)'}</code></div>`
+                  : `<div class="tc-detail">출력: <code>${r.stdout||'(없음)'}</code></div>`);
       }
     } else {
       cls = 'tc-fail';
@@ -1447,8 +1450,17 @@ function renderResults(){
         detail = `<div class="tc-detail">${r.detail}</div>`;
       else if (r.stdout !== undefined){
         const inputPreview = (r.input||'').replace(/\n/g,' / ').slice(0,40);
+        const isMultiOut = (r.stdout||'').includes('\n');
+        const isMultiExp = (r.expected||'').includes('\n');
+        const outHtml = isMultiOut
+          ? `<code style="display:block;white-space:pre-wrap;margin-top:2px;padding:4px 6px;background:var(--surface3);border-radius:4px">${r.stdout||'(없음)'}</code>`
+          : `<code>${r.stdout||'(없음)'}</code>`;
+        const expHtml = isMultiExp
+          ? `<code style="display:block;white-space:pre-wrap;margin-top:2px;padding:4px 6px;background:var(--accent-bg);border-radius:4px">${r.expected}</code>`
+          : `<code>${r.expected}</code>`;
         detail = `<div class="tc-detail">입력: <code>${inputPreview}</code></div>
-                  <div class="tc-detail">출력: <code>${r.stdout||'(없음)'}</code>&nbsp;&nbsp;기댓값: <code>${r.expected}</code></div>`;
+                  <div class="tc-detail">출력: ${outHtml}</div>
+                  <div class="tc-detail">기댓값: ${expHtml}</div>`;
       }
     }
     return `<div class="tc-row ${cls}">
