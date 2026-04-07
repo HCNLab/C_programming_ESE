@@ -635,6 +635,7 @@ PROBLEMS.push(
     id:'r19', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'학생 성적표',
     desc:'학생 이름과 3개 과목 점수를 입력받아 형식에 맞게 출력하라.<br>힌트: Name 행은 <code>printf("Name: %15s\\n", name)</code> (우측정렬), 과목/합계/평균 행은 <code>%-15s %8d</code> / <code>%-15s %8.2f</code>, 평균 계산 시 <code>(double)</code> 형변환 사용',
+    starter:'#define _CRT_SECURE_NO_WARNINGS\n#include <stdio.h>\n\nint main(void)\n{\n    char name[50];  // 문자열(이름) 저장용 배열\n    int s1, s2, s3;\n\n    scanf("%s %d %d %d", name, &s1, &s2, &s3);  // 문자열은 & 없이\n\n    // 여기에 출력 코드를 작성하세요\n\n    return 0;\n}\n',
     input_desc:'이름(공백 없는 문자열)과 점수 3개를 입력한다.',
     output_desc:'아래 형식에 맞게 출력한다.',
     ex_in:'Alice 85 92 78',
