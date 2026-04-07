@@ -91,6 +91,8 @@ textarea:focus{border-color:var(--text3)}
 .layout{display:grid;grid-template-columns:1fr;gap:1.25rem}
 @media(min-width:960px){.layout{grid-template-columns:1fr 300px}}
 @media(max-width:959px){.sidebar{order:-1}}
+.prob-layout{display:flex;flex-direction:column;gap:1rem}
+@media(min-width:960px){.prob-layout{flex-direction:row}.prob-layout>.prob-pane{order:2;flex:0 0 420px;min-width:0;max-height:calc(100vh - 120px);overflow-y:auto;position:sticky;top:80px}.prob-layout>.code-pane{order:1;flex:1;min-width:0}}
 .sidebar{display:flex;flex-direction:column;gap:.85rem}
 .sidebar-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.9rem 1rem}
 .sidebar-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.6rem}
@@ -1119,31 +1121,36 @@ function renderProb(pid, push=true){
         &nbsp;·&nbsp; <span style="color:var(--link);cursor:pointer" onclick="renderHistory()">이력 보기</span>
         ${hist[0].code ? `&nbsp;·&nbsp; <span style="color:var(--link);cursor:pointer" onclick="showCode(window._probLastCode,window._probLastCodeTitle,window._probLastCodeTs)">최근 제출 코드 보기</span>` : ''}</div>`;
     })() : ''}
-    <div class="card" style="margin-bottom:1rem">
-      <div class="section-lbl">문제</div>
-      <div class="body-text">${p.desc}</div>
-      <div class="section-lbl">입력</div>
-      <div class="body-text">${p.input_desc}</div>
-      <div class="section-lbl">출력</div>
-      <div class="body-text">${p.output_desc}</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
-        <div><div class="section-lbl">예제 입력</div><div class="io-box">${p.ex_in}</div></div>
-        <div><div class="section-lbl">예제 출력</div><div class="io-box">${p.ex_out.replace(/\n/g, '<span style="color:var(--text4)">↵</span>\n')}</div></div>
+    <div class="prob-layout">
+      <div class="prob-pane">
+        <div class="card">
+          <div class="section-lbl">문제</div>
+          <div class="body-text">${p.desc}</div>
+          <div class="section-lbl">입력</div>
+          <div class="body-text">${p.input_desc}</div>
+          <div class="section-lbl">출력</div>
+          <div class="body-text">${p.output_desc}</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+            <div><div class="section-lbl">예제 입력</div><div class="io-box">${p.ex_in}</div></div>
+            <div><div class="section-lbl">예제 출력</div><div class="io-box">${p.ex_out.replace(/\n/g, '<span style="color:var(--text4)">↵</span>\n')}</div></div>
+          </div>
+        </div>
       </div>
-      
-    </div>
-    <div class="section-lbl" style="margin-top:1.25rem;margin-bottom:.4rem">코드 작성</div>
-    <div style="font-size:12px;color:var(--text3);margin-bottom:.6rem;padding:.5rem .75rem;background:var(--warn-bg);border-radius:6px;border:1px solid var(--warn-border)">
-      출력은 예제 출력과 <b>완전히 동일</b>해야 합니다. <code>printf("입력하세요: ")</code> 같은 안내 문구 없이 결과 값만 출력하세요.
-      ${GEN[p.id] ? '<br>테스트는 <b>매번 다른 랜덤 입력값</b>으로 실행됩니다. 테스트를 통과해도 모든 경우에 대응하지 못할 수 있으니, 다양한 케이스를 직접 고려해보세요.' : ''}
-    </div>
-    <textarea id="code-ta" spellcheck="false">${code}</textarea>
-    <div class="btn-row">
-      ${p.noSubmit ? '<button class="primary" id="sub-btn" onclick="doSubmit()" style="background:var(--link);border-color:var(--link)" title="제출 순위에 반영됩니다 (성적 무관)">제출 (순위 반영)</button>' : '<button class="primary" id="sub-btn" onclick="doSubmit()">제출</button>'}
-      <button id="test-btn" onclick="doTest()">테스트 실행</button>
-      <button onclick="doReset()">초기화</button>
-    </div>
-    <div id="results"></div>`;
+      <div class="code-pane">
+        <div class="section-lbl" style="margin-bottom:.4rem">코드 작성</div>
+        <div style="font-size:12px;color:var(--text3);margin-bottom:.6rem;padding:.5rem .75rem;background:var(--warn-bg);border-radius:6px;border:1px solid var(--warn-border)">
+          출력은 예제 출력과 <b>완전히 동일</b>해야 합니다. <code>printf("입력하세요: ")</code> 같은 안내 문구 없이 결과 값만 출력하세요.
+          ${GEN[p.id] ? '<br>테스트는 <b>매번 다른 랜덤 입력값</b>으로 실행됩니다. 테스트를 통과해도 모든 경우에 대응하지 못할 수 있으니, 다양한 케이스를 직접 고려해보세요.' : ''}
+        </div>
+        <textarea id="code-ta" spellcheck="false">${code}</textarea>
+        <div class="btn-row">
+          ${p.noSubmit ? '<button class="primary" id="sub-btn" onclick="doSubmit()" style="background:var(--link);border-color:var(--link)" title="제출 순위에 반영됩니다 (성적 무관)">제출 (순위 반영)</button>' : '<button class="primary" id="sub-btn" onclick="doSubmit()">제출</button>'}
+          <button id="test-btn" onclick="doTest()">테스트 실행</button>
+          <button onclick="doReset()">초기화</button>
+        </div>
+        <div id="results"></div>
+      </div>
+    </div>`;
 
   /* CodeMirror 초기화 */
   const ta = $('code-ta');
