@@ -1165,6 +1165,13 @@ function renderHome(push=true){
               ? `<span style="font-size:10px;color:var(--text8)">${_submitCounts[p.id]}명 제출</span>`
               : ''}
             ${getRatingHtml(p.id)}
+            ${(() => {
+              const first = _ratings[p.id]?.firstSubmitter;
+              if (!first) return '';
+              const myShort = username ? (username.split('_')[1] || username) : null;
+              const isMe = myShort && first === myShort;
+              return `<span style="font-size:10px;${isMe?'color:#f5a623;font-weight:700':'color:var(--text5)'}">🎖️ ${first}</span>`;
+            })()}
           </div>
         </div>
       </div>`;
@@ -1598,6 +1605,21 @@ async function doSubmit(){
   setTimeout(fetchSubmitCounts, 2000);
   setTimeout(() => showRatingDialog(p.id), 600);
 
+  // 첫 제출 체크
+  const isFirst = !_submitCounts[p.id];
+  if (isFirst && username) {
+    const sname = username.split('_')[1] || username;
+    try {
+      const ref = db.collection('ratings').doc(p.id);
+      const snap = await ref.get();
+      if (!snap.exists || !snap.data().firstSubmitter) {
+        await ref.set({ firstSubmitter: sname }, { merge: true });
+        _ratings[p.id] = { ...(_ratings[p.id]||{}), firstSubmitter: sname };
+        showFirstBadge();
+      }
+    } catch(e) {}
+  }
+
   // 결과 영역에 제출 완료 표시
   if ($('results')){
     const lateTag = isLate ? ' &nbsp;<span style="color:var(--error);font-size:12px;font-weight:600">[지각]</span>' : '';
@@ -1747,6 +1769,24 @@ async function doRate(pid, score){
     const r = _ratings[pid] || { sum:0, count:0 };
     _ratings[pid] = { sum: r.sum + score, count: r.count + 1 };
   } catch(e) { console.warn('rating error', e); }
+}
+
+function showFirstBadge(){
+  const el = document.createElement('div');
+  el.style.cssText = `position:fixed;top:24px;left:50%;transform:translateX(-50%) scale(.8);
+    z-index:9999;background:linear-gradient(135deg,#f5a623,#f7c948);color:#fff;
+    font-size:14px;font-weight:700;padding:.6rem 1.4rem;border-radius:30px;
+    box-shadow:0 4px 20px rgba(245,166,35,.5);opacity:0;
+    transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap`;
+  el.textContent = '🎖️ 최초 제출!';
+  document.body.appendChild(el);
+  requestAnimationFrame(() => {
+    el.style.opacity = '1'; el.style.transform = 'translateX(-50%) scale(1)';
+  });
+  setTimeout(() => {
+    el.style.opacity = '0'; el.style.transform = 'translateX(-50%) scale(.8)';
+    setTimeout(() => el.remove(), 300);
+  }, 2800);
 }
 
 function showRatingDialog(pid){
