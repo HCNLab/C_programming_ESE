@@ -103,6 +103,8 @@ textarea:focus{border-color:var(--text3)}
 .view-toggle{display:flex;gap:4px;margin-left:auto}
 .view-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:12px;cursor:pointer;color:var(--text3)}
 .view-btn.active{background:var(--text);color:var(--surface);border-color:transparent}
+.wf-btn{font-size:12px;padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text3);cursor:pointer}
+.wf-btn.active{background:var(--text);color:var(--bg);border-color:var(--text);font-weight:600}
 .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
 .week-section{margin-bottom:1.5rem}
 .list-view .card-grid{display:flex;flex-direction:column;gap:.4rem}
@@ -252,7 +254,7 @@ function buildCases(pid){
 const PROBLEMS = [
   /* ── Week 5B Practice ─────────────────────────── */
   {
-    id:'p1', week:'6주차 Practice', title:'Calculator with switch',
+    id:'p1', week:'Week 6: Control flow - switch, if-else if', title:'Calculator with switch',
     desc:'한 줄로 <code>a op b</code>를 입력받아 switch(op)로 연산 결과를 출력하시오. 연산자: <code>+</code> <code>-</code> <code>*</code> <code>/</code>. 0으로 나누기는 <code>/</code> 케이스 안에서 if로 처리.',
     input_desc:'한 줄에 <code>a op b</code> 형식으로 주어진다. (예: <code>5 + 3</code>)',
     output_desc:'결과를 소수점 둘째 자리까지 출력 (숫자만, 레이블 없음):<br><code>5 + 3</code> → <code>8.00</code><br><code>10 - 4</code> → <code>6.00</code><br><code>10 / 3</code> → <code>3.33</code><br>0으로 나누기: <code>5 / 0</code> → <code>Error: division by zero</code>',
@@ -265,7 +267,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'p2', week:'6주차 Practice', title:'Season Finder',
+    id:'p2', week:'Week 6: Control flow - switch, if-else if', title:'Season Finder',
     desc:'월 번호(1-12)를 입력받아 계절을 출력하시오. <b>fall-through</b>를 이용한 switch로 작성할 것.<br>계절 매핑: 3, 4, 5월 → Spring &nbsp; 6, 7, 8월 → Summer &nbsp; 9, 10, 11월 → Autumn &nbsp; 12, 1, 2월 → Winter',
     input_desc:'첫째 줄에 월 번호(1-12)가 주어진다.',
     output_desc:'해당 계절을 출력한다: <code>Spring</code> / <code>Summer</code> / <code>Autumn</code> / <code>Winter</code><br>범위 외: <code>Invalid month</code>',
@@ -278,7 +280,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'p3', week:'6주차 Practice', title:'Vending Machine',
+    id:'p3', week:'Week 6: Control flow - switch, if-else if', title:'Vending Machine',
     desc:'자판기 프로그램을 작성하시오.<br>메뉴: 1. Coffee (1500원) &nbsp; 2. Tea (1200원) &nbsp; 3. Juice (2000원) &nbsp; 4. Water (800원)<br>switch로 가격을 설정하고, if로 투입 금액을 확인할 것.<br><b>주의:</b> 메뉴 목록이나 입력 안내 문자는 출력하지 않는다. 결과 한 줄만 출력.',
     input_desc:'첫째 줄에 선택 번호, 둘째 줄에 투입 금액(원)이 주어진다.',
     output_desc:'충분: <code>Dispensing... Change: N won</code><br>부족: <code>Insufficient! Need N more won</code><br>잘못된 선택: <code>Invalid selection!</code>',
@@ -291,7 +293,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'p4', week:'6주차 Practice', title:'Grade Classifier',
+    id:'p4', week:'Week 6: Control flow - switch, if-else if', title:'Grade Classifier',
     desc:'점수(0-100)를 입력받아 학점을 출력하시오. <code>switch(score / 10)</code>을 이용할 것.<br>90~100 → Grade: A &nbsp; 80~89 → Grade: B &nbsp; 70~79 → Grade: C &nbsp; 60~69 → Grade: D &nbsp; 0~59 → Grade: F<br>Hint: score=100일 때 score/10은 10',
     input_desc:'한 줄에 점수(정수)가 주어진다.',
     output_desc:'형식: <code>Grade: A</code> / <code>Grade: B</code> / <code>Grade: C</code> / <code>Grade: D</code> / <code>Grade: F</code><br>범위 외(음수 또는 100 초과): <code>Invalid score</code>',
@@ -306,8 +308,8 @@ const PROBLEMS = [
 
   /* ── Week 5B Challenge ────────────────────────── */
   {
-    id:'c1', week:'6주차 Practice', title:'Tax Bracket Calculator',
-    desc:'연소득(원, 정수)을 입력받아 누진세를 계산하시오.<br>세율 구간 (각 구간 금액에만 해당 세율 적용):<br>~14,000,000 → 6% / ~50,000,000 → 15% / ~88,000,000 → 24% / 초과 → 35%<br>예: 60,000,000원 = 14M×6% + 36M×15% + 10M×24% = 8,640,000원 (60M×24% 아님!)',
+    id:'c1', week:'Week 6: Control flow - switch, if-else if', title:'Tax Bracket Calculator',
+    desc:'연소득(원, 정수)을 입력받아 누진세를 계산하시오.<br>세율 구간 (각 구간 금액에만 해당 세율 적용):<br>~14,000,000 → 6% / ~50,000,000 → 15% / ~88,000,000 → 24% / 초과 → 35%<br>예: 60,000,000원 = 14M×6% + 36M×15% + 10M×24% = 8,640,000원 (60M×24% 아님!)<br><b>주의:</b> if-else if 체인으로 작성할 것 (switch 사용 불가).',
     input_desc:'첫째 줄에 연소득(원, 정수)이 주어진다.',
     output_desc:'형식: <code>Tax: N won</code><br><code>14000000</code> → <code>Tax: 840000 won</code><br><code>60000000</code> → <code>Tax: 8640000 won</code><br><code>100000000</code> → <code>Tax: 19560000 won</code>',
     ex_in:'60000000', ex_out:'Tax: 8640000 won', deadline:'2026-04-13T23:59',
@@ -319,7 +321,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'c2', week:'6주차 Practice', title:'Blackjack Hand Evaluator',
+    id:'c2', week:'Week 6: Control flow - switch, if-else if', title:'Blackjack Hand Evaluator',
     desc:'카드 문자 2개를 입력받아 블랙잭 핸드 점수를 계산하시오.<br>카드 값: <code>A</code>=11 &nbsp; <code>2-9</code>=면 값 &nbsp; <code>T, J, Q, K</code>=10 (fall-through 활용)<br>대소문자 모두 처리. 숫자 카드는 <code>c - \'0\'</code> 트릭 사용.',
     input_desc:'첫째 줄에 Card 1, 둘째 줄에 Card 2 문자를 입력한다. (A, 2-9, T, J, Q, K)',
     output_desc:'<code>Card 1: N</code><br><code>Card 2: N</code><br>합계 21: <code>Total: 21 (Blackjack!)</code><br>합계 &gt;21: <code>Total: N (Bust)</code><br>그 외: <code>Total: N</code><br>유효하지 않은 카드: <code>Invalid card</code>',
@@ -332,7 +334,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'c3', week:'6주차 Practice', title:'Membership Discount Calculator',
+    id:'c3', week:'Week 6: Control flow - switch, if-else if', title:'Membership Discount Calculator',
     desc:'멤버십 등급과 구매 금액을 입력받아 할인 금액과 최종 가격을 출력하시오.<br>등급별 기본 할인율: 1.Bronze 5% &nbsp; 2.Silver 10% &nbsp; 3.Gold 15% &nbsp; 4.Platinum 20%<br>구매 금액이 100,000원 이상이면 추가 5% 할인 적용<br>잘못된 등급 번호: <code>Invalid membership</code>',
     input_desc:'첫째 줄에 멤버십 등급(1-4), 둘째 줄에 구매 금액(원, 양의 정수)이 주어진다.',
     output_desc:'<code>Discount: X%</code><br><code>Final: N won</code><br>예: 등급 1, 50000원 → <code>Discount: 5%</code> / <code>Final: 47500 won</code><br>예: 등급 3, 150000원 → <code>Discount: 20%</code> / <code>Final: 120000 won</code>',
@@ -345,7 +347,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'c4', week:'6주차 Practice', title:'Unit Converter',
+    id:'c4', week:'Week 6: Control flow - switch, if-else if', title:'Unit Converter',
     desc:'switch로 단위 변환을 구현하시오.<br>1. km → mi &nbsp; 2. °C → °F &nbsp; 3. kg → lb &nbsp; 4. cm → in<br>변환 공식: mi=km×0.621371, F=C×9/5+32, lb=kg×2.20462, in=cm÷2.54<br><b>주의:</b> 메뉴 목록이나 입력 안내 문자 출력 없이 변환 결과 한 줄만 출력.',
     input_desc:'첫째 줄에 메뉴 번호(1-4), 둘째 줄에 변환할 값(double)이 주어진다.',
     output_desc:'소수점 둘째 자리로 출력. 형식:<br><code>50.00 km = 31.07 mi</code><br><code>20.00 C = 68.00 F</code><br><code>70.00 kg = 154.32 lb</code><br><code>100.00 cm = 39.37 in</code><br>잘못된 번호: <code>Invalid!</code>',
@@ -358,7 +360,7 @@ const PROBLEMS = [
     ]
   },
   {
-    id:'c5', week:'6주차 Practice', title:'Mini ATM System',
+    id:'c5', week:'Week 6: Control flow - switch, if-else if', title:'Mini ATM System',
     desc:'PIN(1234)을 검증하고 메뉴를 처리하는 ATM을 작성하시오. 초기 잔액: 100,000원. switch로 메뉴 처리, if로 검증.<br><b>각 메뉴 출력 형식:</b><br>1. 잔액 확인 → <code>Balance: N won</code><br>2. 입금 (금액 입력) → <code>Balance: N won</code> (잔액만 출력)<br>3. 출금 (금액 입력) → 성공: <code>Dispensed N won</code> 후 <code>Balance: N won</code> / 부족: <code>Insufficient!</code> 후 <code>Balance: N won</code><br>4. 종료 → <code>Goodbye!</code>',
     input_desc:'첫째 줄: PIN. 올바르면 둘째 줄: 메뉴(1-4). 메뉴 2·3이면 셋째 줄: 금액.',
     output_desc:'PIN 오류: <code>Wrong PIN!</code><br>메뉴 1 (잔액): <code>Balance: N won</code><br>메뉴 2 (입금 후): <code>Balance: N won</code><br>메뉴 3 성공: <code>Dispensed N won</code> → <code>Balance: N won</code><br>메뉴 3 부족: <code>Insufficient!</code> → <code>Balance: N won</code><br>메뉴 4: <code>Goodbye!</code>',
@@ -1050,7 +1052,16 @@ function renderHome(push=true){
             </button></div>`
         : '');
 
-  const sectionsHtml = Object.keys(groups).map(w => {
+  const weekKeys = Object.keys(groups);
+  const filterHtml = `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.8rem">
+    <button class="wf-btn${!window._weekFilter?' active':''}" data-wf="" onclick="setWeekFilter('')">전체</button>
+    ${weekKeys.map(w => {
+      const short = w.split(/\s*[:(]/)[0].trim();
+      return `<button class="wf-btn${window._weekFilter===w?' active':''}" data-wf="${w.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" onclick="setWeekFilter(this.dataset.wf)">${short}</button>`;
+    }).join('')}
+  </div>`;
+
+  const sectionsHtml = weekKeys.map(w => {
     const cards = groups[w].map(p => {
       const open = isOpen(p);
       const entries = hist[p.id] || [];
@@ -1077,7 +1088,7 @@ function renderHome(push=true){
         </div>
       </div>`;
     }).join('');
-    return `<div class="week-section">
+    return `<div class="week-section" data-week="${w.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}">
       <div class="week-label">${w}</div>
       <div class="card-grid">${cards}</div>
     </div>`;
@@ -1123,6 +1134,7 @@ function renderHome(push=true){
           </div>
           <span class="desktop-user-bar">${userBar()}</span>
         </div>
+        ${filterHtml}
         <div id="prob-sections">${sectionsHtml}</div>
       </div>
       <div class="sidebar">
@@ -1764,6 +1776,16 @@ async function renderAdminSubmissions(){
   } catch(e) {
     adminEl.innerHTML = '<p style="color:var(--fail)">제출 데이터를 불러올 수 없습니다. Sheets doGet에 admin 모드가 설정되어 있는지 확인하세요.</p>';
   }
+}
+
+function setWeekFilter(w) {
+  window._weekFilter = w;
+  document.querySelectorAll('.week-section').forEach(el => {
+    el.style.display = (!w || el.dataset.week === w) ? '' : 'none';
+  });
+  document.querySelectorAll('.wf-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.wf === w);
+  });
 }
 
 let _viewMode = 'grid';
