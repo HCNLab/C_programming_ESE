@@ -1483,11 +1483,7 @@ async function doTest(){
   const src = getCode();
   submitting = true;
   const testBtn = $('test-btn');
-  // 랜덤 지연 0~5초: 동시 다수 요청으로 인한 Wandbox 과부하 분산
-  const jitter = Math.floor(Math.random() * 5000);
-  if (testBtn){ testBtn.disabled = true; testBtn.textContent = `대기 중...`; }
-  await new Promise(res => setTimeout(res, jitter));
-  if (testBtn) testBtn.textContent = '실행 중...';
+  if (testBtn){ testBtn.disabled = true; testBtn.textContent = '실행 중...'; }
   // 전체 TC 초기화
   p.cases.forEach(tc => { tcResults[tc.id] = { status:'running' }; });
   renderResults();
