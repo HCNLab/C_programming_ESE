@@ -1691,9 +1691,9 @@ async function doSubmit(){
   setTimeout(fetchSubmitCounts, 2000);
   setTimeout(() => showRatingDialog(p.id), 600);
 
-  // 첫 제출 체크
+  // 첫 제출 체크 (관리자·TA 제외)
   const isFirst = !_submitCounts[p.id];
-  if (isFirst && username) {
+  if (isFirst && username && !isAdmin() && !isTA()) {
     const sname = username.split('_')[1] || username;
     try {
       const ref = db.collection('ratings').doc(p.id);
