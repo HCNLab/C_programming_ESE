@@ -839,7 +839,18 @@ async function runCase(tc, src){
   try{
     let d = await callWandbox(src, tc.input);
     if (!d) return { status:'fail', msg:'채점 서버 오류' };
-    const hasError = d.compiler_error && d.compiler_error.includes('error:');
+    // 서버 과부하 에러 (OCI runtime error 등)는 컴파일 오류로 표시하지 않고 재시도
+    const isServerBusy = d.compiler_error && (
+      d.compiler_error.includes('OCI runtime') ||
+      d.compiler_error.includes('Resource temporarily unavailable') ||
+      d.compiler_error.includes('crun:')
+    );
+    if (isServerBusy) {
+      await new Promise(res => setTimeout(res, 1500 + Math.random()*1500));
+      const d2 = await callWandbox(src, tc.input);
+      if (d2) d = d2;
+    }
+    const hasError = !isServerBusy && d.compiler_error && d.compiler_error.includes('error:');
     if (hasError){
       return { status:'fail', msg:'컴파일 오류',
         detail: d.compiler_error.trim().slice(0, 400) };
