@@ -1369,8 +1369,8 @@ function renderHistory(push=true){
       return `<tr>
         <td style="color:var(--text4);font-size:12px">${i===0?p.week:''}</td>
         <td>${i===0?p.title:''}</td>
-        <td>${scoreCell}</td>
-        <td style="color:var(--text4);font-size:12px">${new Date(e.ts).toLocaleString('ko-KR')}</td>
+        <td style="white-space:nowrap">${scoreCell}</td>
+        <td style="color:var(--text4);font-size:12px;white-space:nowrap">${new Date(e.ts).toLocaleString('ko-KR')}</td>
         <td style="text-align:center">${codeBtn}</td>
       </tr>`;
     }).join('');
@@ -1392,8 +1392,8 @@ function renderHistory(push=true){
         <thead><tr>
           <th style="padding:.5rem 1rem;text-align:left;font-size:12px;font-weight:600;color:var(--text3);background:var(--surface3);border-bottom:1px solid var(--border);width:120px">주차</th>
           <th style="padding:.5rem 1rem;text-align:left;font-size:12px;font-weight:600;color:var(--text3);background:var(--surface3);border-bottom:1px solid var(--border)">문제</th>
-          <th style="padding:.5rem 1rem;text-align:left;font-size:12px;font-weight:600;color:var(--text3);background:var(--surface3);border-bottom:1px solid var(--border);width:110px">점수</th>
-          <th style="padding:.5rem 1rem;text-align:left;font-size:12px;font-weight:600;color:var(--text3);background:var(--surface3);border-bottom:1px solid var(--border)">제출 시각</th>
+          <th style="padding:.5rem 1rem;text-align:left;font-size:12px;font-weight:600;color:var(--text3);background:var(--surface3);border-bottom:1px solid var(--border);width:140px;white-space:nowrap">점수</th>
+          <th style="padding:.5rem 1rem;text-align:left;font-size:12px;font-weight:600;color:var(--text3);background:var(--surface3);border-bottom:1px solid var(--border);white-space:nowrap">제출 시각</th>
           <th style="padding:.5rem 1rem;text-align:left;font-size:12px;font-weight:600;color:var(--text3);background:var(--surface3);border-bottom:1px solid var(--border)"></th>
         </tr></thead>
         <tbody>${rows}</tbody>
