@@ -14,6 +14,7 @@ submissions*.csv
 
 # 강의자료
 lecture_notes/
+PROFESSOR_GUIDE.md
 
 # 학교 마스코트 이미지 (저작권 보호, 웹 공개 금지)
 assets/mascot/
