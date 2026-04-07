@@ -925,10 +925,15 @@ function renderHome(push=true){
   const showAll = window._sidebarAll || false;
   const display = showAll ? upcoming : upcoming.slice(0,5);
   // 리더보드
+  const myName = username ? (username.split('_')[1] || username) : null;
+  const myRankIdx = myName ? _leaderboard.findIndex(item => item.name.includes(myName)) : -1;
+  const myRank = myRankIdx + 1;
+  const showMyRow = myRank > 10;
+
   const leaderboardHtml = _leaderboard.length === 0
     ? `<div style="font-size:12px;color:var(--text4)">아직 제출 데이터 없음</div>`
     : _leaderboard.slice(0,10).map((item, i) => {
-        const isMe = username && item.name.includes(username.split('_')[1] || username);
+        const isMe = myName && item.name.includes(myName);
         const rank = i+1;
         const medal = rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':'';
         return `<div style="display:flex;align-items:center;gap:8px;padding:.35rem 0;
@@ -939,7 +944,13 @@ function renderHome(push=true){
           <div style="font-size:12px;font-weight:600;color:var(--text2)">${item.count}문제</div>
         </div>`;
       }).join('')
-    + (_leaderboard.length > 10 ? `<div style="font-size:11px;color:var(--text4);text-align:center;margin-top:.4rem">총 ${_leaderboard.length}명 참여</div>` : '');
+    + (_leaderboard.length > 10 ? `<div style="font-size:11px;color:var(--text4);text-align:center;margin-top:.4rem">총 ${_leaderboard.length}명 참여</div>` : '')
+    + (showMyRow ? `<div style="display:flex;align-items:center;gap:8px;padding:.35rem .5rem;margin-top:.3rem;
+        background:var(--warn-bg);border-radius:4px;border-top:1px dashed var(--border2)">
+        <div style="font-size:11px;font-weight:600;color:var(--text4);width:16px;text-align:center">${myRank}</div>
+        <div style="flex:1;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${_leaderboard[myRankIdx].name}</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text2)">${_leaderboard[myRankIdx].count}문제</div>
+      </div>` : '');
 
   // 진행률 (과제/연습 분리)
   const assignProbs    = PROBLEMS.filter(p => !p.noSubmit);
@@ -1449,6 +1460,9 @@ async function doSubmit(){
 
   submitting = false;
   if (btn){ btn.disabled = false; btn.textContent = '제출'; }
+
+  // 제출 후 리더보드 갱신
+  setTimeout(fetchSubmitCounts, 2000);
 
   // 결과 영역에 제출 완료 표시
   if ($('results')){
