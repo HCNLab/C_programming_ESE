@@ -840,34 +840,32 @@ async function runCase(tc, src){
     let d = await callWandbox(src, tc.input);
     if (!d) return { status:'fail', msg:'채점 서버 오류' };
     // 서버 과부하 에러 (OCI runtime error 등)는 컴파일 오류로 표시하지 않고 재시도
-    const isServerBusy = d.compiler_error && (
+    let serverBusy = false;
+    if (d.compiler_error && (
       d.compiler_error.includes('OCI runtime') ||
       d.compiler_error.includes('Resource temporarily unavailable') ||
       d.compiler_error.includes('crun:')
-    );
-    if (isServerBusy) {
+    )) {
+      serverBusy = true;
       await new Promise(res => setTimeout(res, 1500 + Math.random()*1500));
       const d2 = await callWandbox(src, tc.input);
       if (d2) d = d2;
     }
-    const hasError = !isServerBusy && d.compiler_error && d.compiler_error.includes('error:');
+    const hasError = d.compiler_error && d.compiler_error.includes('error:') &&
+      !d.compiler_error.includes('OCI runtime') &&
+      !d.compiler_error.includes('crun:');
     if (hasError){
       return { status:'fail', msg:'컴파일 오류',
         detail: d.compiler_error.trim().slice(0, 400) };
-    }
-    // 컴파일 오류 없이 출력이 비어있으면 서버 과부하 가능성 → 1회 재시도
-    if (!d.program_output && !d.compiler_error) {
-      await new Promise(res => setTimeout(res, 1500 + Math.random()*1500));
-      const d2 = await callWandbox(src, tc.input);
-      if (d2) d = d2;
     }
     const stdout = trim(d.program_output || '');
     const exp    = trim(tc.expected);
     if (stdout === exp){
       return { status:'pass', stdout, expected:exp };
     } else {
-      const emptyMsg = stdout === '' ? '서버 혼잡 — 잠시 후 재시도' : '오답';
-      return { status:'fail', msg:emptyMsg, stdout, expected:exp, input:tc.input };
+      // OCI 에러였는데 재시도 후에도 출력 없으면 서버 혼잡, 그 외 빈 출력은 오답
+      const msg = (serverBusy && stdout === '') ? '서버 혼잡 — 잠시 후 재시도' : '오답';
+      return { status:'fail', msg, stdout, expected:exp, input:tc.input };
     }
   } catch { return { status:'fail', msg:'네트워크 오류' }; }
 }
