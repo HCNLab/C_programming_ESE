@@ -1164,6 +1164,7 @@ function renderHome(push=true){
             ${_submitCountsLoaded && _submitCounts[p.id] !== undefined
               ? `<span style="font-size:10px;color:var(--text8)">${_submitCounts[p.id]}명 제출</span>`
               : ''}
+            ${getRatingHtml(p.id)}
           </div>
         </div>
       </div>`;
@@ -1593,8 +1594,9 @@ async function doSubmit(){
   submitting = false;
   if (btn){ btn.disabled = false; btn.textContent = '제출'; }
 
-  // 제출 후 리더보드 갱신
+  // 제출 후 리더보드 갱신 + 별점 다이얼로그
   setTimeout(fetchSubmitCounts, 2000);
+  setTimeout(() => showRatingDialog(p.id), 600);
 
   // 결과 영역에 제출 완료 표시
   if ($('results')){
@@ -1707,6 +1709,66 @@ function doReset(){
   else { const el=$('code-ta'); if(el) el.value=s; }
   tcResults = {};
   renderResults();
+}
+
+/* ── 난이도 별점 ── */
+let _ratings = {};  // { pid: { sum, count } }
+
+async function fetchRatings(){
+  try {
+    const snap = await db.collection('ratings').get();
+    snap.forEach(doc => { _ratings[doc.id] = doc.data(); });
+  } catch(e) {}
+}
+
+function getRatingHtml(pid){
+  const r = _ratings[pid];
+  if (!r || r.count < 1) return '';
+  const avg = (r.sum / r.count).toFixed(1);
+  return `<span style="font-size:10px;color:#f5a623">★ ${avg}</span><span style="font-size:10px;color:var(--text5)">(${r.count})</span>`;
+}
+
+function hoverStars(n){
+  document.querySelectorAll('.rate-star').forEach(el => {
+    el.style.opacity = (!n || Number(el.dataset.s) <= n) ? '1' : '0.25';
+  });
+}
+
+async function doRate(pid, score){
+  document.getElementById('rating-overlay')?.remove();
+  localStorage.setItem('oj_rated_'+pid, score);
+  try {
+    const ref = db.collection('ratings').doc(pid);
+    await db.runTransaction(async t => {
+      const doc = await t.get(ref);
+      if (doc.exists) t.update(ref, { sum: firebase.firestore.FieldValue.increment(score), count: firebase.firestore.FieldValue.increment(1) });
+      else            t.set(ref, { sum: score, count: 1 });
+    });
+    const r = _ratings[pid] || { sum:0, count:0 };
+    _ratings[pid] = { sum: r.sum + score, count: r.count + 1 };
+  } catch(e) { console.warn('rating error', e); }
+}
+
+function showRatingDialog(pid){
+  if (!firebaseUser || localStorage.getItem('oj_rated_'+pid)) return;
+  const overlay = document.createElement('div');
+  overlay.id = 'rating-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;display:flex;align-items:center;justify-content:center;padding:1rem';
+  overlay.innerHTML = `
+    <div style="background:var(--surface);border-radius:14px;padding:1.5rem 2rem;max-width:280px;width:100%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.3)">
+      <div style="font-size:22px;margin-bottom:.4rem">📊</div>
+      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:.3rem">이 문제 난이도는?</div>
+      <div style="font-size:11px;color:var(--text4);margin-bottom:1rem">쉬움 ←————→ 어려움</div>
+      <div style="display:flex;justify-content:center;gap:6px;margin-bottom:1.1rem" onmouseleave="hoverStars(0)">
+        ${[1,2,3,4,5].map(i=>`<span class="rate-star" data-s="${i}" onclick="doRate('${pid}',${i})"
+          onmouseover="hoverStars(${i})"
+          style="font-size:30px;cursor:pointer;opacity:.25;transition:opacity .1s;line-height:1">⭐</span>`).join('')}
+      </div>
+      <button onclick="document.getElementById('rating-overlay').remove()"
+        style="font-size:11px;color:var(--text5);background:none;border:none;cursor:pointer">건너뛰기</button>
+    </div>`;
+  overlay.onclick = e => { if(e.target===overlay) overlay.remove(); };
+  document.body.appendChild(overlay);
 }
 
 /* ── 제출 현황 (Sheets doGet) ── */
@@ -2035,6 +2097,7 @@ history.replaceState({view:'home'}, '', ' ');
 (function(){ const t=localStorage.getItem('oj_theme'); if(t==='dark') document.body.classList.add('dark'); })();
 // 초기 렌더링은 onAuthStateChanged 콜백에서 수행
 fetchSubmitCounts();
+fetchRatings();
 </script>
 
 <!--
