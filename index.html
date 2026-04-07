@@ -76,7 +76,7 @@ textarea:focus{border-color:var(--text3)}
 .tc-perf{font-size:11px;color:var(--text4);font-family:'Menlo',monospace;margin-top:1px}
 .tab{padding:.4rem .9rem;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px;background:var(--surface);color:var(--text3)}
 .tab.active{background:var(--text);color:var(--surface);border-color:transparent}
-.course-header{background:var(--surface);border:none;border-bottom:3px solid var(--text);border-radius:0;padding:1.5rem 1.75rem;margin-bottom:1rem}
+.course-header{background:var(--surface);border:none;border-bottom:3px solid var(--text);border-radius:0;padding:1.5rem 1.75rem;margin-bottom:1rem;position:relative}
 .course-meta{font-size:12px;color:var(--text3);margin-bottom:.5rem;letter-spacing:.02em}
 .course-title{font-size:28px;font-weight:700;letter-spacing:-.5px;margin-bottom:.2rem;line-height:1.2;color:var(--text)}
 .course-code{font-size:13px;color:var(--text4);font-family:'Menlo','Consolas',monospace;margin-bottom:.75rem}
@@ -141,13 +141,6 @@ body.dark .CodeMirror-focused{border-color:#888}
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 <body>
-<button id="theme-fab" onclick="toggleTheme()" title="테마 전환"
-  style="position:fixed;top:14px;right:16px;z-index:9000;display:flex;align-items:center;gap:5px;
-    font-size:12px;font-weight:600;color:var(--text3);background:var(--surface);
-    border:1px solid var(--border);border-radius:20px;padding:5px 11px;cursor:pointer;
-    box-shadow:0 1px 4px var(--shadow)">
-  <span id="theme-fab-icon">🌙</span><span>테마</span>
-</button>
 <div class="wrap"><div id="app"></div></div>
 <script>
 /* ============================================================
@@ -896,8 +889,8 @@ function toggleTheme(){
   const dark = document.body.classList.toggle('dark');
   localStorage.setItem('oj_theme', dark ? 'dark' : 'light');
   if (window._cm) window._cm.setOption('theme', dark ? 'dracula' : 'default');
-  const fab = document.getElementById('theme-fab-icon');
-  if (fab) fab.textContent = dark ? '☀️' : '🌙';
+  const tbi = document.getElementById('theme-btn-icon');
+  if (tbi) tbi.textContent = dark ? '☀️' : '🌙';
   if (view === 'home') renderHome(false);
   else if (view === 'problem') renderProb(curPid, false);
 }
@@ -1147,6 +1140,12 @@ function renderHome(push=true){
 
   $('app').innerHTML = `
     <div class="course-header">
+      <button onclick="toggleTheme()" id="theme-btn" title="테마 전환"
+        style="position:absolute;top:14px;right:16px;display:flex;align-items:center;gap:5px;
+          font-size:12px;font-weight:600;color:var(--text3);background:var(--surface2);
+          border:1px solid var(--border);border-radius:20px;padding:4px 10px;cursor:pointer">
+        <span id="theme-btn-icon">${document.body.classList.contains('dark')?'☀️':'🌙'}</span><span>테마</span>
+      </button>
       <div class="course-meta">임베디드시스템공학과 &nbsp;·&nbsp; 인천대학교</div>
       <div class="course-title">C언어프로그래밍(1)</div>
       <div class="course-code">0006799001</div>
@@ -1947,10 +1946,7 @@ window.addEventListener('popstate', function(e){
 });
 history.replaceState({view:'home'}, '', ' ');
 // Apply saved theme
-(function(){
-  const t=localStorage.getItem('oj_theme');
-  if(t==='dark'){ document.body.classList.add('dark'); const f=document.getElementById('theme-fab-icon'); if(f) f.textContent='☀️'; }
-})();
+(function(){ const t=localStorage.getItem('oj_theme'); if(t==='dark') document.body.classList.add('dark'); })();
 // 초기 렌더링은 onAuthStateChanged 콜백에서 수행
 fetchSubmitCounts();
 </script>
