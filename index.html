@@ -1000,7 +1000,7 @@ function renderHome(push=true){
             <div style="font-size:16px;line-height:1.4">${medal}</div>
             <div style="font-size:11px;font-weight:${isMe?'700':'600'};color:${isMe?'var(--accent-text)':'var(--text)'};
               white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 2px">${item.name}</div>
-            <div style="font-size:10px;color:var(--text4);margin-bottom:3px">${item.count}문제</div>
+            <div style="font-size:10px;color:var(--text4);margin-bottom:3px">${item.count}문제 ${rankArrow(item.name)}</div>
             <div style="height:${baseH}px;background:${color};border-radius:4px 4px 0 0;
               display:flex;align-items:center;justify-content:center;
               font-size:12px;font-weight:700;color:rgba(255,255,255,.9)">${rank}</div>
@@ -1015,7 +1015,9 @@ function renderHome(push=true){
         border-bottom:1px solid var(--surface4)${isMe?';font-weight:700;color:var(--accent-text)':''}">
         <div style="font-size:11px;color:var(--text4);width:16px;text-align:right;flex-shrink:0">${rank}</div>
         <div style="flex:1;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.name}</div>
-        <div style="font-size:11px;color:var(--text3);flex-shrink:0">${item.count}</div>
+        <div style="display:flex;align-items:center;gap:3px;flex-shrink:0">
+          <span style="font-size:11px;color:var(--text3)">${item.count}</span>${rankArrow(item.name)}
+        </div>
       </div>`;
     }).join('');
 
@@ -1816,7 +1818,19 @@ let _submitCounts = {};  // { problemId: count }
 let _submitCountsLoaded = false;
 
 let _leaderboard = [];
+let _prevLeaderboard = JSON.parse(localStorage.getItem('oj_prev_lb') || '[]');
 const EXCLUDE_NAMES = ['원경호', '황주옥'];
+
+function rankArrow(name){
+  if (!_prevLeaderboard.length) return '';
+  const cur  = _leaderboard.findIndex(x => x.name === name);
+  const prev = _prevLeaderboard.findIndex(x => x.name === name);
+  if (prev === -1) return `<span style="font-size:9px;font-weight:700;color:var(--accent-text)">NEW</span>`;
+  const diff = prev - cur;
+  if (diff > 0) return `<span style="font-size:11px;color:#e53935;line-height:1">▲</span>`;
+  if (diff < 0) return `<span style="font-size:11px;color:#1e88e5;line-height:1">▼</span>`;
+  return '';
+}
 
 async function fetchSubmitCounts(){
   if (!SHEETS_URL) return;
@@ -1829,6 +1843,10 @@ async function fetchSubmitCounts(){
       _submitCountsLoaded = true;
     }
     if (d.leaderboard) {
+      if (_leaderboard.length) {
+        _prevLeaderboard = _leaderboard;
+        localStorage.setItem('oj_prev_lb', JSON.stringify(_prevLeaderboard));
+      }
       _leaderboard = d.leaderboard;
     }
     if (view === 'home') renderHome(false);
