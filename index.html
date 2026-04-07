@@ -1369,13 +1369,18 @@ function renderHistory(push=true){
   const rows = weekGroups.flatMap(g =>
     g.problems.flatMap((p, pi) => {
       const entries = hist[p.id] || [];
+      const weekParts = g.week.split(/\s*\(/);
+      const weekHtml = weekParts.length > 1
+        ? `${weekParts[0]}<br><span style="font-size:11px;color:var(--text4)">(${weekParts[1]}</span>`
+        : g.week;
       const tdWeek = pi === 0
-        ? `<td rowspan="${g.totalRows}" style="color:var(--text4);font-size:12px;vertical-align:top;padding-top:.6rem;border-right:1px solid var(--border)">${g.week}</td>`
+        ? `<td rowspan="${g.totalRows}" style="font-size:13px;font-weight:600;color:var(--text2);vertical-align:middle;padding:.6rem .9rem;border-right:1px solid var(--border);white-space:nowrap;line-height:1.5">${weekHtml}</td>`
         : '';
+      const tdStyle = 'padding:.45rem .9rem;font-size:13px;border-bottom:1px solid var(--surface4)';
       if (!entries.length) return [`<tr>
         ${tdWeek}
-        <td><span style="font-size:11px;color:var(--text4);font-family:monospace;margin-right:5px">${p.id}</span>${p.title}</td>
-        <td colspan="3" style="color:var(--text5)">미제출</td>
+        <td style="${tdStyle}"><span style="font-size:11px;font-family:monospace;color:var(--text4);margin-right:5px">${p.id}</span>${p.title}</td>
+        <td style="${tdStyle}" colspan="3"><span style="color:var(--text5);font-size:12px">미제출</span></td>
       </tr>`];
       return entries.map((e, i) => {
         const hasScore = e.score !== null && e.score !== undefined && !isNaN(e.score);
@@ -1384,14 +1389,14 @@ function renderHistory(push=true){
         const codeIdx = window._histCodes.length;
         window._histCodes.push({ code: e.code || '', title: p.title, ts: new Date(e.ts).toLocaleString('ko-KR') });
         const codeBtn = e.code
-          ? `<button onclick="viewHistCode(${codeIdx})" style="font-size:11px;padding:2px 8px;color:var(--link);border-color:var(--link)">코드 보기</button>`
+          ? `<button onclick="viewHistCode(${codeIdx})" style="font-size:11px;padding:2px 7px;color:var(--link);border-color:var(--link)">코드 보기</button>`
           : `<span style="font-size:11px;color:var(--text5)">-</span>`;
         return `<tr>
           ${i === 0 ? tdWeek : ''}
-          <td>${i===0?`<span style="font-size:11px;color:var(--text4);font-family:monospace;margin-right:5px">${p.id}</span>${p.title}`:''}</td>
-          <td style="white-space:nowrap">${scoreCell}</td>
-          <td style="color:var(--text4);font-size:12px;white-space:nowrap">${new Date(e.ts).toLocaleString('ko-KR')}</td>
-          <td style="text-align:center">${codeBtn}</td>
+          <td style="${tdStyle}">${i===0?`<span style="font-size:11px;font-family:monospace;color:var(--text4);margin-right:5px">${p.id}</span>${p.title}`:''}</td>
+          <td style="${tdStyle};white-space:nowrap">${scoreCell}</td>
+          <td style="${tdStyle};color:var(--text3);font-size:11px;white-space:nowrap">${new Date(e.ts).toLocaleString('ko-KR')}</td>
+          <td style="${tdStyle};text-align:center">${codeBtn}</td>
         </tr>`;
       });
     })
