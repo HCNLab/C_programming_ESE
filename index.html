@@ -1293,6 +1293,11 @@ function renderResults(){
       badge = '<span class="badge pass">정답</span>';
       if (r.time || r.memory)
         perf = `<div class="tc-perf">${r.time ? r.time+'s' : ''}${r.time && r.memory ? ' · ' : ''}${r.memory ? r.memory+'KB' : ''}</div>`;
+      if (r.stdout !== undefined){
+        const inputPreview = (r.input||'').replace(/\n/g,' / ').slice(0,40);
+        detail = (inputPreview ? `<div class="tc-detail">입력: <code>${inputPreview}</code></div>` : '')
+               + `<div class="tc-detail">출력: <code>${r.stdout||'(없음)'}</code></div>`;
+      }
     } else {
       cls = 'tc-fail';
       badge = `<span class="badge fail">${r.msg || '오답'}</span>`;
