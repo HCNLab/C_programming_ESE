@@ -665,15 +665,16 @@ PROBLEMS.push(
   {
     id:'r21', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'영수증 계산기',
-    desc:'3개 상품의 가격(double)과 수량(int)을 입력받아 영수증을 출력하라.<br>소계, 세금(10%), 총계를 포함.<br>아이템 이름은 순서대로 <code>Item 1</code>, <code>Item 2</code>, <code>Item 3</code>으로 하드코딩한다.<br>힌트: <code>%-12s %3d %8.2f</code> 포맷 사용',
-    input_desc:'아이템 3개를 각 줄에 "가격 수량" 형식으로 입력한다.',
-    output_desc:'형식에 맞는 영수증을 출력한다.',
+    desc:'3개 상품의 가격(double)과 수량(int)을 입력받아 영수증을 출력하라.<br>소계, 세금(10%), 총계를 포함. 아이템 이름은 <code>Item 1</code>, <code>Item 2</code>, <code>Item 3</code>으로 하드코딩한다.<br><b>데이터 행 포맷:</b> <code>%-14s%3d%8.2f%8.2f</code> &nbsp;(이름 14, 수량 3, 단가 8, 금액 8)<br><b>합계 행 포맷:</b> <code>%-25s%8.2f</code> &nbsp;(레이블 25, 금액 8)<br><b>구분선:</b> <code>-</code> 32개 / <code>=</code> 32개',
+    input_desc:'아이템 3개를 각 줄에 <code>가격 수량</code> 형식으로 입력한다.',
+    output_desc:'형식에 맞는 영수증을 출력한다. 전체 너비 33자.',
+    starter:'#define _CRT_SECURE_NO_WARNINGS\n#include <stdio.h>\n\nint main(void)\n{\n    double p1, p2, p3;\n    int q1, q2, q3;\n    scanf("%lf %d", &p1, &q1);\n    scanf("%lf %d", &p2, &q2);\n    scanf("%lf %d", &p3, &q3);\n\n    double a1=p1*q1, a2=p2*q2, a3=p3*q3;\n    double sub = a1+a2+a3;\n    double tax = sub * 0.1;\n    double total = sub + tax;\n\n    printf("============ RECEIPT ============\\n");\n    printf("%-14s%3s%8s%8s\\n", "Item", "Qty", "Price", "Amount");\n    printf("--------------------------------\\n");\n    // 데이터 행: %-14s%3d%8.2f%8.2f\n    printf("%-14s%3d%8.2f%8.2f\\n", "Item 1", q1, p1, a1);\n    // Item 2, Item 3 도 같은 형식으로 출력하세요\n\n    printf("--------------------------------\\n");\n    // 합계 행: %-25s%8.2f\n    printf("%-25s%8.2f\\n", "Subtotal:", sub);\n    printf("================================\\n");\n    return 0;\n}\n',
     ex_in:'4.5 2\n12 1\n3.75 3',
-    ex_out:'============ RECEIPT ============\nItem          Qty   Price  Amount\n--------------------------------\nItem 1          2    4.50    9.00\nItem 2          1   12.00   12.00\nItem 3          3    3.75   11.25\n--------------------------------\nSubtotal:                  32.25\nTax (10%):                  3.23\nTOTAL:                     35.48\n================================',
+    ex_out:'============ RECEIPT ============\nItem          Qty   Price  Amount\n--------------------------------\nItem 1          2    4.50    9.00\nItem 2          1   12.00   12.00\nItem 3          3    3.75   11.25\n--------------------------------\nSubtotal:                   32.25\nTax (10%):                   3.23\nTOTAL:                      35.48\n================================',
     deadline:'2099-12-31',
     cases:[
       {id:1, input:'4.5 2\n12 1\n3.75 3',
-       expected:'============ RECEIPT ============\nItem          Qty   Price  Amount\n--------------------------------\nItem 1          2    4.50    9.00\nItem 2          1   12.00   12.00\nItem 3          3    3.75   11.25\n--------------------------------\nSubtotal:                  32.25\nTax (10%):                  3.23\nTOTAL:                     35.48\n================================',
+       expected:'============ RECEIPT ============\nItem          Qty   Price  Amount\n--------------------------------\nItem 1          2    4.50    9.00\nItem 2          1   12.00   12.00\nItem 3          3    3.75   11.25\n--------------------------------\nSubtotal:                   32.25\nTax (10%):                   3.23\nTOTAL:                      35.48\n================================',
        pts:100},
     ]
   },
@@ -926,9 +927,21 @@ function renderHome(push=true){
   });
   // 리더보드 순위 (userCardHtml에서도 사용)
   const myName = username ? (username.split('_')[1] || username) : null;
-  const myRankIdx = myName ? _leaderboard.findIndex(item => item.name.includes(myName)) : -1;
+  const myRankIdx = username ? _leaderboard.findIndex(item => item.name === username) : -1;
   const myRank = myRankIdx >= 0 ? myRankIdx + 1 : 0;
   const showMyRow = myRank > 10;
+
+  // 동명이인 처리: 이름이 같은 학생이 있으면 학번 뒤 3자리 표시
+  function lbDisplayName(fullName) {
+    const parts = fullName.split('_');
+    const name = parts.length >= 2 ? parts[1] : fullName;
+    const sid  = parts.length >= 2 ? parts[0] : '';
+    const isDup = _leaderboard.filter(x => {
+      const xp = x.name.split('_');
+      return (xp.length >= 2 ? xp[1] : x.name) === name;
+    }).length > 1;
+    return (isDup && sid.length >= 3) ? `${name}(${sid.slice(-3)})` : name;
+  }
 
   // 유저 환영 카드
   const userCardHtml = (() => {
@@ -996,11 +1009,11 @@ function renderHome(push=true){
         ${podDef.map(({idx,medal,color,baseH,rank}) => {
           if (!top3[idx]) return `<div style="flex:1"></div>`;
           const item = top3[idx];
-          const isMe = myName && item.name.includes(myName);
+          const isMe = username && item.name === username;
           return `<div style="flex:1;text-align:center;min-width:0">
             <div style="font-size:16px;line-height:1.4">${medal}</div>
             <div style="font-size:11px;font-weight:${isMe?'700':'600'};color:${isMe?'var(--accent-text)':'var(--text)'};
-              white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 2px">${item.name}</div>
+              white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 2px">${lbDisplayName(item.name)}</div>
             <div style="font-size:10px;color:var(--text4);margin-bottom:3px">${item.count}문제 ${rankArrow(item.name)}</div>
             <div style="height:${baseH}px;background:${color};border-radius:4px 4px 0 0;
               display:flex;align-items:center;justify-content:center;
@@ -1011,11 +1024,11 @@ function renderHome(push=true){
 
     const restHtml = rest.map((item, i) => {
       const rank = i + 4;
-      const isMe = myName && item.name.includes(myName);
+      const isMe = username && item.name === username;
       return `<div style="display:flex;align-items:center;gap:6px;padding:.18rem 0;
         border-bottom:1px solid var(--surface4)${isMe?';font-weight:700;color:var(--accent-text)':''}">
         <div style="font-size:11px;color:var(--text4);width:16px;text-align:right;flex-shrink:0">${rank}</div>
-        <div style="flex:1;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.name}</div>
+        <div style="flex:1;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${lbDisplayName(item.name)}</div>
         <div style="display:flex;align-items:center;gap:3px;flex-shrink:0">
           <span style="font-size:11px;color:var(--text3)">${item.count}</span>${rankArrow(item.name)}
         </div>
@@ -1031,7 +1044,7 @@ function renderHome(push=true){
       : showMyRow ? `<div style="display:flex;align-items:center;gap:6px;padding:.25rem .4rem;margin-top:.3rem;
           background:var(--warn-bg);border-radius:4px;border-top:1px dashed var(--border2)">
           <div style="font-size:11px;color:var(--text4);width:16px;text-align:right;flex-shrink:0">${myRank}</div>
-          <div style="flex:1;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${_leaderboard[myRankIdx].name}</div>
+          <div style="flex:1;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${lbDisplayName(_leaderboard[myRankIdx].name)}</div>
           <div style="font-size:11px;color:var(--text3);flex-shrink:0">${_leaderboard[myRankIdx].count}</div>
         </div>` : '';
 
