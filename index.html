@@ -948,7 +948,12 @@ function renderHome(push=true){
         </div>`;
       }).join('')
     + (_leaderboard.length > 10 ? `<div style="font-size:11px;color:var(--text4);text-align:center;margin-top:.4rem">총 ${_leaderboard.length}명 참여</div>` : '')
-    + (showMyRow ? `<div style="display:flex;align-items:center;gap:8px;padding:.35rem .5rem;margin-top:.3rem;
+    + (isAdmin()
+        ? `<div style="margin-top:.5rem;padding:.4rem .6rem;border-radius:6px;background:var(--surface3);border:1px solid var(--border);text-align:center">
+            <div style="font-size:12px;font-weight:700;color:#D85A30">👨‍🏫 관리자</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px">원경호 교수님, 환영합니다</div>
+          </div>`
+        : showMyRow ? `<div style="display:flex;align-items:center;gap:8px;padding:.35rem .5rem;margin-top:.3rem;
         background:var(--warn-bg);border-radius:4px;border-top:1px dashed var(--border2)">
         <div style="font-size:11px;font-weight:600;color:var(--text4);width:16px;text-align:center">${myRank}</div>
         <div style="flex:1;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${_leaderboard[myRankIdx].name}</div>
