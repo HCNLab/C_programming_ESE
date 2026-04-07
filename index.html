@@ -309,7 +309,7 @@ const PROBLEMS = [
   /* ── Week 5B Challenge ────────────────────────── */
   {
     id:'c1', week:'Week 6: Control flow - switch, if-else if', title:'Tax Bracket Calculator',
-    desc:'연소득(원, 정수)을 입력받아 누진세를 계산하시오.<br>세율 구간 (각 구간 금액에만 해당 세율 적용):<br>~14,000,000 → 6% / ~50,000,000 → 15% / ~88,000,000 → 24% / 초과 → 35%<br>예: 60,000,000원 = 14M×6% + 36M×15% + 10M×24% = 8,640,000원 (60M×24% 아님!)<br><b>주의:</b> if-else if 체인으로 작성할 것 (switch 사용 불가).',
+    desc:'연소득(원, 정수)을 입력받아 누진세를 계산하시오.<br>세율 구간 (각 구간 금액에만 해당 세율 적용):<br>~14,000,000 → 6% / ~50,000,000 → 15% / ~88,000,000 → 24% / 초과 → 35%<br>예: 60,000,000원 = 14M×6% + 36M×15% + 10M×24% = 8,640,000원 (60M×24% 아님!)<br><b>힌트:</b> 누진 구간 계산에는 if-else if 체인이 더 적합합니다.',
     input_desc:'첫째 줄에 연소득(원, 정수)이 주어진다.',
     output_desc:'형식: <code>Tax: N won</code><br><code>14000000</code> → <code>Tax: 840000 won</code><br><code>60000000</code> → <code>Tax: 8640000 won</code><br><code>100000000</code> → <code>Tax: 19560000 won</code>',
     ex_in:'60000000', ex_out:'Tax: 8640000 won', deadline:'2026-04-13T23:59',
