@@ -2045,6 +2045,7 @@ async function renderAdminUsers(){
       <th style="padding:8px 12px;text-align:left">학번_이름</th>
       <th style="padding:8px 12px;text-align:left">Google 이메일</th>
       <th style="padding:8px 12px;text-align:left">상태</th>
+      <th style="padding:8px 12px;text-align:left"></th>
     </tr></thead><tbody>` +
     users.map((u, i) => {
       const stuId = u.username.split('_')[0];
@@ -2054,11 +2055,23 @@ async function renderAdminUsers(){
         <td style="padding:8px 12px;font-weight:500">${u.username}</td>
         <td style="padding:8px 12px;font-family:monospace;font-size:13px">${u.email}</td>
         <td style="padding:8px 12px">${isDup ? '<span style="color:var(--fail);font-weight:600">중복 의심</span>' : '<span style="color:var(--accent)">정상</span>'}</td>
+        <td style="padding:8px 12px"><button onclick="adminDeleteUser('${u.username}')"
+          style="font-size:11px;padding:2px 8px;color:var(--error);border-color:var(--fail-badge-bg)">삭제</button></td>
       </tr>`;
     }).join('') + '</tbody></table>';
     adminEl.innerHTML = html;
   } catch(e) {
     adminEl.innerHTML = '<p style="color:var(--fail)">사용자 목록을 불러올 수 없습니다. Firestore 보안규칙을 확인하세요.</p>';
+  }
+}
+
+async function adminDeleteUser(uname){
+  if (!confirm(`'${uname}' 등록을 삭제할까요?\n해당 사용자는 로그아웃 후 다시 등록해야 합니다.`)) return;
+  try {
+    await db.collection('usernames').doc(uname).delete();
+    await renderAdminUsers();
+  } catch(e) {
+    alert('삭제 실패: ' + e.message);
   }
 }
 
