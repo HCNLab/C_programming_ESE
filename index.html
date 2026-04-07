@@ -858,12 +858,19 @@ async function runCase(tc, src){
       return { status:'fail', msg:'컴파일 오류',
         detail: d.compiler_error.trim().slice(0, 400) };
     }
+    // 타임아웃 / 런타임 오류 감지
+    if (d.signal) {
+      const isTimeout = d.signal === 'Killed' || d.signal === 'Timeout';
+      return { status:'fail',
+        msg: isTimeout ? '시간 초과' : '런타임 오류',
+        detail: isTimeout ? '무한루프 또는 실행 시간 초과' : `Signal: ${d.signal}`,
+        stdout: trim(d.program_output || ''), expected: trim(tc.expected), input: tc.input };
+    }
     const stdout = trim(d.program_output || '');
     const exp    = trim(tc.expected);
     if (stdout === exp){
       return { status:'pass', stdout, expected:exp };
     } else {
-      // OCI 에러였는데 재시도 후에도 출력 없으면 서버 혼잡, 그 외 빈 출력은 오답
       const msg = (serverBusy && stdout === '') ? '서버 혼잡 — 잠시 후 재시도' : '오답';
       return { status:'fail', msg, stdout, expected:exp, input:tc.input };
     }
@@ -1179,6 +1186,19 @@ function renderProb(pid, push=true){
           <button id="test-btn" onclick="doTest()">테스트 실행</button>
           <button onclick="doReset()">초기화</button>
         </div>
+        <details style="margin-bottom:.75rem;font-size:12px;color:var(--text3)">
+          <summary style="cursor:pointer;user-select:none;list-style:none;display:flex;align-items:center;gap:4px">
+            <span style="font-size:10px">▶</span> 채점 결과 안내
+          </summary>
+          <div style="margin-top:.5rem;display:flex;flex-direction:column;gap:4px;padding-left:4px">
+            <div><span class="badge pass" style="font-size:10px;min-width:70px">정답</span> &nbsp;출력이 기댓값과 완전히 일치</div>
+            <div><span class="badge fail" style="font-size:10px;min-width:70px">오답</span> &nbsp;출력이 다르거나 출력 없음</div>
+            <div><span class="badge fail" style="font-size:10px;min-width:70px">컴파일 오류</span> &nbsp;문법 오류로 컴파일 실패</div>
+            <div><span class="badge fail" style="font-size:10px;min-width:70px">시간 초과</span> &nbsp;무한루프 등 실행 시간 초과</div>
+            <div><span class="badge fail" style="font-size:10px;min-width:70px">런타임 오류</span> &nbsp;실행 중 비정상 종료 (segfault 등)</div>
+            <div><span class="badge fail" style="font-size:10px;min-width:70px">서버 혼잡</span> &nbsp;채점 서버 과부하 — 잠시 후 재시도</div>
+          </div>
+        </details>
         <div id="results"></div>
       </div>
     </div>`;
