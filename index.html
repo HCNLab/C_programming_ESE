@@ -1276,6 +1276,28 @@ function renderHome(push=true){
           <div class="sidebar-title">제출 순위</div>
           ${leaderboardHtml}
         </div>
+        <div class="sidebar-card">
+          <div class="sidebar-title" style="margin-bottom:.5rem">오늘 제출 현황 <span style="font-size:10px;font-weight:400;color:var(--text4)">최근 24시간</span></div>
+          ${(()=>{
+            const max = Math.max(..._hourly, 1);
+            const nowH = new Date().getHours();
+            const bars = _hourly.map((v, i) => {
+              const h = Math.round((v / max) * 36);
+              const isCur = i === 23;
+              const labelH = (nowH - (23 - i) + 24) % 24;
+              const showLabel = labelH % 6 === 0;
+              return `<div style="display:flex;flex-direction:column;align-items:center;gap:1px;flex:1">
+                <div title="${labelH}시 ${v}건" style="width:100%;height:${h}px;min-height:${v>0?2:0}px;
+                  background:${isCur?'var(--accent)':v>0?'var(--text4)':'var(--surface4)'};
+                  border-radius:2px 2px 0 0;transition:height .3s"></div>
+                <div style="font-size:8px;color:${showLabel?'var(--text4)':'transparent'};line-height:1">${labelH}</div>
+              </div>`;
+            }).join('');
+            const total = _hourly.reduce((a,b)=>a+b,0);
+            return `<div style="display:flex;align-items:flex-end;gap:1px;height:48px;padding-bottom:12px">${bars}</div>
+              <div style="font-size:11px;color:var(--text3);text-align:right;margin-top:2px">총 <b style="color:var(--text)">${total}</b>건</div>`;
+          })()}
+        </div>
       </div>
     </div>`;
 }
@@ -1903,6 +1925,7 @@ let _submitCountsLoaded = false;
 
 let _leaderboard = [];
 let _prevLeaderboard = JSON.parse(localStorage.getItem('oj_prev_lb') || '[]');
+let _hourly = new Array(24).fill(0);  // 24시간 시간대별 제출 수
 const EXCLUDE_NAMES = ['원경호', '황주옥'];
 
 function rankArrow(name){
@@ -1933,6 +1956,7 @@ async function fetchSubmitCounts(){
       localStorage.setItem('oj_prev_lb', JSON.stringify(d.leaderboard));
       _leaderboard = d.leaderboard;
     }
+    if (d.hourly) _hourly = d.hourly;
     if (view === 'home') renderHome(false);
   } catch {}
 }
