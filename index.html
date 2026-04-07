@@ -1089,6 +1089,7 @@ function renderHome(push=true){
         <div class="how-step"><span class="step-num">3</span><span>문제 카드 클릭 후 <b>코드 작성</b> 탭에서 C 코드 작성</span></div>
         <div class="how-step"><span class="step-num">4</span><span><b>테스트 실행</b>으로 예제 케이스 확인 후 <b>제출</b> 버튼까지 눌러야 제출이 완료됩니다</span></div>
         <div class="how-step"><span class="step-num">5</span><span>완성 후 <b>제출</b> 클릭 &nbsp;→&nbsp; 제출 완료 ✓ 확인</span></div>
+        <div style="margin-top:.5rem;font-size:12px;color:var(--text3);padding-left:2px">※ 테스트 케이스는 서버 과부하를 줄이기 위해 순차적으로 실행되므로 결과까지 다소 시간이 소요될 수 있습니다.</div>
       </div>
     </div>
 
@@ -1470,8 +1471,8 @@ async function doTest(){
   // 전체 TC 초기화
   p.cases.forEach(tc => { tcResults[tc.id] = { status:'running' }; });
   renderResults();
-  // 전체 TC 병렬 실행
-  await Promise.all(p.cases.map(async tc => {
+  // 전체 TC 순차 실행 (서버 과부하 방지)
+  for (const tc of p.cases) {
     const result = await runCase(tc, src);
     if (result.status === 'fail' &&
         (result.msg === '네트워크 오류' || result.msg === '채점 서버 응답 없음')) {
@@ -1480,7 +1481,7 @@ async function doTest(){
       tcResults[tc.id] = result;
     }
     renderResults();
-  }));
+  }
   submitting = false;
   // 채점 완료 후 15초 쿨다운 시작
   startTestCooldown();
