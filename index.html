@@ -820,31 +820,43 @@ function sendToSheets(payload){
 }
 
 /* Judge0 */
+async function callWandbox(src, input){
+  const r = await fetch(WANDBOX, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      compiler: 'gcc-head',
+      code: src,
+      stdin: input,
+      options: 'warning',
+      compiler_option_raw: '-lm',
+    }),
+  });
+  if (!r.ok) return null;
+  return r.json();
+}
+
 async function runCase(tc, src){
   try{
-    const r = await fetch(WANDBOX, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        compiler: 'gcc-head',
-        code: src,
-        stdin: tc.input,
-        options: 'warning',
-        compiler_option_raw: '-lm',
-      }),
-    });
-    if (!r.ok) return { status:'fail', msg:'채점 서버 오류' };
-    const d = await r.json();
+    let d = await callWandbox(src, tc.input);
+    if (!d) return { status:'fail', msg:'채점 서버 오류' };
     const hasError = d.compiler_error && d.compiler_error.includes('error:');
     if (hasError){
       return { status:'fail', msg:'컴파일 오류',
         detail: d.compiler_error.trim().slice(0, 400) };
+    }
+    // 서버 과부하로 빈 출력이 오면 1회 재시도
+    if (!d.program_output && !d.program_error && d.status === '0') {
+      await new Promise(res => setTimeout(res, 1500 + Math.random()*1500));
+      const d2 = await callWandbox(src, tc.input);
+      if (d2) d = d2;
     }
     const stdout = trim(d.program_output || '');
     const exp    = trim(tc.expected);
     if (stdout === exp){
       return { status:'pass', stdout, expected:exp };
     } else {
-      return { status:'fail', msg:'오답', stdout, expected:exp, input:tc.input };
+      const emptyMsg = stdout === '' ? '출력 없음 (서버 과부하 가능성)' : '오답';
+      return { status:'fail', msg:emptyMsg, stdout, expected:exp, input:tc.input };
     }
   } catch { return { status:'fail', msg:'네트워크 오류' }; }
 }
@@ -1418,8 +1430,8 @@ let testCooldownTimer = null;
 
 function startTestCooldown() {
   const testBtn = $('test-btn');
-  testCooldown = 10;
-  if (testBtn){ testBtn.disabled = true; testBtn.textContent = '10...'; }
+  testCooldown = 30;
+  if (testBtn){ testBtn.disabled = true; testBtn.textContent = '30...'; }
   testCooldownTimer = setInterval(() => {
     testCooldown--;
     if (testCooldown > 0) {
@@ -1441,7 +1453,11 @@ async function doTest(){
   const src = getCode();
   submitting = true;
   const testBtn = $('test-btn');
-  if (testBtn){ testBtn.disabled = true; testBtn.textContent = '실행 중...'; }
+  // 랜덤 지연 0~5초: 동시 다수 요청으로 인한 Wandbox 과부하 분산
+  const jitter = Math.floor(Math.random() * 5000);
+  if (testBtn){ testBtn.disabled = true; testBtn.textContent = `대기 중...`; }
+  await new Promise(res => setTimeout(res, jitter));
+  if (testBtn) testBtn.textContent = '실행 중...';
   // 전체 TC 초기화
   p.cases.forEach(tc => { tcResults[tc.id] = { status:'running' }; });
   renderResults();
@@ -1457,7 +1473,7 @@ async function doTest(){
     renderResults();
   }));
   submitting = false;
-  // 채점 완료 후 10초 쿨다운 시작
+  // 채점 완료 후 30초 쿨다운 시작
   startTestCooldown();
 }
 
