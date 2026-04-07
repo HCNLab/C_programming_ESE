@@ -921,6 +921,12 @@ function renderHome(push=true){
     if (!groups[w]) groups[w] = [];
     groups[w].push(p);
   });
+  // 리더보드 순위 (userCardHtml에서도 사용)
+  const myName = username ? (username.split('_')[1] || username) : null;
+  const myRankIdx = myName ? _leaderboard.findIndex(item => item.name.includes(myName)) : -1;
+  const myRank = myRankIdx >= 0 ? myRankIdx + 1 : 0;
+  const showMyRow = myRank > 10;
+
   // 유저 환영 카드
   const userCardHtml = (() => {
     if (!firebaseUser) return `
@@ -944,11 +950,13 @@ function renderHome(push=true){
     const parts = username.split('_');
     const sid = parts[0] || '';
     const sname = parts[1] || username;
+    const rankEmoji = myRank===1?'👑':myRank===2?'🥈':myRank===3?'🥉':'👋';
+    const rankLabel = myRank>=1&&myRank<=3 ? `<div style="font-size:11px;font-weight:700;color:${myRank===1?'#D4AF37':myRank===2?'#888':'#B07D50'};margin:.15rem 0 .5rem;letter-spacing:.03em">${myRank}위 · ${myRank===1?'🎉 전체 1위!':myRank===2?'상위권':'Top 3'}</div>` : `<div style="font-size:11px;color:var(--text3);margin-bottom:.65rem">환영합니다${myRank>0?` (${myRank}위)`:''}</div>`;
     return `
-      <div style="font-size:22px;margin-bottom:.3rem">👋</div>
+      <div style="font-size:22px;margin-bottom:.2rem">${rankEmoji}</div>
       <div style="font-size:14px;font-weight:700;color:var(--text)">${sname}님</div>
-      <div style="font-size:11px;color:var(--text4);margin:.15rem 0 .1rem">${sid}</div>
-      <div style="font-size:11px;color:var(--text3);margin-bottom:.65rem">환영합니다</div>
+      <div style="font-size:11px;color:var(--text4);margin:.1rem 0 0">${sid}</div>
+      ${rankLabel}
       <button onclick="renderHistory()" style="font-size:12px;padding:5px 0;width:100%;border-radius:5px;cursor:pointer;background:none;color:var(--link);border:1px solid var(--link);margin-bottom:.4rem">내 제출 이력</button>
       <button onclick="doLogout()" class="link-btn" style="font-size:11px;color:var(--text5)">로그아웃</button>`;
   })();
@@ -966,38 +974,64 @@ function renderHome(push=true){
     .sort((a,b) => new Date(a.deadline) - new Date(b.deadline));
   const showAll = window._sidebarAll || false;
   const display = showAll ? upcoming : upcoming.slice(0,5);
-  // 리더보드
-  const myName = username ? (username.split('_')[1] || username) : null;
-  const myRankIdx = myName ? _leaderboard.findIndex(item => item.name.includes(myName)) : -1;
-  const myRank = myRankIdx + 1;
-  const showMyRow = myRank > 10;
+  // 리더보드 (포디엄 스타일)
+  const leaderboardHtml = (() => {
+    if (_leaderboard.length === 0)
+      return `<div style="font-size:12px;color:var(--text4)">아직 제출 데이터 없음</div>`;
 
-  const leaderboardHtml = _leaderboard.length === 0
-    ? `<div style="font-size:12px;color:var(--text4)">아직 제출 데이터 없음</div>`
-    : _leaderboard.slice(0,10).map((item, i) => {
-        const isMe = myName && item.name.includes(myName);
-        const rank = i+1;
-        const medal = rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':'';
-        return `<div style="display:flex;align-items:center;gap:8px;padding:.35rem 0;
-          border-bottom:1px solid var(--surface4);${isMe?'background:var(--warn-bg);margin:0 -.5rem;padding:.35rem .5rem;border-radius:4px':''}">
-          <div style="font-size:11px;font-weight:600;color:var(--text4);width:16px;text-align:center">${medal||rank}</div>
-          <div style="flex:1;font-size:12px;font-weight:${isMe?'700':'400'};
-            white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.name}</div>
-          <div style="font-size:12px;font-weight:600;color:var(--text2)">${item.count}문제</div>
-        </div>`;
-      }).join('')
-    + (_leaderboard.length > 10 ? `<div style="font-size:11px;color:var(--text4);text-align:center;margin-top:.4rem">총 ${_leaderboard.length}명 참여</div>` : '')
-    + (isAdmin()
-        ? `<div style="margin-top:.5rem;padding:.4rem .6rem;border-radius:6px;background:var(--surface3);border:1px solid var(--border);text-align:center">
-            <div style="font-size:12px;font-weight:700;color:#D85A30">👨‍🏫 관리자</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:2px">원경호 교수님, 환영합니다</div>
-          </div>`
-        : showMyRow ? `<div style="display:flex;align-items:center;gap:8px;padding:.35rem .5rem;margin-top:.3rem;
-        background:var(--warn-bg);border-radius:4px;border-top:1px dashed var(--border2)">
-        <div style="font-size:11px;font-weight:600;color:var(--text4);width:16px;text-align:center">${myRank}</div>
-        <div style="flex:1;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${_leaderboard[myRankIdx].name}</div>
-        <div style="font-size:12px;font-weight:600;color:var(--text2)">${_leaderboard[myRankIdx].count}문제</div>
-      </div>` : '');
+    const top3 = _leaderboard.slice(0, Math.min(3, _leaderboard.length));
+    const rest  = _leaderboard.slice(3, 10);
+
+    // 포디엄 순서: 2위(왼), 1위(가운데 높음), 3위(오른)
+    const podDef = [
+      { idx:1, medal:'🥈', color:'#8fa8c0', baseH:50, rank:2 },
+      { idx:0, medal:'🥇', color:'#c9a84c', baseH:72, rank:1 },
+      { idx:2, medal:'🥉', color:'#a07850', baseH:36, rank:3 },
+    ];
+    const podiumHtml = `
+      <div style="display:flex;align-items:flex-end;gap:3px;margin-bottom:.5rem">
+        ${podDef.map(({idx,medal,color,baseH,rank}) => {
+          if (!top3[idx]) return `<div style="flex:1"></div>`;
+          const item = top3[idx];
+          const isMe = myName && item.name.includes(myName);
+          return `<div style="flex:1;text-align:center;min-width:0">
+            <div style="font-size:16px;line-height:1.4">${medal}</div>
+            <div style="font-size:11px;font-weight:${isMe?'700':'600'};color:${isMe?'var(--accent-text)':'var(--text)'};
+              white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 2px">${item.name}</div>
+            <div style="font-size:10px;color:var(--text4);margin-bottom:3px">${item.count}문제</div>
+            <div style="height:${baseH}px;background:${color};border-radius:4px 4px 0 0;
+              display:flex;align-items:center;justify-content:center;
+              font-size:12px;font-weight:700;color:rgba(255,255,255,.9)">${rank}</div>
+          </div>`;
+        }).join('')}
+      </div>`;
+
+    const restHtml = rest.map((item, i) => {
+      const rank = i + 4;
+      const isMe = myName && item.name.includes(myName);
+      return `<div style="display:flex;align-items:center;gap:6px;padding:.18rem 0;
+        border-bottom:1px solid var(--surface4)${isMe?';font-weight:700;color:var(--accent-text)':''}">
+        <div style="font-size:11px;color:var(--text4);width:16px;text-align:right;flex-shrink:0">${rank}</div>
+        <div style="flex:1;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.name}</div>
+        <div style="font-size:11px;color:var(--text3);flex-shrink:0">${item.count}</div>
+      </div>`;
+    }).join('');
+
+    const totalHtml = _leaderboard.length > 10
+      ? `<div style="font-size:10px;color:var(--text4);text-align:center;margin-top:.3rem">총 ${_leaderboard.length}명 참여</div>`
+      : '';
+
+    const myRowHtml = isAdmin()
+      ? ''
+      : showMyRow ? `<div style="display:flex;align-items:center;gap:6px;padding:.25rem .4rem;margin-top:.3rem;
+          background:var(--warn-bg);border-radius:4px;border-top:1px dashed var(--border2)">
+          <div style="font-size:11px;color:var(--text4);width:16px;text-align:right;flex-shrink:0">${myRank}</div>
+          <div style="flex:1;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${_leaderboard[myRankIdx].name}</div>
+          <div style="font-size:11px;color:var(--text3);flex-shrink:0">${_leaderboard[myRankIdx].count}</div>
+        </div>` : '';
+
+    return podiumHtml + restHtml + totalHtml + myRowHtml;
+  })();
 
   // 진행률 (과제/연습 분리)
   const assignProbs    = PROBLEMS.filter(p => !p.noSubmit);
