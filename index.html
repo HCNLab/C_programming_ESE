@@ -1926,7 +1926,7 @@ let _submitCountsLoaded = false;
 let _leaderboard = [];
 let _prevLeaderboard = JSON.parse(localStorage.getItem('oj_prev_lb') || '[]');
 let _hourly = new Array(24).fill(0);  // 24시간 시간대별 제출 수
-const EXCLUDE_NAMES = ['원경호', '황주옥'];
+const EXCLUDE_NAMES = ['원경호'];  // TA는 순위에 포함
 
 function rankArrow(name){
   if (!_prevLeaderboard.length) return '';
