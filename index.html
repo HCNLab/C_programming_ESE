@@ -1350,31 +1350,52 @@ function renderHistory(push=true){
   view = 'history';
   window._histCodes = [];
   const hist = loadHistory();
-  const rows = PROBLEMS.map(p => {
+  // 주차별로 그룹화해서 rowspan 계산
+  const weekGroups = [];
+  PROBLEMS.forEach(p => {
     const entries = hist[p.id] || [];
-    if (!entries.length) return `<tr>
-      <td style="color:var(--text4)">${p.week}</td>
-      <td>${p.title}</td>
-      <td colspan="3" style="color:var(--text5)">미제출</td>
-    </tr>`;
-    return entries.map((e,i) => {
-      const hasScore = e.score !== null && e.score !== undefined && !isNaN(e.score);
-      const scoreColor = hasScore ? (e.score === e.max ? 'var(--accent-text)' : e.score > 0 ? 'var(--partial)' : 'var(--error)') : 'var(--accent-text)';
-      const scoreCell = `<span style="color:${scoreColor};font-weight:600;font-size:12px;white-space:nowrap">제출됨${hasScore ? ` (${e.score}/${e.max}점)` : ''}</span>`;
-      const codeIdx = window._histCodes.length;
-      window._histCodes.push({ code: e.code || '', title: p.title, ts: new Date(e.ts).toLocaleString('ko-KR') });
-      const codeBtn = e.code
-        ? `<button onclick="viewHistCode(${codeIdx})" style="font-size:11px;padding:2px 8px;color:var(--link);border-color:var(--link)">코드 보기</button>`
-        : `<span style="font-size:11px;color:var(--text5)">-</span>`;
-      return `<tr>
-        <td style="color:var(--text4);font-size:12px">${i===0?p.week:''}</td>
-        <td>${i===0?`<span style="font-size:11px;color:var(--text4);font-family:monospace;margin-right:5px">${p.id}</span>${p.title}`:''}</td>
-        <td style="white-space:nowrap">${scoreCell}</td>
-        <td style="color:var(--text4);font-size:12px;white-space:nowrap">${new Date(e.ts).toLocaleString('ko-KR')}</td>
-        <td style="text-align:center">${codeBtn}</td>
-      </tr>`;
-    }).join('');
-  }).join('');
+    const rowCount = Math.max(1, entries.length);
+    const last = weekGroups[weekGroups.length - 1];
+    if (last && last.week === p.week) {
+      last.problems.push(p);
+      last.totalRows += rowCount;
+    } else {
+      weekGroups.push({ week: p.week, problems: [p], totalRows: rowCount });
+    }
+  });
+
+  let firstInWeek = new Set(weekGroups.map(g => g.problems[0].id));
+
+  const rows = weekGroups.flatMap(g =>
+    g.problems.flatMap((p, pi) => {
+      const entries = hist[p.id] || [];
+      const tdWeek = pi === 0
+        ? `<td rowspan="${g.totalRows}" style="color:var(--text4);font-size:12px;vertical-align:top;padding-top:.6rem;border-right:1px solid var(--border)">${g.week}</td>`
+        : '';
+      if (!entries.length) return [`<tr>
+        ${tdWeek}
+        <td><span style="font-size:11px;color:var(--text4);font-family:monospace;margin-right:5px">${p.id}</span>${p.title}</td>
+        <td colspan="3" style="color:var(--text5)">미제출</td>
+      </tr>`];
+      return entries.map((e, i) => {
+        const hasScore = e.score !== null && e.score !== undefined && !isNaN(e.score);
+        const scoreColor = hasScore ? (e.score === e.max ? 'var(--accent-text)' : e.score > 0 ? 'var(--partial)' : 'var(--error)') : 'var(--accent-text)';
+        const scoreCell = `<span style="color:${scoreColor};font-weight:600;font-size:12px;white-space:nowrap">제출됨${hasScore ? ` (${e.score}/${e.max}점)` : ''}</span>`;
+        const codeIdx = window._histCodes.length;
+        window._histCodes.push({ code: e.code || '', title: p.title, ts: new Date(e.ts).toLocaleString('ko-KR') });
+        const codeBtn = e.code
+          ? `<button onclick="viewHistCode(${codeIdx})" style="font-size:11px;padding:2px 8px;color:var(--link);border-color:var(--link)">코드 보기</button>`
+          : `<span style="font-size:11px;color:var(--text5)">-</span>`;
+        return `<tr>
+          ${i === 0 ? tdWeek : ''}
+          <td>${i===0?`<span style="font-size:11px;color:var(--text4);font-family:monospace;margin-right:5px">${p.id}</span>${p.title}`:''}</td>
+          <td style="white-space:nowrap">${scoreCell}</td>
+          <td style="color:var(--text4);font-size:12px;white-space:nowrap">${new Date(e.ts).toLocaleString('ko-KR')}</td>
+          <td style="text-align:center">${codeBtn}</td>
+        </tr>`;
+      });
+    })
+  ).join('');
 
   $('app').innerHTML = `
     <div class="topbar">
