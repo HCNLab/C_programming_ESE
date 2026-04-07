@@ -844,8 +844,8 @@ async function runCase(tc, src){
       return { status:'fail', msg:'컴파일 오류',
         detail: d.compiler_error.trim().slice(0, 400) };
     }
-    // 서버 과부하로 빈 출력이 오면 1회 재시도
-    if (!d.program_output && !d.program_error && d.status === '0') {
+    // 컴파일 오류 없이 출력이 비어있으면 서버 과부하 가능성 → 1회 재시도
+    if (!d.program_output && !d.compiler_error) {
       await new Promise(res => setTimeout(res, 1500 + Math.random()*1500));
       const d2 = await callWandbox(src, tc.input);
       if (d2) d = d2;
@@ -855,7 +855,7 @@ async function runCase(tc, src){
     if (stdout === exp){
       return { status:'pass', stdout, expected:exp };
     } else {
-      const emptyMsg = stdout === '' ? '출력 없음 (서버 과부하 가능성)' : '오답';
+      const emptyMsg = stdout === '' ? '서버 혼잡 — 잠시 후 재시도' : '오답';
       return { status:'fail', msg:emptyMsg, stdout, expected:exp, input:tc.input };
     }
   } catch { return { status:'fail', msg:'네트워크 오류' }; }
@@ -1430,8 +1430,8 @@ let testCooldownTimer = null;
 
 function startTestCooldown() {
   const testBtn = $('test-btn');
-  testCooldown = 30;
-  if (testBtn){ testBtn.disabled = true; testBtn.textContent = '30...'; }
+  testCooldown = 15;
+  if (testBtn){ testBtn.disabled = true; testBtn.textContent = '15...'; }
   testCooldownTimer = setInterval(() => {
     testCooldown--;
     if (testCooldown > 0) {
@@ -1473,7 +1473,7 @@ async function doTest(){
     renderResults();
   }));
   submitting = false;
-  // 채점 완료 후 30초 쿨다운 시작
+  // 채점 완료 후 15초 쿨다운 시작
   startTestCooldown();
 }
 
