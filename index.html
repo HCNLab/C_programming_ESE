@@ -92,7 +92,9 @@ textarea:focus{border-color:var(--text3)}
 @media(min-width:960px){.layout{grid-template-columns:1fr 300px}}
 @media(max-width:959px){.sidebar{order:-1}}
 .prob-layout{display:flex;flex-direction:column;gap:1rem}
-@media(min-width:960px){.prob-layout{flex-direction:row}.prob-layout>.prob-pane{order:2;flex:0 0 45%;min-width:0;max-height:calc(100vh - 120px);overflow-y:auto;position:sticky;top:80px}.prob-layout>.code-pane{order:1;flex:0 0 55%;min-width:0}}
+@media(min-width:960px){.prob-layout{flex-direction:row}.prob-layout>.prob-pane{order:2;flex:0 0 45%;min-width:0;max-height:calc(100vh - 120px);overflow-y:auto;position:sticky;top:80px;transition:flex-basis .25s}.prob-layout>.code-pane{order:1;flex:0 0 55%;min-width:0;transition:flex-basis .25s}.prob-layout.prob-wide>.prob-pane{flex-basis:60%}.prob-layout.prob-wide>.code-pane{flex-basis:40%}.prob-layout.prob-full>.prob-pane{flex-basis:100%}.prob-layout.prob-full>.code-pane{display:none}}
+.prob-resize{display:none}
+@media(min-width:960px){.prob-resize{display:inline-flex;gap:2px;margin-left:auto}.prob-resize button{padding:2px 7px;font-size:11px;border-radius:5px;min-width:0}}
 .sidebar{display:flex;flex-direction:column;gap:.85rem}
 .sidebar-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.9rem 1rem}
 .sidebar-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.6rem}
@@ -729,6 +731,13 @@ let code = STARTER, tcResults = {}, submitting = false;
 let _curProb = null;
 let username = localStorage.getItem(LS_USER) || '';
 
+function resizeProb(mode){
+  const el = document.querySelector('.prob-layout');
+  if(!el) return;
+  el.classList.remove('prob-wide','prob-full');
+  if(mode==='wide') el.classList.add('prob-wide');
+  else if(mode==='full') el.classList.add('prob-full');
+}
 function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 function trim(s){ return (s || '').replace(/\r/g, '').trimEnd(); }
 function $(id){ return document.getElementById(id); }
@@ -1124,7 +1133,7 @@ function renderProb(pid, push=true){
     <div class="prob-layout">
       <div class="prob-pane">
         <div class="card">
-          <div class="section-lbl">문제</div>
+          <div style="display:flex;align-items:center"><div class="section-lbl" style="margin-top:0;flex:1">문제</div><div class="prob-resize"><button onclick="resizeProb('default')" title="기본">◁</button><button onclick="resizeProb('wide')" title="확대">▷</button><button onclick="resizeProb('full')" title="전체">⬛</button></div></div>
           <div class="body-text">${p.desc}</div>
           <div class="section-lbl">입력</div>
           <div class="body-text">${p.input_desc}</div>
