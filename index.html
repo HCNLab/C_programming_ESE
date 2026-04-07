@@ -1883,10 +1883,10 @@ async function fetchSubmitCounts(){
       _submitCountsLoaded = true;
     }
     if (d.leaderboard) {
-      if (_leaderboard.length) {
-        _prevLeaderboard = _leaderboard;
-        localStorage.setItem('oj_prev_lb', JSON.stringify(_prevLeaderboard));
-      }
+      // 이전 순위 = 현재 메모리에 있으면 그걸, 없으면 localStorage에서
+      _prevLeaderboard = _leaderboard.length ? _leaderboard : _prevLeaderboard;
+      // 새 데이터를 다음 세션의 prev로 저장
+      localStorage.setItem('oj_prev_lb', JSON.stringify(d.leaderboard));
       _leaderboard = d.leaderboard;
     }
     if (view === 'home') renderHome(false);
