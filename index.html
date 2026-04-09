@@ -1034,7 +1034,14 @@ window._openPublishDialog = async function(){
     const d = doc.data();
     items.push({ id: doc.id, title: d.title || doc.id, week: d.week || '', published: !!d.published });
   });
-  items.sort((a,b) => a.week.localeCompare(b.week) || a.id.localeCompare(b.id));
+  // 주차 → 연습(p/lp) → 도전(c/lc) → 번호순
+  const _pubSortKey = (id) => {
+    const isChallenge = /^l?c\d/.test(id);
+    const isPractice  = /^l?p\d/.test(id);
+    const num = parseInt((id||'').replace(/\D/g,''), 10) || 0;
+    return (isPractice ? 0 : isChallenge ? 1000 : 5000) + num;
+  };
+  items.sort((a,b) => a.week.localeCompare(b.week) || _pubSortKey(a.id) - _pubSortKey(b.id));
 
   const overlay = document.createElement('div');
   overlay.id = 'publish-overlay';
