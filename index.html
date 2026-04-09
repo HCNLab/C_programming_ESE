@@ -107,6 +107,8 @@ textarea:focus{border-color:var(--text3)}
 .wf-btn.active{background:var(--text);color:var(--bg);border-color:var(--text);font-weight:600}
 .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
 .week-section{margin-bottom:1.5rem}
+.new-badge{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.04em;color:#fff;background:#D85A30;border-radius:3px;padding:1px 4px;margin-left:4px;vertical-align:middle;animation:newPulse 1.6s ease-in-out infinite}
+@keyframes newPulse{0%,100%{box-shadow:0 0 0 0 rgba(216,90,48,.55)}50%{box-shadow:0 0 0 4px rgba(216,90,48,0)}}
 .list-view .card-grid{display:flex;flex-direction:column;gap:.4rem}
 .list-view .prob-card{display:flex;align-items:center;gap:12px;padding:.65rem 1rem;border-radius:8px}
 .list-view .prob-card-title{margin-bottom:0;font-size:13px}
@@ -440,7 +442,7 @@ const PROBLEMS = [
     desc:'양의 정수 <code>N</code>을 입력받아 1부터 N까지의 합을 출력하시오. <b>for 또는 while 루프</b>로 누적합을 계산할 것 (공식 사용 금지).',
     input_desc:'첫째 줄에 정수 N (1 ≤ N ≤ 10000) 이 주어진다.',
     output_desc:'형식: <code>Sum: &lt;합&gt;</code><br>예: N=10 → <code>Sum: 55</code>',
-    ex_in:'10', ex_out:'Sum: 55', deadline:'2026-04-16T23:59',
+    ex_in:'10', ex_out:'Sum: 55', deadline:'2026-04-16T23:59', createdAt:'2026-04-09',
     cases:[
       {id:1,input:'10',   expected:'Sum: 55',     pts:25},
       {id:2,input:'100',  expected:'Sum: 5050',   pts:25},
@@ -454,7 +456,7 @@ const PROBLEMS = [
     input_desc:'첫째 줄에 정수 N (2 ≤ N ≤ 9).',
     output_desc:'9줄 출력 (각 줄 형식: <code>N x i = N*i</code>)<br>예: N=2 →<br><code>2 x 1 = 2</code><br><code>2 x 2 = 4</code><br>...<br><code>2 x 9 = 18</code>',
     ex_in:'2', ex_out:'2 x 1 = 2\n2 x 2 = 4\n2 x 3 = 6\n2 x 4 = 8\n2 x 5 = 10\n2 x 6 = 12\n2 x 7 = 14\n2 x 8 = 16\n2 x 9 = 18',
-    deadline:'2026-04-16T23:59',
+    deadline:'2026-04-16T23:59', createdAt:'2026-04-09',
     cases:[
       {id:1,input:'2', expected:'2 x 1 = 2\n2 x 2 = 4\n2 x 3 = 6\n2 x 4 = 8\n2 x 5 = 10\n2 x 6 = 12\n2 x 7 = 14\n2 x 8 = 16\n2 x 9 = 18', pts:25},
       {id:2,input:'5', expected:'5 x 1 = 5\n5 x 2 = 10\n5 x 3 = 15\n5 x 4 = 20\n5 x 5 = 25\n5 x 6 = 30\n5 x 7 = 35\n5 x 8 = 40\n5 x 9 = 45', pts:25},
@@ -467,7 +469,7 @@ const PROBLEMS = [
     desc:'양의 정수 N을 입력받아 자릿수를 거꾸로 한 정수를 출력하시오. <b>while 루프</b>로 <code>n%10</code>(마지막 자리)과 <code>n/=10</code>(자리 제거)을 활용할 것. 선행 0은 자동으로 사라진다 (예: 100 → 1).',
     input_desc:'첫째 줄에 양의 정수 N (1 ≤ N ≤ 1,000,000).',
     output_desc:'형식: <code>Reversed: &lt;뒤집은 수&gt;</code><br>예: 12345 → <code>Reversed: 54321</code><br>예: 100 → <code>Reversed: 1</code>',
-    ex_in:'12345', ex_out:'Reversed: 54321', deadline:'2026-04-16T23:59',
+    ex_in:'12345', ex_out:'Reversed: 54321', deadline:'2026-04-16T23:59', createdAt:'2026-04-09',
     cases:[
       {id:1,input:'12345', expected:'Reversed: 54321', pts:25},
       {id:2,input:'100',   expected:'Reversed: 1',     pts:25},
@@ -480,7 +482,7 @@ const PROBLEMS = [
     desc:'정의: F(1)=1, F(2)=1, F(n)=F(n-1)+F(n-2). 정수 N을 입력받아 N번째 피보나치 수를 출력하시오. <b>for 루프 + 두 변수 갱신</b>으로 작성할 것 (재귀 금지 — 느림).',
     input_desc:'첫째 줄에 정수 N (1 ≤ N ≤ 40).',
     output_desc:'형식: <code>F(N) = &lt;값&gt;</code><br>예: N=10 → <code>F(10) = 55</code>',
-    ex_in:'10', ex_out:'F(10) = 55', deadline:'2026-04-16T23:59',
+    ex_in:'10', ex_out:'F(10) = 55', deadline:'2026-04-16T23:59', createdAt:'2026-04-09',
     cases:[
       {id:1,input:'1',  expected:'F(1) = 1',       pts:25},
       {id:2,input:'10', expected:'F(10) = 55',     pts:25},
@@ -495,7 +497,7 @@ const PROBLEMS = [
     desc:'양의 정수 N을 입력받아 1 이상 N 이하의 <b>소수의 개수</b>를 출력하시오. 각 수에 대해 2부터 √k까지 나눠보고, 나누어떨어지면 즉시 <code>break</code>로 빠져나오는 방식으로 작성할 것.',
     input_desc:'첫째 줄에 정수 N (1 ≤ N ≤ 10000).',
     output_desc:'형식: <code>Primes &lt;= N: &lt;개수&gt;</code><br>예: N=10 → <code>Primes &lt;= 10: 4</code> (2,3,5,7)',
-    ex_in:'10', ex_out:'Primes <= 10: 4', deadline:'2026-04-16T23:59',
+    ex_in:'10', ex_out:'Primes <= 10: 4', deadline:'2026-04-16T23:59', createdAt:'2026-04-09',
     cases:[
       {id:1,input:'10',  expected:'Primes <= 10: 4',   pts:25},
       {id:2,input:'30',  expected:'Primes <= 30: 10',  pts:25},
@@ -508,7 +510,7 @@ const PROBLEMS = [
     desc:'두 양의 정수 a, b의 최대공약수(GCD)를 유클리드 호제법으로 구하시오.<br><b>알고리즘:</b><br>&nbsp;&nbsp;<code>while (b != 0) { t = b; b = a % b; a = t; }</code><br>&nbsp;&nbsp;GCD = a',
     input_desc:'첫째 줄에 두 양의 정수 a b가 공백으로 구분되어 주어진다 (1 ≤ a, b ≤ 1,000,000).',
     output_desc:'형식: <code>GCD: &lt;값&gt;</code><br>예: <code>48 18</code> → <code>GCD: 6</code>',
-    ex_in:'48 18', ex_out:'GCD: 6', deadline:'2026-04-16T23:59',
+    ex_in:'48 18', ex_out:'GCD: 6', deadline:'2026-04-16T23:59', createdAt:'2026-04-09',
     cases:[
       {id:1,input:'48 18',  expected:'GCD: 6',  pts:25},
       {id:2,input:'100 75', expected:'GCD: 25', pts:25},
@@ -521,7 +523,7 @@ const PROBLEMS = [
     desc:'양의 정수 N에 대해 Collatz 수열(짝수면 n/2, 홀수면 3n+1)을 1이 될 때까지 반복했을 때 걸리는 단계 수를 출력하시오. (N이 이미 1이면 0단계)',
     input_desc:'첫째 줄에 양의 정수 N (1 ≤ N ≤ 1000).',
     output_desc:'형식: <code>Steps: &lt;단계수&gt;</code><br>예: N=6 → 6→3→10→5→16→8→4→2→1 (8단계) → <code>Steps: 8</code>',
-    ex_in:'6', ex_out:'Steps: 8', deadline:'2026-04-16T23:59',
+    ex_in:'6', ex_out:'Steps: 8', deadline:'2026-04-16T23:59', createdAt:'2026-04-09',
     cases:[
       {id:1,input:'1',  expected:'Steps: 0',   pts:25},
       {id:2,input:'6',  expected:'Steps: 8',   pts:25},
@@ -534,7 +536,7 @@ const PROBLEMS = [
     desc:'정수 N을 입력받아 높이 2N-1의 <b>마름모(다이아몬드)</b>를 출력하시오. 각 줄은 (N-i)개의 공백 + (2i-1)개의 별 (<code>*</code>)로 구성된다. 위쪽 절반과 아래쪽 절반을 두 개의 중첩 for 루프로 그릴 것.',
     input_desc:'첫째 줄에 정수 N (1 ≤ N ≤ 9).',
     output_desc:'2N-1 줄의 마름모를 출력. 각 줄 끝에 불필요한 공백 없음.<br>예: N=3 →<br><code>&nbsp;&nbsp;*</code><br><code>&nbsp;***</code><br><code>*****</code><br><code>&nbsp;***</code><br><code>&nbsp;&nbsp;*</code>',
-    ex_in:'3', ex_out:'  *\n ***\n*****\n ***\n  *', deadline:'2026-04-16T23:59',
+    ex_in:'3', ex_out:'  *\n ***\n*****\n ***\n  *', deadline:'2026-04-16T23:59', createdAt:'2026-04-09',
     cases:[
       {id:1,input:'2', expected:' *\n***\n *',                                                                       pts:25},
       {id:2,input:'3', expected:'  *\n ***\n*****\n ***\n  *',                                                       pts:25},
@@ -547,7 +549,7 @@ const PROBLEMS = [
     desc:'양의 정수 N의 각 자릿수를 더하는 과정을 한 자리가 될 때까지 반복하고, 모든 중간 결과를 <code>-&gt;</code>로 연결해 한 줄에 출력하시오. (이미 한 자리면 그 수만 출력)<br>예: 9875 → 9+8+7+5=29 → 2+9=11 → 1+1=2',
     input_desc:'첫째 줄에 양의 정수 N (1 ≤ N ≤ 1,000,000).',
     output_desc:'형식: <code>N -&gt; ... -&gt; root</code> (단일 자리면 N만)<br>예:<br><code>9875</code> → <code>9875 -&gt; 29 -&gt; 11 -&gt; 2</code><br><code>5</code> → <code>5</code>',
-    ex_in:'9875', ex_out:'9875 -> 29 -> 11 -> 2', deadline:'2026-04-16T23:59',
+    ex_in:'9875', ex_out:'9875 -> 29 -> 11 -> 2', deadline:'2026-04-16T23:59', createdAt:'2026-04-09',
     cases:[
       {id:1,input:'9875',  expected:'9875 -> 29 -> 11 -> 2', pts:25},
       {id:2,input:'493',   expected:'493 -> 16 -> 7',        pts:25},
@@ -931,6 +933,13 @@ function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 function trim(s){ return (s || '').replace(/\r/g, '').trimEnd(); }
 function $(id){ return document.getElementById(id); }
 function isOpen(p){ return new Date() <= new Date(p.deadline); }
+// 게시 후 NEW_DAYS일 동안 NEW 뱃지 표시
+const NEW_DAYS = 7;
+function isNewProblem(p){
+  if(!p.createdAt) return false;
+  const ageMs = Date.now() - new Date(p.createdAt).getTime();
+  return ageMs >= 0 && ageMs < NEW_DAYS * 86400000;
+}
 function fmtDL(dl){
   if(!dl || dl.startsWith('2099')) return '';
   if(dl.includes('T')){
@@ -1327,7 +1336,13 @@ function renderHome(push=true){
             </button></div>`
         : '');
 
-  const weekKeys = Object.keys(groups);
+  // 주차 정렬: 과제 주차는 PROBLEMS 등록 역순(최신이 위), noSubmit 연습문제 그룹은 항상 맨 아래
+  const noSubmitWeeks = new Set();
+  PROBLEMS.forEach(p => { if (p.noSubmit) noSubmitWeeks.add(p.week); });
+  const allWeekKeys = Object.keys(groups);
+  const assignWeeks = allWeekKeys.filter(w => !noSubmitWeeks.has(w)).reverse();
+  const submitWeeks = allWeekKeys.filter(w =>  noSubmitWeeks.has(w));
+  const weekKeys = [...assignWeeks, ...submitWeeks];
   const filterHtml = `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.8rem">
     <button class="wf-btn${!window._weekFilter?' active':''}" data-wf="" onclick="setWeekFilter('')">전체</button>
     ${weekKeys.map(w => {
@@ -1343,7 +1358,7 @@ function renderHome(push=true){
 
       return `<div class="prob-card" onclick="goProb('${p.id}')">
         <div class="prob-card-title">
-          <span style="font-family:'Menlo','Consolas',monospace;font-size:11px;font-weight:500;color:var(--text4);margin-right:5px;background:var(--surface3);border:1px solid var(--border);border-radius:3px;padding:1px 4px">${p.id}</span>${p.title}</div>
+          <span style="font-family:'Menlo','Consolas',monospace;font-size:11px;font-weight:500;color:var(--text4);margin-right:5px;background:var(--surface3);border:1px solid var(--border);border-radius:3px;padding:1px 4px">${p.id}</span>${p.title}${isNewProblem(p)?'<span class="new-badge">NEW</span>':''}</div>
         ${fmtDL(p.deadline) ? `<div class="prob-card-dl">마감 ${fmtDL(p.deadline)}</div>` : ''}
         <div class="prob-card-footer">
           <span class="open-badge ${open?'open':'closed'}">${open?'제출 가능':'마감'}</span>
