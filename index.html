@@ -1240,41 +1240,33 @@ async function _loadClassProgress(force=false){
     }
   });
 
-  // users 문서가 있는 uid + history만 있는 orphan uid 모두 포함
+  // users 문서가 있는 uid + history만 있는 orphan uid 모두 포함 (uid 기준, 병합 X)
+  // 동명이인 오집계 방지를 위해 username으로 병합하지 않음
   const allUids = new Set([...Object.keys(userByUid), ...Object.keys(histByUid)]);
-
-  // username 기준 병합 (같은 학생이 여러 uid로 등록되는 경우 합침)
-  // username이 없는 uid는 orphan 키로 별도 표시
-  const byKey = {};
+  const students = [];
   allUids.forEach(uid => {
     const u = userByUid[uid] || {};
     const h = histByUid[uid] || { completed: new Set(), submitCount: 0 };
     // staff 제외
     if (u.email && (ADMIN_EMAILS.includes(u.email) || TA_EMAILS.includes(u.email))) return;
-    const key = u.username && u.username.trim()
+    const hasUserDoc = !!userByUid[uid];
+    const username = u.username && u.username.trim()
       ? u.username
       : `(미등록 ${uid.slice(0,6)})`;
-    if (!byKey[key]) {
-      byKey[key] = {
-        username: key,
-        email: u.email || '',
-        approved: false,
-        completed: new Set(),
-        submitCount: 0,
-        uids: [],
-        hasUserDoc: false,
-      };
-    }
-    const agg = byKey[key];
-    h.completed.forEach(pid => agg.completed.add(pid));
-    agg.submitCount += h.submitCount;
-    agg.uids.push(uid);
-    if (userByUid[uid]) agg.hasUserDoc = true;
-    if (u.approved === true) agg.approved = true;
-    if (!agg.email && u.email) agg.email = u.email;
+    // user 문서도 없고 제출도 0이면 아예 제외
+    if (!hasUserDoc && h.submitCount === 0) return;
+    students.push({
+      uid,
+      username,
+      email: u.email || '',
+      approved: u.approved === true,
+      hasUserDoc,
+      completed: h.completed,
+      submitCount: h.submitCount,
+    });
   });
 
-  _classProgressCache = { students: Object.values(byKey), loadedAt: new Date() };
+  _classProgressCache = { students, loadedAt: new Date() };
   return _classProgressCache;
 }
 
