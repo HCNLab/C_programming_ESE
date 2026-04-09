@@ -2642,65 +2642,28 @@ async function doSubmit(){
     } catch(e) {}
   }
 
-  // 풍부한 제출 완료 피드백
-  const renderSubmitFeedback = (rankInnerHtml) => {
-    const r = $('results');
-    if (!r) return;
-    const lateTag = isLate ? '<span style="background:var(--error);color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;margin-left:.3rem;vertical-align:middle">지각</span>' : '';
-    const typeTag = p.noSubmit
-      ? '<span style="color:var(--accent-text);font-size:11px;font-weight:600;background:var(--accent-bg);padding:2px 7px;border-radius:10px;margin-left:.3rem">연습문제</span>'
-      : '<span style="color:var(--link);font-size:11px;font-weight:600;background:var(--surface3);padding:2px 7px;border-radius:10px;margin-left:.3rem">과제</span>';
-    const hasScore = submitScore !== null && submitMax !== null;
-    const perfect  = hasScore && submitScore === submitMax;
-    const scoreHtml = hasScore
-      ? `<div style="display:flex;align-items:center;gap:10px;padding:.55rem .85rem;background:var(--surface);border:1px solid var(--border);border-radius:9px;margin-bottom:.55rem">
-           <div style="font-size:10px;color:var(--text4);font-weight:600;letter-spacing:.05em;text-transform:uppercase">테스트 점수</div>
-           <div style="font-size:20px;font-weight:800;color:${perfect?'var(--accent-text)':'var(--text)'};line-height:1">${submitScore}<span style="font-size:13px;color:var(--text4);font-weight:500">&nbsp;/&nbsp;${submitMax}</span></div>
-           ${perfect?'<span style="font-size:10px;background:linear-gradient(135deg,#FFD93D,#D85A30);color:#fff;padding:3px 9px;border-radius:11px;font-weight:800;letter-spacing:.04em">만점</span>':''}
-         </div>`
-      : `<div style="font-size:11px;color:var(--text4);padding:.5rem .85rem;background:var(--surface);border:1px dashed var(--border);border-radius:9px;margin-bottom:.55rem">ℹ 테스트 실행 없이 제출 — 점수 미집계</div>`;
-    const nthHtml = _submitCountsLoaded && _submitCounts[p.id] !== undefined
-      ? `<div style="font-size:11px;color:var(--text3)">📊 이 문제 <b style="color:var(--text)">${_submitCounts[p.id] + (isFirst?1:0)}명</b> 제출${isFirst?' <span style="color:var(--accent-text);font-weight:700">(첫 제출!)</span>':''}</div>`
-      : '';
-    r.innerHTML = `
-      <div id="submit-feedback" style="padding:1rem 1.2rem;background:linear-gradient(135deg,var(--accent-bg) 0%,var(--surface2) 100%);border:2px solid var(--accent);border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.06);animation:feedbackPop .5s cubic-bezier(.2,1.4,.4,1) forwards">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:.75rem">
-          <div style="font-size:32px;animation:checkPop .6s cubic-bezier(.2,1.6,.4,1) forwards">✅</div>
-          <div style="flex:1;min-width:0">
-            <div style="font-size:18px;font-weight:800;color:var(--accent-text);letter-spacing:-.3px">제출 완료!</div>
-            <div style="font-size:12px;color:var(--text3);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.title}${typeTag}${lateTag}</div>
-          </div>
-          <div style="text-align:right;font-size:10px;color:var(--text4);line-height:1.4;flex-shrink:0">${new Date(ts).toLocaleString('ko-KR')}</div>
-        </div>
-        ${scoreHtml}
-        <div style="display:flex;gap:1rem;align-items:center;padding-top:.5rem;border-top:1px solid var(--border);flex-wrap:wrap">
-          ${nthHtml}
-          <div id="submit-rank-slot" style="margin-left:auto;font-size:11px;color:var(--text4)">${rankInnerHtml || '⏳ 순위 집계 중...'}</div>
-        </div>
-      </div>`;
-  };
-  renderSubmitFeedback(null);
+  // 결과 영역: 원래대로 담백한 제출 완료 표시
+  if ($('results')){
+    const lateTag = isLate ? ' &nbsp;<span style="color:var(--error);font-size:12px;font-weight:600">[지각]</span>' : '';
+    $('results').innerHTML = `<div style="padding:.85rem 1rem;background:var(--accent-bg);border:1px solid var(--accent);
+      border-radius:8px;color:var(--accent-text);font-size:14px;font-weight:600">
+      제출 완료 ✓${lateTag} &nbsp;<span style="font-weight:400;font-size:12px">${new Date(ts).toLocaleString('ko-KR')}</span>
+    </div>`;
+  }
 
-  // 2초 후 리더보드 갱신 + 순위 슬롯 업데이트
-  setTimeout(async () => {
-    await fetchSubmitCounts();
-    const slot = document.getElementById('submit-rank-slot');
-    if (!slot || !username) return;
-    const idx = _leaderboard.findIndex(item => item.name === username);
-    if (idx < 0) {
-      slot.innerHTML = `<span style="color:var(--text4)">순위 정보 없음</span>`;
-      return;
-    }
-    const rank = idx + 1;
-    const total = _leaderboard.length;
-    const count = _leaderboard[idx].count;
-    const emoji = rank===1?'👑':rank===2?'🥈':rank===3?'🥉':'🏅';
-    const color = rank===1?'#D4AF37':rank===2?'#888':rank===3?'#B07D50':'var(--text)';
-    const topTag = rank<=3 ? ` <span style="font-size:10px;font-weight:800;color:${color};letter-spacing:.03em;margin-left:.2rem">TOP ${rank}</span>` : '';
-    slot.innerHTML = `<span style="color:var(--text3)">내 순위</span> <b style="color:${color};font-size:13px">${emoji} ${rank}위</b> <span style="color:var(--text5)">/ ${total}명 · ${count}건${topTag}</span>`;
-  }, 2000);
+  // 제출 후 리더보드 갱신
+  setTimeout(fetchSubmitCounts, 2000);
 
-  setTimeout(() => showRatingDialog(p.id), 600);
+  // 풍부한 피드백은 팝업(별점 다이얼로그)으로 통합 전달
+  setTimeout(() => showRatingDialog(p.id, {
+    title: p.title,
+    noSubmit: !!p.noSubmit,
+    score: submitScore,
+    max: submitMax,
+    isLate,
+    isFirst,
+    ts,
+  }), 600);
 }
 
 let testCooldown = 0;
@@ -2862,26 +2825,88 @@ function showFirstBadge(){
   }, 2800);
 }
 
-function showRatingDialog(pid){
-  if (!firebaseUser || localStorage.getItem('oj_rated_'+pid)) return;
+function showRatingDialog(pid, info){
+  if (!firebaseUser) return;
+  const alreadyRated = !!localStorage.getItem('oj_rated_'+pid);
+  // 제출 정보가 없고 이미 별점도 매겼으면 띄울 이유 없음
+  if (!info && alreadyRated) return;
+
   const overlay = document.createElement('div');
   overlay.id = 'rating-overlay';
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;display:flex;align-items:center;justify-content:center;padding:1rem';
+
+  // 제출 피드백 섹션 (info가 있을 때만)
+  let feedbackHtml = '';
+  if (info) {
+    const lateTag = info.isLate ? '<span style="background:var(--error);color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;margin-left:.3rem;vertical-align:middle">지각</span>' : '';
+    const typeTag = info.noSubmit
+      ? '<span style="color:var(--accent-text);font-size:10px;font-weight:700;background:var(--accent-bg);padding:2px 7px;border-radius:10px;margin-left:.3rem">연습</span>'
+      : '<span style="color:var(--link);font-size:10px;font-weight:700;background:var(--surface3);padding:2px 7px;border-radius:10px;margin-left:.3rem">과제</span>';
+    const hasScore = info.score !== null && info.max !== null;
+    const perfect  = hasScore && info.score === info.max;
+    const scoreHtml = hasScore
+      ? `<div style="display:flex;align-items:center;justify-content:center;gap:10px;padding:.55rem .85rem;background:var(--surface2);border:1px solid var(--border);border-radius:9px;margin-bottom:.55rem">
+           <div style="font-size:9px;color:var(--text4);font-weight:600;letter-spacing:.05em;text-transform:uppercase">테스트 점수</div>
+           <div style="font-size:20px;font-weight:800;color:${perfect?'var(--accent-text)':'var(--text)'};line-height:1">${info.score}<span style="font-size:13px;color:var(--text4);font-weight:500">&nbsp;/&nbsp;${info.max}</span></div>
+           ${perfect?'<span style="font-size:10px;background:linear-gradient(135deg,#FFD93D,#D85A30);color:#fff;padding:3px 9px;border-radius:11px;font-weight:800;letter-spacing:.04em">만점</span>':''}
+         </div>`
+      : `<div style="font-size:11px;color:var(--text4);padding:.45rem .8rem;background:var(--surface2);border:1px dashed var(--border);border-radius:9px;margin-bottom:.55rem;text-align:center">ℹ 테스트 실행 없이 제출 — 점수 미집계</div>`;
+    const nthHtml = _submitCountsLoaded && _submitCounts[pid] !== undefined
+      ? `<div style="font-size:11px;color:var(--text3)">📊 이 문제 <b style="color:var(--text)">${_submitCounts[pid] + (info.isFirst?1:0)}명</b> 제출${info.isFirst?' <span style="color:var(--accent-text);font-weight:700">· 첫 제출!</span>':''}</div>`
+      : '';
+    feedbackHtml = `
+      <div style="padding:0 0 1rem 0;margin-bottom:1rem;border-bottom:1px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:.7rem;text-align:left">
+          <div style="font-size:28px;animation:checkPop .6s cubic-bezier(.2,1.6,.4,1) forwards">✅</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:16px;font-weight:800;color:var(--accent-text);letter-spacing:-.3px">제출 완료!</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${info.title}${typeTag}${lateTag}</div>
+          </div>
+        </div>
+        ${scoreHtml}
+        <div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;font-size:11px">
+          ${nthHtml}
+          <div id="submit-rank-slot" style="margin-left:auto;color:var(--text4)">⏳ 순위 집계 중...</div>
+        </div>
+      </div>`;
+  }
+
+  // 별점 섹션 (이미 매겼으면 숨김)
+  const rateSection = alreadyRated ? '' : `
+    <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:.3rem">이 문제 난이도는?</div>
+    <div style="font-size:11px;color:var(--text4);margin-bottom:.9rem">쉬움 ←————→ 어려움</div>
+    <div style="display:flex;justify-content:center;gap:6px;margin-bottom:1rem" onmouseleave="hoverStars(0)">
+      ${[1,2,3,4,5].map(i=>`<span class="rate-star" data-s="${i}" onclick="doRate('${pid}',${i})"
+        onmouseover="hoverStars(${i})"
+        style="font-size:28px;cursor:pointer;opacity:.25;transition:opacity .1s;line-height:1">⭐</span>`).join('')}
+    </div>`;
+
   overlay.innerHTML = `
-    <div style="background:var(--surface);border-radius:14px;padding:1.5rem 2rem;max-width:280px;width:100%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.3)">
-      <div style="font-size:22px;margin-bottom:.4rem">📊</div>
-      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:.3rem">이 문제 난이도는?</div>
-      <div style="font-size:11px;color:var(--text4);margin-bottom:1rem">쉬움 ←————→ 어려움</div>
-      <div style="display:flex;justify-content:center;gap:6px;margin-bottom:1.1rem" onmouseleave="hoverStars(0)">
-        ${[1,2,3,4,5].map(i=>`<span class="rate-star" data-s="${i}" onclick="doRate('${pid}',${i})"
-          onmouseover="hoverStars(${i})"
-          style="font-size:30px;cursor:pointer;opacity:.25;transition:opacity .1s;line-height:1">⭐</span>`).join('')}
-      </div>
+    <div style="background:var(--surface);border-radius:14px;padding:1.4rem 1.6rem;max-width:340px;width:100%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.3);animation:feedbackPop .4s cubic-bezier(.2,1.4,.4,1) forwards">
+      ${feedbackHtml}
+      ${rateSection}
       <button onclick="document.getElementById('rating-overlay').remove()"
-        style="font-size:11px;color:var(--text5);background:none;border:none;cursor:pointer">건너뛰기</button>
+        style="font-size:11px;color:var(--text5);background:none;border:none;cursor:pointer">${alreadyRated?'닫기':'건너뛰기'}</button>
     </div>`;
   overlay.onclick = e => { if(e.target===overlay) overlay.remove(); };
   document.body.appendChild(overlay);
+
+  // 2초 후 순위 슬롯 업데이트 (fetchSubmitCounts는 doSubmit에서 이미 예약됨)
+  if (info) {
+    setTimeout(() => {
+      const slot = document.getElementById('submit-rank-slot');
+      if (!slot || !username) return;
+      const idx = _leaderboard.findIndex(item => item.name === username);
+      if (idx < 0) { slot.innerHTML = `<span style="color:var(--text4)">순위 정보 없음</span>`; return; }
+      const rank = idx + 1;
+      const total = _leaderboard.length;
+      const count = _leaderboard[idx].count;
+      const emoji = rank===1?'👑':rank===2?'🥈':rank===3?'🥉':'🏅';
+      const color = rank===1?'#D4AF37':rank===2?'#888':rank===3?'#B07D50':'var(--text)';
+      const topTag = rank<=3 ? ` <span style="font-size:10px;font-weight:800;color:${color};letter-spacing:.03em;margin-left:.2rem">TOP ${rank}</span>` : '';
+      slot.innerHTML = `<span style="color:var(--text3)">내 순위</span> <b style="color:${color};font-size:13px">${emoji} ${rank}위</b> <span style="color:var(--text5)">/ ${total}명 · ${count}건${topTag}</span>`;
+    }, 2100);
+  }
 }
 
 /* ── 제출 현황 (Sheets doGet) ── */
