@@ -120,11 +120,17 @@ textarea:focus{border-color:var(--text3)}
 code{font-family:'Menlo','Consolas',monospace;background:var(--surface4);padding:1px 4px;border-radius:3px;font-size:12px;color:var(--text)}
 .mobile-user-bar{display:none}
 .how-to-user{flex-shrink:0;width:170px;border-left:1px solid var(--border);padding-left:1.25rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.how-to-user.staff{width:280px}
+.staff-btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;width:100%;margin-top:.1rem}
+.staff-btn-grid > .staff-full{grid-column:1/-1}
+.staff-btn-grid > .staff-divider{grid-column:1/-1;font-size:10px;color:var(--text4);text-align:center;margin:.25rem 0 .1rem;letter-spacing:.05em}
+.staff-btn{font-size:12px;padding:6px 4px;border-radius:5px;cursor:pointer;background:none;font-weight:600;display:flex;align-items:center;justify-content:center;box-sizing:border-box;line-height:1.2;min-height:30px;text-align:center}
 @media(max-width:959px){
   .mobile-user-bar{display:flex;justify-content:flex-end;margin-bottom:.85rem}
   .desktop-user-bar{display:none}
   .how-to{flex-direction:column!important}
   .how-to-user{border-left:none;border-top:1px solid var(--border);padding-left:0;padding-top:.85rem;width:100%!important;flex-direction:row;gap:1rem;justify-content:flex-start;text-align:left}
+  .how-to-user.staff{width:100%!important}
 }
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
@@ -1337,30 +1343,41 @@ function renderHome(push=true){
       <button onclick="doRegisterName()" style="font-size:12px;font-weight:600;padding:6px 0;background:var(--text);color:var(--bg);border:none;border-radius:6px;cursor:pointer;width:100%;margin-bottom:.5rem">학번_이름 등록</button>
       <button onclick="doLogout()" class="link-btn" style="font-size:11px;color:var(--text5)">로그아웃</button>`;
     const draftCount = PROBLEMS.filter(p => p._isDraft).length;
-    const btnStyle = 'font-size:12px;padding:5px 0;width:100%;border-radius:5px;cursor:pointer;background:none;margin-bottom:.4rem;display:block;text-align:center;box-sizing:border-box;font-weight:600';
-    const draftButtons = `
-      <div style="font-size:10px;color:var(--text4);text-align:center;margin:.3rem 0 .25rem;letter-spacing:.05em">─ 비공개 문제 (${draftCount}) ─</div>
-      <label style="${btnStyle};color:#C9A600;border:1px solid #C9A600">
-        📥 업로드
-        <input type="file" accept=".json" onchange="_uploadDrafts(this.files[0])" style="display:none">
-      </label>
-      <button onclick="_downloadDraftsCode()" ${draftCount===0?'disabled':''} style="${btnStyle};color:#5B8C3E;border:1px solid #5B8C3E${draftCount===0?';opacity:.4;cursor:not-allowed':''}">⬇ 공개용 코드</button>
-      <button onclick="_deleteAllDrafts()" ${draftCount===0?'disabled':''} style="${btnStyle};color:#c44;border:1px solid #c44${draftCount===0?';opacity:.4;cursor:not-allowed':''}">🗑 전체 삭제</button>
-      <div style="font-size:10px;color:var(--text4);text-align:center;margin:.4rem 0 .25rem;letter-spacing:.05em">─ 가입 승인 ─</div>
-      <button onclick="_openApprovalQueue()" style="${btnStyle};color:#8B5CF6;border:1px solid #8B5CF6">⏳ 승인 대기${_pendingCount>0?` (${_pendingCount})`:''}</button>`;
-    if (isAdmin()) return `
-      <div style="font-size:22px;margin-bottom:.3rem">👨‍🏫</div>
-      <div style="font-size:14px;font-weight:700;color:#D85A30">관리자</div>
-      <div style="font-size:12px;color:var(--text2);margin:.25rem 0 .7rem;line-height:1.5">원경호 교수님<br>환영합니다</div>
-      <button onclick="renderAdmin()" style="font-size:12px;padding:5px 0;color:#D85A30;border:1px solid #D85A30;font-weight:600;width:100%;border-radius:5px;cursor:pointer;background:none;margin-bottom:.4rem">관리자 패널</button>
-      ${draftButtons}
-      <button onclick="doLogout()" class="link-btn" style="font-size:11px;color:var(--text5)">로그아웃</button>`;
-    if (isTA()) return `
-      <div style="font-size:22px;margin-bottom:.3rem">🧑‍💻</div>
-      <div style="font-size:14px;font-weight:700;color:var(--link)">TA</div>
-      <div style="font-size:12px;color:var(--text2);margin:.25rem 0 .7rem;line-height:1.5">황주옥님<br>환영합니다</div>
-      ${draftButtons}
-      <button onclick="doLogout()" class="link-btn" style="font-size:11px;color:var(--text5)">로그아웃</button>`;
+    const disStyle = d => d ? ';opacity:.4;cursor:not-allowed' : '';
+    const staffHeader = isAdmin()
+      ? `<div style="display:flex;align-items:center;gap:.5rem;width:100%;margin-bottom:.6rem">
+          <div style="font-size:22px">👨‍🏫</div>
+          <div style="flex:1;text-align:left;min-width:0">
+            <div style="font-size:13px;font-weight:700;color:#D85A30">관리자</div>
+            <div style="font-size:11px;color:var(--text2);line-height:1.35">원경호 교수님</div>
+          </div>
+        </div>`
+      : `<div style="display:flex;align-items:center;gap:.5rem;width:100%;margin-bottom:.6rem">
+          <div style="font-size:22px">🧑‍💻</div>
+          <div style="flex:1;text-align:left;min-width:0">
+            <div style="font-size:13px;font-weight:700;color:var(--link)">TA</div>
+            <div style="font-size:11px;color:var(--text2);line-height:1.35">황주옥님</div>
+          </div>
+        </div>`;
+    const adminPanelBtn = isAdmin()
+      ? `<button onclick="renderAdmin()" class="staff-btn staff-full" style="color:#D85A30;border:1px solid #D85A30">🛠 관리자 패널</button>`
+      : '';
+    const staffBody = `
+      ${staffHeader}
+      <div class="staff-btn-grid">
+        ${adminPanelBtn}
+        <div class="staff-divider">─ 비공개 문제 (${draftCount}) ─</div>
+        <label class="staff-btn" style="color:#C9A600;border:1px solid #C9A600">
+          📥 업로드
+          <input type="file" accept=".json" onchange="_uploadDrafts(this.files[0])" style="display:none">
+        </label>
+        <button onclick="_downloadDraftsCode()" ${draftCount===0?'disabled':''} class="staff-btn" style="color:#5B8C3E;border:1px solid #5B8C3E${disStyle(draftCount===0)}">⬇ 공개용 코드</button>
+        <button onclick="_deleteAllDrafts()" ${draftCount===0?'disabled':''} class="staff-btn staff-full" style="color:#c44;border:1px solid #c44${disStyle(draftCount===0)}">🗑 drafts 전체 삭제</button>
+        <div class="staff-divider">─ 수강생 관리 ─</div>
+        <button onclick="_openApprovalQueue()" class="staff-btn staff-full" style="color:#8B5CF6;border:1px solid #8B5CF6">⏳ 가입 승인 대기${_pendingCount>0?` (${_pendingCount})`:''}</button>
+      </div>
+      <button onclick="doLogout()" class="link-btn" style="font-size:11px;color:var(--text5);margin-top:.6rem">로그아웃</button>`;
+    if (isAdmin() || isTA()) return staffBody;
     const parts = username.split('_');
     const sid = parts[0] || '';
     const sname = parts[1] || username;
@@ -1647,7 +1664,7 @@ function renderHome(push=true){
           <div class="how-step"><span class="step-num" style="background:var(--surface4);color:var(--text3)">+</span><span style="color:var(--text4)"><b>⏱ 타임어택</b> — 코드 작성 화면에서 활성화하면 붙여넣기가 차단되고 풀이 시간이 측정됩니다</span></div>
         </div>
       </div>
-      <div class="how-to-user">${userCardHtml}</div>
+      <div class="how-to-user${(isAdmin()||isTA())?' staff':''}">${userCardHtml}</div>
     </div>
 
     <div class="layout">
