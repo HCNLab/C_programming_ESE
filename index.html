@@ -77,6 +77,9 @@ textarea:focus{border-color:var(--text3)}
 .tab{padding:.4rem .9rem;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px;background:var(--surface);color:var(--text3)}
 .tab.active{background:var(--text);color:var(--surface);border-color:transparent}
 .course-header{background:var(--surface);border:none;border-bottom:3px solid var(--text);border-radius:0;padding:1.5rem 1.75rem;margin-bottom:1rem;position:relative}
+.header-hourly{position:absolute;right:16px;bottom:12px;width:180px;display:flex;flex-direction:column;align-items:stretch;gap:2px}
+.header-hourly-label{font-size:10px;color:var(--text3);text-align:right;letter-spacing:.02em}
+@media(max-width:720px){.header-hourly{display:none}}
 .course-meta{font-size:12px;color:var(--text3);margin-bottom:.5rem;letter-spacing:.02em}
 .course-title{font-size:28px;font-weight:700;letter-spacing:-.5px;margin-bottom:.2rem;line-height:1.2;color:var(--text)}
 .course-code{font-size:13px;color:var(--text4);font-family:'Menlo','Consolas',monospace;margin-bottom:.75rem}
@@ -1810,6 +1813,27 @@ function renderHome(push=true){
           이러닝 사이트 바로가기 ↗
         </a>
       </div>
+      <div class="header-hourly" title="최근 24시간 제출 현황">
+        ${(()=>{
+          const max = Math.max(..._hourly, 1);
+          const nowH = new Date().getHours();
+          const bars = _hourly.map((v, i) => {
+            const h = Math.round((v / max) * 26);
+            const isCur = i === 23;
+            const labelH = (nowH - (23 - i) + 24) % 24;
+            const showLabel = labelH % 6 === 0;
+            return `<div style="display:flex;flex-direction:column;align-items:center;gap:1px;flex:1">
+              <div title="${labelH}시 ${v}건" style="width:100%;height:${h}px;min-height:${v>0?2:0}px;
+                background:${isCur?'var(--accent)':v>0?'var(--text4)':'var(--surface4)'};
+                border-radius:2px 2px 0 0;transition:height .3s"></div>
+              <div style="font-size:7px;color:${showLabel?'var(--text4)':'transparent'};line-height:1">${labelH}</div>
+            </div>`;
+          }).join('');
+          const total = _hourly.reduce((a,b)=>a+b,0);
+          return `<div class="header-hourly-label">오늘 제출 <b style="color:var(--text)">${total}</b><span style="color:var(--text5)"> · 24h</span></div>
+            <div style="display:flex;align-items:flex-end;gap:1px;height:34px;padding-bottom:10px;width:100%">${bars}</div>`;
+        })()}
+      </div>
     </div>
 
     <div class="how-to" style="display:flex;gap:1.5rem;align-items:stretch">
@@ -1871,34 +1895,18 @@ function renderHome(push=true){
           </div>
         </div>` : ''}
         <div class="sidebar-card">
-          <div class="sidebar-title">미제출 마감 예정</div>
-          ${sidebarPinnedHtml}
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem;cursor:pointer"
+            onclick="(function(){var b=document.getElementById('pinned-body');var a=document.getElementById('pinned-arrow');var open=b.style.display!=='none';b.style.display=open?'none':'';a.textContent=open?'▶':'▼';localStorage.setItem('oj_pinned_open',open?'0':'1')})()">
+            <div class="sidebar-title" style="margin-bottom:0">미제출 마감 예정</div>
+            <span id="pinned-arrow" style="font-size:10px;color:var(--text4)">${localStorage.getItem('oj_pinned_open')==='0'?'▶':'▼'}</span>
+          </div>
+          <div id="pinned-body" style="display:${localStorage.getItem('oj_pinned_open')==='0'?'none':''}">
+            ${sidebarPinnedHtml}
+          </div>
         </div>
         <div class="sidebar-card">
           <div class="sidebar-title">명예의 전당</div>
           ${leaderboardHtml}
-        </div>
-        <div class="sidebar-card">
-          <div class="sidebar-title" style="margin-bottom:.5rem">오늘 제출 현황 <span style="font-size:10px;font-weight:400;color:var(--text4)">최근 24시간</span></div>
-          ${(()=>{
-            const max = Math.max(..._hourly, 1);
-            const nowH = new Date().getHours();
-            const bars = _hourly.map((v, i) => {
-              const h = Math.round((v / max) * 36);
-              const isCur = i === 23;
-              const labelH = (nowH - (23 - i) + 24) % 24;
-              const showLabel = labelH % 6 === 0;
-              return `<div style="display:flex;flex-direction:column;align-items:center;gap:1px;flex:1">
-                <div title="${labelH}시 ${v}건" style="width:100%;height:${h}px;min-height:${v>0?2:0}px;
-                  background:${isCur?'var(--accent)':v>0?'var(--text4)':'var(--surface4)'};
-                  border-radius:2px 2px 0 0;transition:height .3s"></div>
-                <div style="font-size:8px;color:${showLabel?'var(--text4)':'transparent'};line-height:1">${labelH}</div>
-              </div>`;
-            }).join('');
-            const total = _hourly.reduce((a,b)=>a+b,0);
-            return `<div style="display:flex;align-items:flex-end;gap:1px;height:48px;padding-bottom:12px">${bars}</div>
-              <div style="font-size:11px;color:var(--text3);text-align:right;margin-top:2px">총 <b style="color:var(--text)">${total}</b>건</div>`;
-          })()}
         </div>
       </div>
     </div>`;
