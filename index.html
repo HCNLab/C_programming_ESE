@@ -1570,6 +1570,74 @@ function renderHome(push=true){
       </div>
     </div>`;
 
+  // admin/TA 전용: 홈 사이드바에 수강생 요약 (세로 버전)
+  let classSidebarHtml = '';
+  if (isAdmin() || isTA()) {
+    if (!_classProgressCache) {
+      _loadClassProgress().then(() => { if (view === 'home') renderHome(false); });
+      classSidebarHtml = `<div style="font-size:12px;color:var(--text3);text-align:center;padding:.7rem 0">불러오는 중...</div>`;
+    } else {
+      const _cAll = _classProgressCache.students;
+      const _assignPids = assignProbs.map(p => p.id);
+      const _practicePids = practiceProbs.map(p => p.id);
+      const wc = _cAll.map(s => ({
+        doneA: _assignPids.filter(pid => s.completed.has(pid)).length,
+        doneP: _practicePids.filter(pid => s.completed.has(pid)).length,
+        sub: s.submitCount,
+      }));
+      const nT = wc.length;
+      const nAll = wc.filter(s => _assignPids.length > 0 && s.doneA === _assignPids.length).length;
+      const nZero = wc.filter(s => s.doneA === 0).length;
+      const avgA = nT > 0 ? wc.reduce((a,s)=>a+s.doneA,0) / nT : 0;
+      const avgP = nT > 0 ? wc.reduce((a,s)=>a+s.doneP,0) / nT : 0;
+      const pctA = _assignPids.length > 0 ? Math.round(avgA / _assignPids.length * 100) : 0;
+      const pctP = _practicePids.length > 0 ? Math.round(avgP / _practicePids.length * 100) : 0;
+      const avgSub = nT > 0 ? (wc.reduce((a,s)=>a+s.sub,0) / nT).toFixed(1) : '0';
+      const ts = _classProgressCache.loadedAt.toLocaleTimeString('ko-KR');
+      classSidebarHtml = `
+        <div style="margin-bottom:.7rem">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.3rem">
+            <span style="font-size:11px;font-weight:600;color:var(--text2)">과제 평균</span>
+            <span style="font-size:11px;color:var(--text3)">${avgA.toFixed(1)}/${_assignPids.length}&nbsp;<b style="color:var(--text)">${pctA}%</b></span>
+          </div>
+          <div style="height:7px;background:var(--surface4);border-radius:4px;overflow:hidden">
+            <div style="height:100%;width:${pctA}%;background:${pctA===100?'var(--accent)':'var(--text)'};border-radius:4px;transition:width .4s"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:.85rem">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.3rem">
+            <span style="font-size:11px;font-weight:600;color:var(--text2)">연습 평균</span>
+            <span style="font-size:11px;color:var(--text3)">${avgP.toFixed(1)}/${_practicePids.length}&nbsp;<b style="color:var(--text)">${pctP}%</b></span>
+          </div>
+          <div style="height:7px;background:var(--surface4);border-radius:4px;overflow:hidden">
+            <div style="height:100%;width:${pctP}%;background:var(--accent);border-radius:4px;transition:width .4s"></div>
+          </div>
+        </div>
+        <div style="border-top:1px solid var(--surface4);padding-top:.7rem;display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
+          <div style="text-align:center">
+            <div style="font-size:18px;font-weight:700;color:var(--text)">${nT}</div>
+            <div style="font-size:10px;color:var(--text3)">수강생</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:18px;font-weight:700;color:var(--accent-text)">${nAll}</div>
+            <div style="font-size:10px;color:var(--text3)">전체 완료</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:18px;font-weight:700;color:#c44">${nZero}</div>
+            <div style="font-size:10px;color:var(--text3)">미제출</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:18px;font-weight:700;color:var(--text2)">${avgSub}</div>
+            <div style="font-size:10px;color:var(--text3)">평균제출</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.6rem;padding-top:.5rem;border-top:1px solid var(--surface4)">
+          <span style="font-size:10px;color:var(--text4)">${ts}</span>
+          <span onclick="_refreshClassProgress()" style="font-size:10px;color:var(--link);cursor:pointer">🔄 새로고침</span>
+        </div>`;
+    }
+  }
+
   const sidebarPinnedHtml = upcoming.length === 0
     ? `<div style="font-size:12px;color:var(--text4)">모두 제출 완료!</div>`
     : display.map(p => {
@@ -1709,13 +1777,13 @@ function renderHome(push=true){
         ${firebaseUser ? `<div class="sidebar-card">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem;cursor:pointer"
             onclick="(function(){var b=document.getElementById('progress-body');var a=document.getElementById('progress-arrow');var open=b.style.display!=='none';b.style.display=open?'none':'';a.textContent=open?'▶':'▼';localStorage.setItem('oj_progress_open',open?'0':'1')})()">
-            <div class="sidebar-title" style="margin-bottom:0">내 제출현황</div>
+            <div class="sidebar-title" style="margin-bottom:0">${(isAdmin()||isTA())?'👥 수강생 진행 요약':'내 제출현황'}</div>
             <span id="progress-arrow" style="font-size:10px;color:var(--text4)">${localStorage.getItem('oj_progress_open')==='0'?'▶':'▼'}</span>
           </div>
           <div id="progress-body" style="display:${localStorage.getItem('oj_progress_open')==='0'?'none':''}">
-            ${progressHtml}
+            ${(isAdmin()||isTA()) ? classSidebarHtml : progressHtml}
             <div style="margin-top:.5rem;text-align:right">
-              <span onclick="renderHistory()" style="font-size:11px;color:var(--link);cursor:pointer">전체 이력 보기 →</span>
+              <span onclick="renderHistory()" style="font-size:11px;color:var(--link);cursor:pointer">${(isAdmin()||isTA())?'상세 대시보드 →':'전체 이력 보기 →'}</span>
             </div>
           </div>
         </div>` : ''}
