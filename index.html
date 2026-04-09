@@ -1268,6 +1268,11 @@ window._refreshClassProgress = async function(){
   if (view === 'history') renderHistory(false);
 };
 
+window._toggleTopStats = function(){
+  window._topStatsMode = window._topStatsMode === 'class' ? 'mine' : 'class';
+  if (view === 'history') renderHistory(false);
+};
+
 window._approveAllLegacy = async function(){
   if (!isAdmin() && !isTA()) { alert('권한 없음'); return; }
   if (!confirm('approved 필드가 없는 기존 유저를 모두 승인합니다.\n(이미 approved:false로 마킹된 신규 대기자는 제외)\n진행할까요?')) return;
@@ -2015,6 +2020,11 @@ function renderHistory(push=true){
   const _hPA = _hTA > 0 ? Math.round(_hDA/_hTA*100) : 0;
   const _hPP = _hTP > 0 ? Math.round(_hDP/_hTP*100) : 0;
 
+  // 상단 카드 모드 (admin/TA만 토글 가능, 기본 class)
+  const _isStaff = isAdmin() || isTA();
+  if (_isStaff && window._topStatsMode === undefined) window._topStatsMode = 'class';
+  const _topMode = _isStaff ? (window._topStatsMode || 'class') : 'mine';
+
   // 수강생 현황 (admin/TA 전용)
   const classStatsHtml = (() => {
     if (!isAdmin() && !isTA()) return '';
@@ -2158,15 +2168,20 @@ function renderHistory(push=true){
       </div>`;
   })();
 
-  $('app').innerHTML = `
-    <div class="topbar">
-      <button class="back-btn" onclick="renderHome()">← 목록</button>
-      <div class="topbar-title" style="font-size:15px">내 제출 이력</div>
-      ${userBar()}
+  // 상단 진행률 카드 (학생용 = 내 진행률, admin/TA = 토글 가능)
+  const topToggleBtn = _isStaff
+    ? `<button onclick="_toggleTopStats()" style="font-size:11px;padding:4px 10px;background:none;color:var(--text2);border:1px solid var(--border2);border-radius:5px;cursor:pointer;font-weight:600">
+        ${_topMode === 'class' ? '👤 내 진행률 보기' : '👥 수강생 요약 보기'}
+      </button>`
+    : '';
+
+  const myProgressCardBody = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem">
+      <div style="font-size:13px;font-weight:700;color:var(--text)">내 진행률</div>
+      ${topToggleBtn}
     </div>
-    <div class="card" style="margin-bottom:.85rem;display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap">
+    <div style="display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap">
       <div style="flex:1;min-width:160px">
-        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:.6rem">내 진행률</div>
         <div style="margin-bottom:.45rem">
           <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:.25rem">
             <span>과제</span><span><b style="color:var(--text)">${_hDA}</b>/${_hTA}문제 · ${_hPA}%</span>
@@ -2198,7 +2213,99 @@ function renderHistory(push=true){
           <div style="font-size:11px;color:var(--text3)">전체</div>
         </div>
       </div>
+    </div>`;
+
+  // 수강생 요약 카드 본문 (admin/TA 전용, 짧은 버전)
+  let classSummaryBody = '';
+  if (_isStaff && _topMode === 'class') {
+    if (!_classProgressCache) {
+      // 첫 진입: async 로드 후 재렌더
+      _loadClassProgress().then(() => { if (view === 'history') renderHistory(false); });
+      classSummaryBody = `
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem">
+          <div style="font-size:13px;font-weight:700;color:var(--text)">👥 수강생 진행 요약</div>
+          ${topToggleBtn}
+        </div>
+        <div style="text-align:center;padding:1rem;color:var(--text3);font-size:12px">불러오는 중...</div>`;
+    } else {
+      const _cAll = _classProgressCache.students;
+      const _assignPids = _hAssign.map(p => p.id);
+      const _practicePids = _hPractice.map(p => p.id);
+      const withCounts = _cAll.map(s => {
+        const doneA = _assignPids.filter(pid => s.completed.has(pid)).length;
+        const doneP = _practicePids.filter(pid => s.completed.has(pid)).length;
+        return { doneA, doneP, submit: s.submitCount };
+      });
+      const nTotal = withCounts.length;
+      const nAllDone = withCounts.filter(s => _assignPids.length > 0 && s.doneA === _assignPids.length).length;
+      const nZero = withCounts.filter(s => s.doneA === 0).length;
+      const avgA = nTotal > 0 ? withCounts.reduce((a,s)=>a+s.doneA,0) / nTotal : 0;
+      const avgP = nTotal > 0 ? withCounts.reduce((a,s)=>a+s.doneP,0) / nTotal : 0;
+      const avgSub = nTotal > 0 ? (withCounts.reduce((a,s)=>a+s.submit,0) / nTotal).toFixed(1) : '0';
+      const pctA = _assignPids.length > 0 ? Math.round(avgA / _assignPids.length * 100) : 0;
+      const pctP = _practicePids.length > 0 ? Math.round(avgP / _practicePids.length * 100) : 0;
+      const ts = _classProgressCache.loadedAt.toLocaleTimeString('ko-KR');
+      classSummaryBody = `
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem;gap:.5rem;flex-wrap:wrap">
+          <div style="display:flex;align-items:baseline;gap:.4rem">
+            <div style="font-size:13px;font-weight:700;color:var(--text)">👥 수강생 진행 요약</div>
+            <span style="font-size:10px;color:var(--text4)">(${ts})</span>
+          </div>
+          <div style="display:flex;gap:.35rem">
+            <button onclick="_refreshClassProgress()" title="새로고침" style="font-size:11px;padding:4px 8px;background:none;color:var(--text2);border:1px solid var(--border2);border-radius:5px;cursor:pointer">🔄</button>
+            ${topToggleBtn}
+          </div>
+        </div>
+        <div style="display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap">
+          <div style="flex:1;min-width:180px">
+            <div style="margin-bottom:.45rem">
+              <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:.25rem">
+                <span>과제 평균</span><span><b style="color:var(--text)">${avgA.toFixed(1)}</b>/${_assignPids.length}문제 · ${pctA}%</span>
+              </div>
+              <div style="height:6px;background:var(--surface4);border-radius:3px;overflow:hidden">
+                <div style="height:100%;width:${pctA}%;background:${pctA===100?'var(--accent)':'var(--text)'};border-radius:3px;transition:width .4s"></div>
+              </div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:.25rem">
+                <span>연습 평균</span><span><b style="color:var(--text)">${avgP.toFixed(1)}</b>/${_practicePids.length}문제 · ${pctP}%</span>
+              </div>
+              <div style="height:6px;background:var(--surface4);border-radius:3px;overflow:hidden">
+                <div style="height:100%;width:${pctP}%;background:var(--accent);border-radius:3px;transition:width .4s"></div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:1.3rem;flex-shrink:0">
+            <div style="text-align:center">
+              <div style="font-size:22px;font-weight:700;color:var(--text)">${nTotal}</div>
+              <div style="font-size:11px;color:var(--text3)">수강생</div>
+            </div>
+            <div style="text-align:center">
+              <div style="font-size:22px;font-weight:700;color:var(--accent-text)">${nAllDone}</div>
+              <div style="font-size:11px;color:var(--text3)">전체 완료</div>
+            </div>
+            <div style="text-align:center">
+              <div style="font-size:22px;font-weight:700;color:#c44">${nZero}</div>
+              <div style="font-size:11px;color:var(--text3)">미제출</div>
+            </div>
+            <div style="text-align:center">
+              <div style="font-size:22px;font-weight:700;color:var(--text2)">${avgSub}</div>
+              <div style="font-size:11px;color:var(--text3)">평균제출</div>
+            </div>
+          </div>
+        </div>`;
+    }
+  }
+
+  const topCardHtml = `<div class="card" style="margin-bottom:.85rem">${_topMode === 'class' ? classSummaryBody : myProgressCardBody}</div>`;
+
+  $('app').innerHTML = `
+    <div class="topbar">
+      <button class="back-btn" onclick="renderHome()">← 목록</button>
+      <div class="topbar-title" style="font-size:15px">내 제출 이력</div>
+      ${userBar()}
     </div>
+    ${topCardHtml}
     <div class="notice" style="display:flex;align-items:center">
       <span>${username||'(이름 없음)'} · ${firebaseUser ? '클라우드 저장' : '브라우저 저장'} (최대 20회/문제)</span>
       <button onclick="if(confirm('제출 이력을 모두 삭제할까요?')){localStorage.removeItem('oj_history');renderHistory();}"
