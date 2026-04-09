@@ -152,6 +152,9 @@ textarea:focus{border-color:var(--text3)}
 .prof-note>summary::-webkit-details-marker{display:none}
 .prof-note>summary::after{content:'▸';font-size:11px;margin-left:auto;color:#806000;transition:transform .2s}
 .prof-note[open]>summary::after{transform:rotate(90deg)}
+.prof-note-hint{font-size:11px;font-weight:400;font-style:italic;color:#8a6d00;margin-left:8px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.prof-note[open]>summary .prof-note-hint{display:none}
+body.dark .prof-note-hint{color:#c8a040}
 .prof-note-body{padding:.15rem 1rem 1rem 1rem;font-size:13.5px;color:#3a2f00;white-space:pre-wrap;line-height:1.65;font-family:'Segoe Print','Comic Sans MS',-apple-system,sans-serif}
 .prof-note-empty{color:#8a7520;font-style:italic}
 .prof-note-actions{display:flex;gap:6px;padding:0 1rem .9rem 1rem}
@@ -2363,7 +2366,7 @@ function renderProfNote(pid, editing){
     : '';
   slot.innerHTML = `
     <details class="prof-note"${text ? '' : ' open'}>
-      <summary>💡 교수님 코멘트</summary>
+      <summary>💡 교수님 코멘트<span class="prof-note-hint">충분히 고민해본 다음 열어보세요</span></summary>
       <div class="prof-note-body">${bodyHtml}</div>
       ${actions}
     </details>`;
