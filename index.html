@@ -1432,6 +1432,24 @@ function renderHome(push=true){
     if (!groups[w]) groups[w] = [];
     groups[w].push(p);
   });
+  // 각 주차 내 정렬: 연습(p/lp) → 도전(c/lc) → 번호 오름차순
+  // (드래프트가 Firestore에서 알파벳순으로 들어와도 쉬운 것부터 보이도록)
+  const _sortKey = (p) => {
+    const id = p.id || '';
+    const isChallenge = /^l?c\d/.test(id);   // c1, lc1... → 도전
+    const isPractice  = /^l?p\d/.test(id);   // p1, lp1... → 연습
+    const num = parseInt(id.replace(/\D/g,''), 10) || 0;
+    // 연습: 0~999, 도전: 1000~1999, 기타: 그대로 (원본 순서 유지 위해 큰 값)
+    const base = isPractice ? 0 : isChallenge ? 1000 : 5000;
+    return base + num;
+  };
+  Object.keys(groups).forEach(w => {
+    // 안정 정렬: 같은 키는 원본 순서 유지
+    groups[w] = groups[w]
+      .map((p, i) => ({ p, i, k: _sortKey(p) }))
+      .sort((a, b) => a.k - b.k || a.i - b.i)
+      .map(x => x.p);
+  });
   // 리더보드 순위 (userCardHtml에서도 사용)
   const myName = username ? (username.split('_')[1] || username) : null;
   const myRankIdx = username ? _leaderboard.findIndex(item => item.name === username) : -1;
