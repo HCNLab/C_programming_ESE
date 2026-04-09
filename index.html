@@ -945,6 +945,54 @@ async function loadDrafts(){
      await removeDraft('lp1')
      await publishDraft('lp1')   // JSON을 클립보드에 복사 + Firestore에서 삭제
 */
+/* 모든 drafts를 PROBLEMS 배열용 코드(.txt)로 다운로드 */
+window._downloadDraftsCode = async function(){
+  if (!isAdmin() && !isTA()) { alert('권한 없음'); return; }
+  const snap = await db.collection('drafts').get();
+  if (snap.empty) { alert('drafts 비어있음'); return; }
+  const arr = [];
+  snap.forEach(doc => {
+    const d = { id: doc.id, ...doc.data() };
+    delete d._isDraft;
+    arr.push(d);
+  });
+  arr.sort((a, b) => {
+    const w = (a.week || '').localeCompare(b.week || '');
+    return w !== 0 ? w : a.id.localeCompare(b.id);
+  });
+  let body = '';
+  let curWeek = null;
+  for (const p of arr) {
+    if (p.week !== curWeek) {
+      curWeek = p.week;
+      body += `\n  /* ── ${curWeek} ────────────────── */\n`;
+    }
+    body += '  ' + JSON.stringify(p, null, 2).replace(/\n/g, '\n  ') + ',\n';
+  }
+  const header = `// ${arr.length} problem(s) — index.html의 "const PROBLEMS = [" 배열 안에 붙여넣고 git push\n`;
+  const blob = new Blob([header + body], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `publish_drafts_${new Date().toISOString().slice(0,10)}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+/* drafts 전체 삭제 */
+window._deleteAllDrafts = async function(){
+  if (!isAdmin() && !isTA()) { alert('권한 없음'); return; }
+  const snap = await db.collection('drafts').get();
+  if (snap.empty) { alert('이미 비어있음'); return; }
+  if (!confirm(`drafts ${snap.size}개를 모두 삭제합니다. 진행할까요?\n(공개 후 정리용. Firebase에서만 지워지고, 이미 git에 푸시된 문제는 영향 없음)`)) return;
+  const batch = db.batch();
+  snap.forEach(doc => batch.delete(doc.ref));
+  await batch.commit();
+  await loadDrafts();
+  if (typeof renderHome === 'function' && view === 'home') renderHome(false);
+  alert(`${snap.size}개 삭제 완료`);
+};
+
 /* JSON 파일에서 한 번에 업로드 — admin/TA의 "비공개 문제 업로드" 버튼이 호출 */
 window._uploadDrafts = async function(file){
   if (!file) return;
@@ -1127,11 +1175,16 @@ function renderHome(push=true){
       <div style="font-size:12px;color:var(--text3);margin-bottom:.6rem;line-height:1.5">학번과 이름을<br>등록해 주세요</div>
       <button onclick="doRegisterName()" style="font-size:12px;font-weight:600;padding:6px 0;background:var(--text);color:var(--bg);border:none;border-radius:6px;cursor:pointer;width:100%;margin-bottom:.5rem">학번_이름 등록</button>
       <button onclick="doLogout()" class="link-btn" style="font-size:11px;color:var(--text5)">로그아웃</button>`;
+    const draftCount = PROBLEMS.filter(p => p._isDraft).length;
+    const btnStyle = 'font-size:12px;padding:5px 0;width:100%;border-radius:5px;cursor:pointer;background:none;margin-bottom:.4rem;display:block;text-align:center;box-sizing:border-box;font-weight:600';
     const draftButtons = `
-      <label style="font-size:12px;padding:5px 0;color:#C9A600;border:1px solid #C9A600;font-weight:600;width:100%;border-radius:5px;cursor:pointer;background:none;margin-bottom:.4rem;display:block;text-align:center;box-sizing:border-box">
-        📥 비공개 문제 업로드
+      <div style="font-size:10px;color:var(--text4);text-align:center;margin:.3rem 0 .25rem;letter-spacing:.05em">─ 비공개 문제 (${draftCount}) ─</div>
+      <label style="${btnStyle};color:#C9A600;border:1px solid #C9A600">
+        📥 업로드
         <input type="file" accept=".json" onchange="_uploadDrafts(this.files[0])" style="display:none">
-      </label>`;
+      </label>
+      <button onclick="_downloadDraftsCode()" ${draftCount===0?'disabled':''} style="${btnStyle};color:#5B8C3E;border:1px solid #5B8C3E${draftCount===0?';opacity:.4;cursor:not-allowed':''}">⬇ 공개용 코드</button>
+      <button onclick="_deleteAllDrafts()" ${draftCount===0?'disabled':''} style="${btnStyle};color:#c44;border:1px solid #c44${draftCount===0?';opacity:.4;cursor:not-allowed':''}">🗑 전체 삭제</button>`;
     if (isAdmin()) return `
       <div style="font-size:22px;margin-bottom:.3rem">👨‍🏫</div>
       <div style="font-size:14px;font-weight:700;color:#D85A30">관리자</div>
