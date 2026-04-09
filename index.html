@@ -77,8 +77,12 @@ textarea:focus{border-color:var(--text3)}
 .tab{padding:.4rem .9rem;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px;background:var(--surface);color:var(--text3)}
 .tab.active{background:var(--text);color:var(--surface);border-color:transparent}
 .course-header{background:var(--surface);border:none;border-bottom:3px solid var(--text);border-radius:0;padding:1.5rem 1.75rem;margin-bottom:1rem;position:relative}
-.header-hourly{position:absolute;right:16px;bottom:12px;width:180px;display:flex;flex-direction:column;align-items:stretch;gap:2px}
+.header-hourly{position:absolute;right:16px;bottom:12px;width:240px;display:flex;flex-direction:column;align-items:stretch;gap:3px}
 .header-hourly-label{font-size:10px;color:var(--text3);text-align:right;letter-spacing:.02em}
+.header-hourly-plot{position:relative;display:flex;align-items:stretch;height:60px}
+.header-hourly-yaxis{display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end;padding-right:3px;padding-bottom:11px;font-size:8px;color:var(--text5);line-height:1;min-width:12px}
+.header-hourly-bars{flex:1;display:flex;align-items:flex-end;gap:1px;padding-bottom:11px;position:relative;border-left:1px solid var(--surface4)}
+.header-hourly-gridline{position:absolute;left:0;right:0;border-top:1px dashed var(--surface4);pointer-events:none}
 @media(max-width:720px){.header-hourly{display:none}}
 .course-meta{font-size:12px;color:var(--text3);margin-bottom:.5rem;letter-spacing:.02em}
 .course-title{font-size:28px;font-weight:700;letter-spacing:-.5px;margin-bottom:.2rem;line-height:1.2;color:var(--text)}
@@ -1815,10 +1819,21 @@ function renderHome(push=true){
       </div>
       <div class="header-hourly" title="최근 24시간 제출 현황">
         ${(()=>{
-          const max = Math.max(..._hourly, 1);
+          const rawMax = Math.max(..._hourly, 0);
+          // y축 상한을 '깔끔한' 수로 (1,2,5,10,20,50,...)
+          const niceCeil = (n) => {
+            if (n <= 0) return 1;
+            const pow = Math.pow(10, Math.floor(Math.log10(n)));
+            const base = n / pow;
+            const m = base <= 1 ? 1 : base <= 2 ? 2 : base <= 5 ? 5 : 10;
+            return m * pow;
+          };
+          const yMax = niceCeil(rawMax);
+          const yMid = yMax / 2;
+          const plotH = 49; // 막대 영역 실제 픽셀 (60 - 11 padding-bottom)
           const nowH = new Date().getHours();
           const bars = _hourly.map((v, i) => {
-            const h = Math.round((v / max) * 26);
+            const h = Math.round((v / yMax) * plotH);
             const isCur = i === 23;
             const labelH = (nowH - (23 - i) + 24) % 24;
             const showLabel = labelH % 6 === 0;
@@ -1830,8 +1845,19 @@ function renderHome(push=true){
             </div>`;
           }).join('');
           const total = _hourly.reduce((a,b)=>a+b,0);
-          return `<div class="header-hourly-label">오늘 제출 <b style="color:var(--text)">${total}</b><span style="color:var(--text5)"> · 24h</span></div>
-            <div style="display:flex;align-items:flex-end;gap:1px;height:34px;padding-bottom:10px;width:100%">${bars}</div>`;
+          return `<div class="header-hourly-label">오늘 제출 <b style="color:var(--text)">${total}</b><span style="color:var(--text5)"> · 최근 24시간</span></div>
+            <div class="header-hourly-plot">
+              <div class="header-hourly-yaxis">
+                <span>${yMax}</span>
+                <span>${yMid % 1 === 0 ? yMid : yMid.toFixed(1)}</span>
+                <span>0</span>
+              </div>
+              <div class="header-hourly-bars">
+                <div class="header-hourly-gridline" style="top:0"></div>
+                <div class="header-hourly-gridline" style="top:50%"></div>
+                ${bars}
+              </div>
+            </div>`;
         })()}
       </div>
     </div>
