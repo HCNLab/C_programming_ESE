@@ -1204,6 +1204,64 @@ window._rejectUser = async function(uid, username){
   }
 };
 
+/* ─── 수강생 진행 현황 집계 (admin/TA 전용) ─── */
+let _classProgressCache = null;  // { students: [...], loadedAt: Date }
+
+async function _loadClassProgress(force=false){
+  if (!isAdmin() && !isTA()) return null;
+  if (!force && _classProgressCache) return _classProgressCache;
+  const [usersSnap, histSnap] = await Promise.all([
+    db.collection('users').get(),
+    db.collectionGroup('history').get()
+  ]);
+  const students = {};
+  usersSnap.forEach(d => {
+    const data = d.data();
+    // staff 계정은 집계에서 제외
+    if (ADMIN_EMAILS.includes(data.email) || TA_EMAILS.includes(data.email)) return;
+    students[d.id] = {
+      uid: d.id,
+      username: data.username || '(이름 미등록)',
+      email: data.email || '',
+      approved: data.approved === true,
+      completed: new Set(),
+      submitCount: 0,
+    };
+  });
+  histSnap.forEach(d => {
+    const parent = d.ref.parent.parent;
+    if (!parent) return;
+    const uid = parent.id;
+    if (!students[uid]) return;
+    const pid = d.id;
+    const entries = d.data().entries || [];
+    if (entries.length > 0) {
+      students[uid].completed.add(pid);
+      students[uid].submitCount += entries.length;
+    }
+  });
+  _classProgressCache = { students: Object.values(students), loadedAt: new Date() };
+  return _classProgressCache;
+}
+
+window._toggleClassProgress = async function(){
+  if (!isAdmin() && !isTA()) return;
+  window._classStatsOpen = !window._classStatsOpen;
+  if (window._classStatsOpen && !_classProgressCache) {
+    const btn = document.getElementById('_classStatsBtn');
+    if (btn) { btn.disabled = true; btn.textContent = '불러오는 중...'; }
+    await _loadClassProgress();
+  }
+  if (view === 'history') renderHistory(false);
+};
+
+window._refreshClassProgress = async function(){
+  const btn = document.getElementById('_classRefreshBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '새로고침 중...'; }
+  await _loadClassProgress(true);
+  if (view === 'history') renderHistory(false);
+};
+
 window._approveAllLegacy = async function(){
   if (!isAdmin() && !isTA()) { alert('권한 없음'); return; }
   if (!confirm('approved 필드가 없는 기존 유저를 모두 승인합니다.\n(이미 approved:false로 마킹된 신규 대기자는 제외)\n진행할까요?')) return;
@@ -1940,6 +1998,149 @@ function renderHistory(push=true){
   const _hPA = _hTA > 0 ? Math.round(_hDA/_hTA*100) : 0;
   const _hPP = _hTP > 0 ? Math.round(_hDP/_hTP*100) : 0;
 
+  // 수강생 현황 (admin/TA 전용)
+  const classStatsHtml = (() => {
+    if (!isAdmin() && !isTA()) return '';
+    const isOpen = !!window._classStatsOpen;
+    const toggleBtn = `<button id="_classStatsBtn" onclick="_toggleClassProgress()"
+      style="font-size:12px;padding:6px 12px;background:none;color:#D85A30;border:1px solid #D85A30;border-radius:6px;cursor:pointer;font-weight:600">
+      ${isOpen ? '▲ 수강생 현황 닫기' : '▼ 👥 수강생 진행 현황 보기'}</button>`;
+    if (!isOpen) return `<div style="margin:.85rem 0">${toggleBtn}</div>`;
+    if (!_classProgressCache) {
+      return `<div class="card" style="margin:.85rem 0;padding:1rem;text-align:center;color:var(--text3)">${toggleBtn}<div style="margin-top:.5rem">불러오는 중...</div></div>`;
+    }
+
+    const allStudents = _classProgressCache.students;
+    const _assignPids = _hAssign.map(p => p.id);
+    const _practicePids = _hPractice.map(p => p.id);
+
+    // 학생별 완료 수 계산 (과제만 기준)
+    const withCounts = allStudents.map(s => {
+      const doneAssign = _assignPids.filter(pid => s.completed.has(pid)).length;
+      const donePractice = _practicePids.filter(pid => s.completed.has(pid)).length;
+      return { ...s, doneAssign, donePractice, doneTotal: doneAssign + donePractice };
+    });
+
+    const total = withCounts.length;
+    const allDone = withCounts.filter(s => s.doneAssign === _assignPids.length && _assignPids.length > 0).length;
+    const zeroDone = withCounts.filter(s => s.doneAssign === 0).length;
+    const avgAssign = total > 0 ? (withCounts.reduce((a,s) => a + s.doneAssign, 0) / total).toFixed(1) : '0';
+    const avgSubmit = total > 0 ? (withCounts.reduce((a,s) => a + s.submitCount, 0) / total).toFixed(1) : '0';
+
+    // 문제별 완료 수
+    const perProblem = [..._hAssign, ..._hPractice].map(p => {
+      const count = withCounts.filter(s => s.completed.has(p.id)).length;
+      const pct = total > 0 ? Math.round(count / total * 100) : 0;
+      return { pid: p.id, title: p.title, week: p.week, noSubmit: !!p.noSubmit, count, pct };
+    });
+
+    // 학생별 정렬 (과제 완료 수 내림차순)
+    const sorted = [...withCounts].sort((a,b) => b.doneAssign - a.doneAssign || b.doneTotal - a.doneTotal);
+
+    const statsRow = `
+      <div style="display:flex;gap:1.2rem;flex-wrap:wrap;padding:.85rem 1rem;background:var(--surface3);border-radius:8px;margin-bottom:.8rem">
+        <div style="flex:1;min-width:110px;text-align:center">
+          <div style="font-size:22px;font-weight:700;color:var(--text)">${total}</div>
+          <div style="font-size:11px;color:var(--text3)">전체 수강생</div>
+        </div>
+        <div style="flex:1;min-width:110px;text-align:center">
+          <div style="font-size:22px;font-weight:700;color:var(--accent-text)">${allDone}</div>
+          <div style="font-size:11px;color:var(--text3)">과제 전체 완료</div>
+        </div>
+        <div style="flex:1;min-width:110px;text-align:center">
+          <div style="font-size:22px;font-weight:700;color:#c44">${zeroDone}</div>
+          <div style="font-size:11px;color:var(--text3)">미제출 학생</div>
+        </div>
+        <div style="flex:1;min-width:110px;text-align:center">
+          <div style="font-size:22px;font-weight:700;color:var(--text2)">${avgAssign}</div>
+          <div style="font-size:11px;color:var(--text3)">과제 평균 (/${_assignPids.length})</div>
+        </div>
+        <div style="flex:1;min-width:110px;text-align:center">
+          <div style="font-size:22px;font-weight:700;color:var(--text2)">${avgSubmit}</div>
+          <div style="font-size:11px;color:var(--text3)">인당 총 제출 수</div>
+        </div>
+      </div>`;
+
+    // 문제별 테이블
+    const tdStyle = 'padding:.35rem .7rem;font-size:12px;border-bottom:1px solid var(--surface4)';
+    const thStyle = 'padding:.45rem .7rem;text-align:left;font-size:11px;font-weight:600;color:var(--text3);background:var(--surface3);border-bottom:1px solid var(--border)';
+    const perProbRows = perProblem.map(p => {
+      const barColor = p.pct === 100 ? 'var(--accent)' : p.pct >= 70 ? '#5B8C3E' : p.pct >= 40 ? '#C9A600' : '#c44';
+      return `<tr>
+        <td style="${tdStyle};font-family:monospace;color:var(--text4);width:56px">${p.pid}</td>
+        <td style="${tdStyle}">${p.title}${p.noSubmit?' <span style="font-size:10px;color:var(--text4)">(연습)</span>':''}</td>
+        <td style="${tdStyle};width:150px">
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="flex:1;height:6px;background:var(--surface4);border-radius:3px;overflow:hidden">
+              <div style="height:100%;width:${p.pct}%;background:${barColor};border-radius:3px"></div>
+            </div>
+            <span style="font-size:11px;color:var(--text3);white-space:nowrap">${p.count}/${total}</span>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+
+    // 학생별 테이블
+    const studentRows = sorted.map(s => {
+      const assignPct = _assignPids.length > 0 ? Math.round(s.doneAssign / _assignPids.length * 100) : 0;
+      const approvedBadge = s.approved
+        ? ''
+        : '<span style="font-size:9px;padding:1px 5px;background:#FFD93D;color:#000;border-radius:3px;margin-left:4px;font-weight:700">대기</span>';
+      const rowColor = s.doneAssign === 0 ? 'color:#c44'
+        : s.doneAssign === _assignPids.length ? 'color:var(--accent-text);font-weight:600'
+        : '';
+      return `<tr>
+        <td style="${tdStyle};${rowColor}">${s.username}${approvedBadge}</td>
+        <td style="${tdStyle};${rowColor};width:100px">${s.doneAssign}/${_assignPids.length} (${assignPct}%)</td>
+        <td style="${tdStyle};${rowColor};width:70px">${s.donePractice}</td>
+        <td style="${tdStyle};${rowColor};width:70px">${s.submitCount}</td>
+      </tr>`;
+    }).join('');
+
+    const loadedAt = _classProgressCache.loadedAt.toLocaleTimeString('ko-KR');
+    return `
+      <div class="card" style="margin:.85rem 0;padding:1rem">
+        <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.8rem;flex-wrap:wrap">
+          <div style="font-size:14px;font-weight:700;color:var(--text)">👥 수강생 진행 현황</div>
+          <span style="font-size:11px;color:var(--text4)">(${loadedAt} 기준)</span>
+          <div style="margin-left:auto;display:flex;gap:.4rem">
+            <button id="_classRefreshBtn" onclick="_refreshClassProgress()" style="font-size:11px;padding:5px 10px;background:none;color:var(--text2);border:1px solid var(--border2);border-radius:5px;cursor:pointer">🔄 새로고침</button>
+            ${toggleBtn}
+          </div>
+        </div>
+        ${statsRow}
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+          <div>
+            <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:.4rem">문제별 완료율</div>
+            <div style="max-height:340px;overflow-y:auto;border:1px solid var(--border2);border-radius:6px">
+              <table style="width:100%;border-collapse:collapse">
+                <thead><tr>
+                  <th style="${thStyle}">ID</th>
+                  <th style="${thStyle}">문제</th>
+                  <th style="${thStyle}">완료율</th>
+                </tr></thead>
+                <tbody>${perProbRows}</tbody>
+              </table>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:.4rem">학생별 현황 (과제 완료 내림차순)</div>
+            <div style="max-height:340px;overflow-y:auto;border:1px solid var(--border2);border-radius:6px">
+              <table style="width:100%;border-collapse:collapse">
+                <thead><tr>
+                  <th style="${thStyle}">학생</th>
+                  <th style="${thStyle}">과제</th>
+                  <th style="${thStyle}">연습</th>
+                  <th style="${thStyle}">총제출</th>
+                </tr></thead>
+                <tbody>${studentRows}</tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  })();
+
   $('app').innerHTML = `
     <div class="topbar">
       <button class="back-btn" onclick="renderHome()">← 목록</button>
@@ -1986,6 +2187,7 @@ function renderHistory(push=true){
       <button onclick="if(confirm('제출 이력을 모두 삭제할까요?')){localStorage.removeItem('oj_history');renderHistory();}"
         style="margin-left:auto;font-size:11px;padding:2px 8px;color:var(--error);border-color:var(--fail-badge-bg)">이력 초기화</button>
     </div>
+    ${classStatsHtml}
     <div class="card" style="padding:0;overflow:hidden">
       <table style="width:100%;border-collapse:collapse">
         <thead><tr>
