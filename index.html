@@ -829,7 +829,7 @@ function trim(s){ return (s || '').replace(/\r/g, '').trimEnd(); }
 function $(id){ return document.getElementById(id); }
 function isOpen(p){ return new Date() <= new Date(p.deadline); }
 // 게시 후 NEW_DAYS일 동안 NEW 뱃지 표시
-const NEW_DAYS = 7;
+const NEW_DAYS = 2;
 function isNewProblem(p){
   if(!p.createdAt) return false;
   const ageMs = Date.now() - new Date(p.createdAt).getTime();
