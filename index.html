@@ -984,29 +984,116 @@ function toggleTheme(){
 function isAdmin(){ return firebaseUser && ADMIN_EMAILS.includes(firebaseUser.email); }
 function isTA()   { return firebaseUser && TA_EMAILS.includes(firebaseUser.email); }
 
-/* ── Firestore Drafts (admin/TA 전용 비공개 문제) ── */
-// 비공개 문제는 git에 들어가지 않고 Firestore drafts/{pid} 컬렉션에 보관.
-// 관리자/TA가 로그인하면 자동으로 PROBLEMS에 병합되어 화면에 DRAFT 뱃지로 표시됨.
-// 일반 학생에게는 fetch 자체가 안 일어나므로 view-source로도 안 보임.
+/* ── Firestore Drafts (비공개/공개 문제) ── */
+// 비공개(draft) 문제: Firestore drafts/{pid}, published 필드 없음 → staff만 보임
+// 공개 전환된 문제: drafts/{pid} + published:true → 모든 로그인 유저에게 보임
+// git에 하드코딩된 문제와 함께 PROBLEMS 배열에 병합됨
 async function loadDrafts(){
-  // 기존 draft 항목 제거 (중복 방지)
+  // 기존 Firestore 항목 제거 (중복 방지)
   for (let i = PROBLEMS.length - 1; i >= 0; i--) {
-    if (PROBLEMS[i]._isDraft) PROBLEMS.splice(i, 1);
+    if (PROBLEMS[i]._isDraft || PROBLEMS[i]._isPublished) PROBLEMS.splice(i, 1);
   }
-  if (!isAdmin() && !isTA()) return;
   try {
-    const snap = await db.collection('drafts').get();
-    snap.forEach(doc => {
-      const d = doc.data();
-      d.id = doc.id;
-      d._isDraft = true;
-      PROBLEMS.push(d);
-    });
-    console.log(`[drafts] loaded ${snap.size} draft problem(s)`);
+    if (isAdmin() || isTA()) {
+      // staff: 모든 drafts 로드 (비공개+공개)
+      const snap = await db.collection('drafts').get();
+      snap.forEach(doc => {
+        const d = doc.data();
+        d.id = doc.id;
+        if (d.published) {
+          d._isPublished = true;
+        } else {
+          d._isDraft = true;
+        }
+        PROBLEMS.push(d);
+      });
+      console.log(`[drafts] loaded ${snap.size} (staff)`);
+    } else if (firebaseUser) {
+      // 학생: 공개된 것만 로드
+      const snap = await db.collection('drafts').where('published', '==', true).get();
+      snap.forEach(doc => {
+        const d = doc.data();
+        d.id = doc.id;
+        d._isPublished = true;
+        PROBLEMS.push(d);
+      });
+      if (snap.size > 0) console.log(`[drafts] loaded ${snap.size} published`);
+    }
   } catch (e) {
     console.warn('[drafts] load failed:', e.message);
   }
 }
+
+/* 공개 전환 팝업 */
+window._openPublishDialog = async function(){
+  if (!isAdmin() && !isTA()) return;
+  const snap = await db.collection('drafts').get();
+  if (snap.empty) { alert('drafts 비어있음'); return; }
+  const items = [];
+  snap.forEach(doc => {
+    const d = doc.data();
+    items.push({ id: doc.id, title: d.title || doc.id, week: d.week || '', published: !!d.published });
+  });
+  items.sort((a,b) => a.week.localeCompare(b.week) || a.id.localeCompare(b.id));
+
+  const overlay = document.createElement('div');
+  overlay.id = 'publish-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;display:flex;align-items:center;justify-content:center;padding:1rem';
+  overlay.onclick = e => { if(e.target===overlay) overlay.remove(); };
+
+  const rows = items.map(it => `
+    <div style="display:flex;align-items:center;gap:10px;padding:.55rem 0;border-bottom:1px solid var(--surface4)">
+      <label style="position:relative;width:36px;height:20px;flex-shrink:0;cursor:pointer">
+        <input type="checkbox" data-pid="${it.id}" ${it.published?'checked':''} style="opacity:0;width:0;height:0;position:absolute"
+          onchange="this.parentElement.querySelector('.tog').style.background=this.checked?'var(--accent)':'var(--surface4)';
+                    this.parentElement.querySelector('.knob').style.transform=this.checked?'translateX(16px)':'translateX(0)'">
+        <div class="tog" style="position:absolute;inset:0;border-radius:10px;background:${it.published?'var(--accent)':'var(--surface4)'};transition:background .2s"></div>
+        <div class="knob" style="position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:8px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .2s;transform:${it.published?'translateX(16px)':'translateX(0)'}"></div>
+      </label>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+          <span style="font-family:monospace;font-size:10px;color:var(--text4);margin-right:4px">${it.id}</span>${it.title}
+        </div>
+        <div style="font-size:10px;color:var(--text4)">${it.week}</div>
+      </div>
+      <span style="font-size:10px;font-weight:600;color:${it.published?'var(--accent-text)':'var(--text5)'}">${it.published?'공개':'비공개'}</span>
+    </div>`).join('');
+
+  overlay.innerHTML = `
+    <div style="background:var(--surface);border-radius:14px;padding:1.4rem 1.6rem;max-width:420px;width:100%;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 8px 32px rgba(0,0,0,.3)">
+      <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:.3rem">공개 전환</div>
+      <div style="font-size:11px;color:var(--text4);margin-bottom:.8rem">토글 ON → 학생에게 즉시 공개 (커밋/푸쉬 불필요)</div>
+      <div style="flex:1;overflow-y:auto;min-height:0;margin-bottom:.8rem">${rows}</div>
+      <div style="display:flex;gap:.5rem;justify-content:flex-end">
+        <button onclick="document.getElementById('publish-overlay').remove()"
+          style="font-size:12px;padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:none;color:var(--text3);cursor:pointer">취소</button>
+        <button onclick="_applyPublishChanges()" id="publish-save-btn"
+          style="font-size:12px;padding:6px 14px;border-radius:6px;border:none;background:var(--accent);color:#fff;font-weight:700;cursor:pointer">저장</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+};
+
+window._applyPublishChanges = async function(){
+  const overlay = document.getElementById('publish-overlay');
+  if (!overlay) return;
+  const btn = document.getElementById('publish-save-btn');
+  if (btn) { btn.disabled = true; btn.textContent = '저장 중...'; }
+  const checks = overlay.querySelectorAll('input[data-pid]');
+  const batch = db.batch();
+  let changed = 0;
+  checks.forEach(chk => {
+    const pid = chk.dataset.pid;
+    const shouldPublish = chk.checked;
+    batch.update(db.collection('drafts').doc(pid), { published: shouldPublish || false });
+    changed++;
+  });
+  await batch.commit();
+  overlay.remove();
+  await loadDrafts();
+  if (typeof renderHome === 'function' && view === 'home') renderHome(false);
+  alert(`${changed}개 문제 상태 저장 완료`);
+};
 
 /* 콘솔용 헬퍼 — admin이 브라우저 콘솔에서 직접 사용
    사용 예:
@@ -1478,6 +1565,7 @@ function renderHome(push=true){
       <button onclick="doRegisterName()" style="font-size:12px;font-weight:600;padding:6px 0;background:var(--text);color:var(--bg);border:none;border-radius:6px;cursor:pointer;width:100%;margin-bottom:.5rem">학번_이름 등록</button>
       <button onclick="doLogout()" class="link-btn" style="font-size:11px;color:var(--text5)">로그아웃</button>`;
     const draftCount = PROBLEMS.filter(p => p._isDraft).length;
+    const publishedCount = PROBLEMS.filter(p => p._isPublished).length;
     const disStyle = d => d ? ';opacity:.4;cursor:not-allowed' : '';
     const staffHeader = isAdmin()
       ? `<div style="display:flex;align-items:center;gap:.5rem;width:100%;margin-bottom:.6rem">
@@ -1502,11 +1590,12 @@ function renderHome(push=true){
       <div class="staff-btn-grid">
         ${adminPanelBtn}
         <label class="staff-btn" style="color:#C9A600;border:1px solid #C9A600">
-          📥 비공개 (${draftCount})
+          📥 업로드 (${draftCount+publishedCount})
           <input type="file" accept=".json" onchange="_uploadDrafts(this.files[0])" style="display:none">
         </label>
-        <button onclick="_downloadDraftsCode()" ${draftCount===0?'disabled':''} class="staff-btn" style="color:#5B8C3E;border:1px solid #5B8C3E${disStyle(draftCount===0)}">⬇ 공개용 코드</button>
-        <button onclick="_deleteAllDrafts()" ${draftCount===0?'disabled':''} class="staff-btn" style="color:#c44;border:1px solid #c44${disStyle(draftCount===0)}">🗑 drafts 삭제</button>
+        <button onclick="_openPublishDialog()" ${draftCount+publishedCount===0?'disabled':''} class="staff-btn" style="color:#5B8C3E;border:1px solid #5B8C3E${disStyle(draftCount+publishedCount===0)}">🔓 공개 전환</button>
+        <button onclick="_downloadDraftsCode()" ${draftCount+publishedCount===0?'disabled':''} class="staff-btn" style="color:var(--text4);border:1px solid var(--border)${disStyle(draftCount+publishedCount===0)}">⬇ 코드</button>
+        <button onclick="_deleteAllDrafts()" ${draftCount+publishedCount===0?'disabled':''} class="staff-btn" style="color:#c44;border:1px solid #c44${disStyle(draftCount+publishedCount===0)}">🗑 삭제</button>
         <button onclick="_openApprovalQueue()" class="staff-btn" style="color:#8B5CF6;border:1px solid #8B5CF6">⏳ 승인${_pendingCount>0?` (${_pendingCount})`:''}</button>
       </div>
       <button onclick="doLogout()" class="link-btn" style="font-size:11px;color:var(--text5);margin-top:.6rem">로그아웃</button>`;
@@ -1788,7 +1877,7 @@ function renderHome(push=true){
 
       return `<div class="prob-card${p._isDraft?' draft-card':''}" onclick="goProb('${p.id}')">
         <div class="prob-card-title">
-          <span style="font-family:'Menlo','Consolas',monospace;font-size:11px;font-weight:500;color:var(--text4);margin-right:5px;background:var(--surface3);border:1px solid var(--border);border-radius:3px;padding:1px 4px">${p.id}</span>${p.title}${p._isDraft?'<span class="draft-badge">DRAFT</span>':''}${isNewProblem(p)?'<span class="new-badge">NEW</span>':''}</div>
+          <span style="font-family:'Menlo','Consolas',monospace;font-size:11px;font-weight:500;color:var(--text4);margin-right:5px;background:var(--surface3);border:1px solid var(--border);border-radius:3px;padding:1px 4px">${p.id}</span>${p.title}${p._isDraft?'<span class="draft-badge">DRAFT</span>':''}${p._isPublished&&(isAdmin()||isTA())?'<span class="draft-badge" style="background:#5B8C3E;border-color:#5B8C3E;color:#fff">공개</span>':''}${isNewProblem(p)?'<span class="new-badge">NEW</span>':''}</div>
         ${fmtDL(p.deadline) ? `<div class="prob-card-dl">마감 ${fmtDL(p.deadline)}</div>` : ''}
         <div class="prob-card-footer">
           <span class="open-badge ${open?'open':'closed'}">${open?'제출 가능':'마감'}</span>
@@ -3265,9 +3354,9 @@ auth.onAuthStateChanged(async (user) => {
     isApproved = false;
     historyCache = null;
     localStorage.removeItem(LS_USER);
-    // 로그아웃 시 draft 제거
+    // 로그아웃 시 draft/published 제거
     for (let i = PROBLEMS.length - 1; i >= 0; i--) {
-      if (PROBLEMS[i]._isDraft) PROBLEMS.splice(i, 1);
+      if (PROBLEMS[i]._isDraft || PROBLEMS[i]._isPublished) PROBLEMS.splice(i, 1);
     }
   }
   renderHome(false);
