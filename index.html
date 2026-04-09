@@ -108,6 +108,8 @@ textarea:focus{border-color:var(--text3)}
 .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
 .week-section{margin-bottom:1.5rem}
 .new-badge{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.04em;color:#fff;background:#D85A30;border-radius:3px;padding:1px 4px;margin-left:4px;vertical-align:middle;animation:newPulse 1.6s ease-in-out infinite}
+.draft-badge{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.04em;color:#000;background:#FFD93D;border:1px solid #C9A600;border-radius:3px;padding:1px 4px;margin-left:4px;vertical-align:middle}
+.draft-card{outline:2px dashed #C9A600;outline-offset:-2px;background:linear-gradient(135deg,var(--surface) 0%,var(--surface) 60%,rgba(255,217,61,.08) 100%)!important}
 @keyframes newPulse{0%,100%{box-shadow:0 0 0 0 rgba(216,90,48,.55)}50%{box-shadow:0 0 0 4px rgba(216,90,48,0)}}
 .list-view .card-grid{display:flex;flex-direction:column;gap:.4rem}
 .list-view .prob-card{display:flex;align-items:center;gap:12px;padding:.65rem 1rem;border-radius:8px}
@@ -250,62 +252,6 @@ const GEN = {
     return {input:`1234\n3\n${ri(100001,500000)}`,expected:'Insufficient!\nBalance: 100000 won'};
   },
 
-  /* ── Week 6B: Loops ─────────────────────────── */
-  lp1: (slot)=>{
-    const ns=[10, 100, 1, 1000];
-    const n = ns[slot-1];
-    return {input:`${n}`, expected:`Sum: ${n*(n+1)/2}`};
-  },
-  lp2: (slot)=>{
-    const ns=[2, 5, 7, 9];
-    const n = ns[slot-1];
-    const lines=[]; for(let i=1;i<=9;i++) lines.push(`${n} x ${i} = ${n*i}`);
-    return {input:`${n}`, expected:lines.join('\n')};
-  },
-  lp3: (slot)=>{
-    const ns=[12345, 100, 7, 80706];
-    const n = ns[slot-1];
-    let r=0, t=n; while(t>0){ r=r*10+t%10; t=Math.floor(t/10); }
-    return {input:`${n}`, expected:`Reversed: ${r}`};
-  },
-  lp4: (slot)=>{
-    const ns=[1, 10, 20, 30];
-    const n = ns[slot-1];
-    let a=1,b=1; for(let i=3;i<=n;i++){ const c=a+b; a=b; b=c; }
-    return {input:`${n}`, expected:`F(${n}) = ${b}`};
-  },
-  lc1: (slot)=>{
-    const ns=[10, 30, 100, 1];
-    const n = ns[slot-1];
-    let cnt=0;
-    for(let k=2;k<=n;k++){ let p=1; for(let i=2;i*i<=k;i++) if(k%i===0){p=0;break;} if(p) cnt++; }
-    return {input:`${n}`, expected:`Primes <= ${n}: ${cnt}`};
-  },
-  lc2: (slot)=>{
-    const pairs=[[48,18],[100,75],[17,31],[60,24]];
-    const [a,b]=pairs[slot-1];
-    let x=a,y=b; while(y){ const t=y; y=x%y; x=t; }
-    return {input:`${a} ${b}`, expected:`GCD: ${x}`};
-  },
-  lc3: (slot)=>{
-    const ns=[1, 6, 27, 9];
-    let n=ns[slot-1]; const orig=n; let s=0;
-    while(n!==1){ n = n%2===0 ? n/2 : 3*n+1; s++; }
-    return {input:`${orig}`, expected:`Steps: ${s}`};
-  },
-  lc4: (slot)=>{
-    const ns=[2, 3, 4, 5];
-    const n = ns[slot-1]; const lines=[];
-    for(let i=1;i<=n;i++)   lines.push(' '.repeat(n-i)+'*'.repeat(2*i-1));
-    for(let i=n-1;i>=1;i--) lines.push(' '.repeat(n-i)+'*'.repeat(2*i-1));
-    return {input:`${n}`, expected:lines.join('\n')};
-  },
-  lc5: (slot)=>{
-    const ns=[9875, 493, 5, 99999];
-    let n=ns[slot-1]; const orig=n; const arr=[String(n)];
-    while(n>=10){ let s=0,t=n; while(t>0){ s+=t%10; t=Math.floor(t/10); } arr.push(String(s)); n=s; }
-    return {input:`${orig}`, expected:arr.join(' -> ')};
-  },
 };
 
 function buildCases(pid){
@@ -436,127 +382,6 @@ const PROBLEMS = [
     ]
   },
 
-  /* ── Week 6B Practice (Loops) ────────────────── */
-  {
-    id:'lp1', week:'Week 6B: Control flow - Loops (while, do-while, for)', title:'Sum 1 to N',
-    desc:'양의 정수 <code>N</code>을 입력받아 1부터 N까지의 합을 출력하시오. <b>for 또는 while 루프</b>로 누적합을 계산할 것 (공식 사용 금지).',
-    input_desc:'첫째 줄에 정수 N (1 ≤ N ≤ 10000) 이 주어진다.',
-    output_desc:'형식: <code>Sum: &lt;합&gt;</code><br>예: N=10 → <code>Sum: 55</code>',
-    ex_in:'10', ex_out:'Sum: 55', deadline:'2026-04-16T23:59', createdAt:'2026-04-09',
-    cases:[
-      {id:1,input:'10',   expected:'Sum: 55',     pts:25},
-      {id:2,input:'100',  expected:'Sum: 5050',   pts:25},
-      {id:3,input:'1',    expected:'Sum: 1',      pts:25},
-      {id:4,input:'1000', expected:'Sum: 500500', pts:25},
-    ]
-  },
-  {
-    id:'lp2', week:'Week 6B: Control flow - Loops (while, do-while, for)', title:'Multiplication Table (1 dan)',
-    desc:'정수 N (2 ≤ N ≤ 9)을 입력받아 N단 구구단을 9줄 출력하시오. <b>for 루프</b>로 작성할 것.',
-    input_desc:'첫째 줄에 정수 N (2 ≤ N ≤ 9).',
-    output_desc:'9줄 출력 (각 줄 형식: <code>N x i = N*i</code>)<br>예: N=2 →<br><code>2 x 1 = 2</code><br><code>2 x 2 = 4</code><br>...<br><code>2 x 9 = 18</code>',
-    ex_in:'2', ex_out:'2 x 1 = 2\n2 x 2 = 4\n2 x 3 = 6\n2 x 4 = 8\n2 x 5 = 10\n2 x 6 = 12\n2 x 7 = 14\n2 x 8 = 16\n2 x 9 = 18',
-    deadline:'2026-04-16T23:59', createdAt:'2026-04-09',
-    cases:[
-      {id:1,input:'2', expected:'2 x 1 = 2\n2 x 2 = 4\n2 x 3 = 6\n2 x 4 = 8\n2 x 5 = 10\n2 x 6 = 12\n2 x 7 = 14\n2 x 8 = 16\n2 x 9 = 18', pts:25},
-      {id:2,input:'5', expected:'5 x 1 = 5\n5 x 2 = 10\n5 x 3 = 15\n5 x 4 = 20\n5 x 5 = 25\n5 x 6 = 30\n5 x 7 = 35\n5 x 8 = 40\n5 x 9 = 45', pts:25},
-      {id:3,input:'7', expected:'7 x 1 = 7\n7 x 2 = 14\n7 x 3 = 21\n7 x 4 = 28\n7 x 5 = 35\n7 x 6 = 42\n7 x 7 = 49\n7 x 8 = 56\n7 x 9 = 63', pts:25},
-      {id:4,input:'9', expected:'9 x 1 = 9\n9 x 2 = 18\n9 x 3 = 27\n9 x 4 = 36\n9 x 5 = 45\n9 x 6 = 54\n9 x 7 = 63\n9 x 8 = 72\n9 x 9 = 81', pts:25},
-    ]
-  },
-  {
-    id:'lp3', week:'Week 6B: Control flow - Loops (while, do-while, for)', title:'Reverse Digits',
-    desc:'양의 정수 N을 입력받아 자릿수를 거꾸로 한 정수를 출력하시오. <b>while 루프</b>로 <code>n%10</code>(마지막 자리)과 <code>n/=10</code>(자리 제거)을 활용할 것. 선행 0은 자동으로 사라진다 (예: 100 → 1).',
-    input_desc:'첫째 줄에 양의 정수 N (1 ≤ N ≤ 1,000,000).',
-    output_desc:'형식: <code>Reversed: &lt;뒤집은 수&gt;</code><br>예: 12345 → <code>Reversed: 54321</code><br>예: 100 → <code>Reversed: 1</code>',
-    ex_in:'12345', ex_out:'Reversed: 54321', deadline:'2026-04-16T23:59', createdAt:'2026-04-09',
-    cases:[
-      {id:1,input:'12345', expected:'Reversed: 54321', pts:25},
-      {id:2,input:'100',   expected:'Reversed: 1',     pts:25},
-      {id:3,input:'7',     expected:'Reversed: 7',     pts:25},
-      {id:4,input:'80706', expected:'Reversed: 60708', pts:25},
-    ]
-  },
-  {
-    id:'lp4', week:'Week 6B: Control flow - Loops (while, do-while, for)', title:'N-th Fibonacci',
-    desc:'정의: F(1)=1, F(2)=1, F(n)=F(n-1)+F(n-2). 정수 N을 입력받아 N번째 피보나치 수를 출력하시오. <b>for 루프 + 두 변수 갱신</b>으로 작성할 것 (재귀 금지 — 느림).',
-    input_desc:'첫째 줄에 정수 N (1 ≤ N ≤ 40).',
-    output_desc:'형식: <code>F(N) = &lt;값&gt;</code><br>예: N=10 → <code>F(10) = 55</code>',
-    ex_in:'10', ex_out:'F(10) = 55', deadline:'2026-04-16T23:59', createdAt:'2026-04-09',
-    cases:[
-      {id:1,input:'1',  expected:'F(1) = 1',       pts:25},
-      {id:2,input:'10', expected:'F(10) = 55',     pts:25},
-      {id:3,input:'20', expected:'F(20) = 6765',   pts:25},
-      {id:4,input:'30', expected:'F(30) = 832040', pts:25},
-    ]
-  },
-
-  /* ── Week 6B Challenge (Loops) ───────────────── */
-  {
-    id:'lc1', week:'Week 6B: Control flow - Loops (while, do-while, for)', title:'Prime Counter (≤ N)',
-    desc:'양의 정수 N을 입력받아 1 이상 N 이하의 <b>소수의 개수</b>를 출력하시오. 각 수에 대해 2부터 √k까지 나눠보고, 나누어떨어지면 즉시 <code>break</code>로 빠져나오는 방식으로 작성할 것.',
-    input_desc:'첫째 줄에 정수 N (1 ≤ N ≤ 10000).',
-    output_desc:'형식: <code>Primes &lt;= N: &lt;개수&gt;</code><br>예: N=10 → <code>Primes &lt;= 10: 4</code> (2,3,5,7)',
-    ex_in:'10', ex_out:'Primes <= 10: 4', deadline:'2026-04-16T23:59', createdAt:'2026-04-09',
-    cases:[
-      {id:1,input:'10',  expected:'Primes <= 10: 4',   pts:25},
-      {id:2,input:'30',  expected:'Primes <= 30: 10',  pts:25},
-      {id:3,input:'100', expected:'Primes <= 100: 25', pts:25},
-      {id:4,input:'1',   expected:'Primes <= 1: 0',    pts:25},
-    ]
-  },
-  {
-    id:'lc2', week:'Week 6B: Control flow - Loops (while, do-while, for)', title:'GCD (Euclidean Algorithm)',
-    desc:'두 양의 정수 a, b의 최대공약수(GCD)를 유클리드 호제법으로 구하시오.<br><b>알고리즘:</b><br>&nbsp;&nbsp;<code>while (b != 0) { t = b; b = a % b; a = t; }</code><br>&nbsp;&nbsp;GCD = a',
-    input_desc:'첫째 줄에 두 양의 정수 a b가 공백으로 구분되어 주어진다 (1 ≤ a, b ≤ 1,000,000).',
-    output_desc:'형식: <code>GCD: &lt;값&gt;</code><br>예: <code>48 18</code> → <code>GCD: 6</code>',
-    ex_in:'48 18', ex_out:'GCD: 6', deadline:'2026-04-16T23:59', createdAt:'2026-04-09',
-    cases:[
-      {id:1,input:'48 18',  expected:'GCD: 6',  pts:25},
-      {id:2,input:'100 75', expected:'GCD: 25', pts:25},
-      {id:3,input:'17 31',  expected:'GCD: 1',  pts:25},
-      {id:4,input:'60 24',  expected:'GCD: 12', pts:25},
-    ]
-  },
-  {
-    id:'lc3', week:'Week 6B: Control flow - Loops (while, do-while, for)', title:'Collatz Steps',
-    desc:'양의 정수 N에 대해 Collatz 수열(짝수면 n/2, 홀수면 3n+1)을 1이 될 때까지 반복했을 때 걸리는 단계 수를 출력하시오. (N이 이미 1이면 0단계)',
-    input_desc:'첫째 줄에 양의 정수 N (1 ≤ N ≤ 1000).',
-    output_desc:'형식: <code>Steps: &lt;단계수&gt;</code><br>예: N=6 → 6→3→10→5→16→8→4→2→1 (8단계) → <code>Steps: 8</code>',
-    ex_in:'6', ex_out:'Steps: 8', deadline:'2026-04-16T23:59', createdAt:'2026-04-09',
-    cases:[
-      {id:1,input:'1',  expected:'Steps: 0',   pts:25},
-      {id:2,input:'6',  expected:'Steps: 8',   pts:25},
-      {id:3,input:'27', expected:'Steps: 111', pts:25},
-      {id:4,input:'9',  expected:'Steps: 19',  pts:25},
-    ]
-  },
-  {
-    id:'lc4', week:'Week 6B: Control flow - Loops (while, do-while, for)', title:'Star Diamond',
-    desc:'정수 N을 입력받아 높이 2N-1의 <b>마름모(다이아몬드)</b>를 출력하시오. 각 줄은 (N-i)개의 공백 + (2i-1)개의 별 (<code>*</code>)로 구성된다. 위쪽 절반과 아래쪽 절반을 두 개의 중첩 for 루프로 그릴 것.',
-    input_desc:'첫째 줄에 정수 N (1 ≤ N ≤ 9).',
-    output_desc:'2N-1 줄의 마름모를 출력. 각 줄 끝에 불필요한 공백 없음.<br>예: N=3 →<br><code>&nbsp;&nbsp;*</code><br><code>&nbsp;***</code><br><code>*****</code><br><code>&nbsp;***</code><br><code>&nbsp;&nbsp;*</code>',
-    ex_in:'3', ex_out:'  *\n ***\n*****\n ***\n  *', deadline:'2026-04-16T23:59', createdAt:'2026-04-09',
-    cases:[
-      {id:1,input:'2', expected:' *\n***\n *',                                                                       pts:25},
-      {id:2,input:'3', expected:'  *\n ***\n*****\n ***\n  *',                                                       pts:25},
-      {id:3,input:'4', expected:'   *\n  ***\n *****\n*******\n *****\n  ***\n   *',                                 pts:25},
-      {id:4,input:'5', expected:'    *\n   ***\n  *****\n *******\n*********\n *******\n  *****\n   ***\n    *',     pts:25},
-    ]
-  },
-  {
-    id:'lc5', week:'Week 6B: Control flow - Loops (while, do-while, for)', title:'Digital Root with Steps',
-    desc:'양의 정수 N의 각 자릿수를 더하는 과정을 한 자리가 될 때까지 반복하고, 모든 중간 결과를 <code>-&gt;</code>로 연결해 한 줄에 출력하시오. (이미 한 자리면 그 수만 출력)<br>예: 9875 → 9+8+7+5=29 → 2+9=11 → 1+1=2',
-    input_desc:'첫째 줄에 양의 정수 N (1 ≤ N ≤ 1,000,000).',
-    output_desc:'형식: <code>N -&gt; ... -&gt; root</code> (단일 자리면 N만)<br>예:<br><code>9875</code> → <code>9875 -&gt; 29 -&gt; 11 -&gt; 2</code><br><code>5</code> → <code>5</code>',
-    ex_in:'9875', ex_out:'9875 -> 29 -> 11 -> 2', deadline:'2026-04-16T23:59', createdAt:'2026-04-09',
-    cases:[
-      {id:1,input:'9875',  expected:'9875 -> 29 -> 11 -> 2', pts:25},
-      {id:2,input:'493',   expected:'493 -> 16 -> 7',        pts:25},
-      {id:3,input:'5',     expected:'5',                     pts:25},
-      {id:4,input:'99999', expected:'99999 -> 45 -> 9',      pts:25},
-    ]
-  },
 ];
 
 /* ── week01-04 연습문제 (noSubmit) ── */
@@ -1089,6 +914,168 @@ function toggleTheme(){
 function isAdmin(){ return firebaseUser && ADMIN_EMAILS.includes(firebaseUser.email); }
 function isTA()   { return firebaseUser && TA_EMAILS.includes(firebaseUser.email); }
 
+/* ── Firestore Drafts (admin/TA 전용 비공개 문제) ── */
+// 비공개 문제는 git에 들어가지 않고 Firestore drafts/{pid} 컬렉션에 보관.
+// 관리자/TA가 로그인하면 자동으로 PROBLEMS에 병합되어 화면에 DRAFT 뱃지로 표시됨.
+// 일반 학생에게는 fetch 자체가 안 일어나므로 view-source로도 안 보임.
+async function loadDrafts(){
+  // 기존 draft 항목 제거 (중복 방지)
+  for (let i = PROBLEMS.length - 1; i >= 0; i--) {
+    if (PROBLEMS[i]._isDraft) PROBLEMS.splice(i, 1);
+  }
+  if (!isAdmin() && !isTA()) return;
+  try {
+    const snap = await db.collection('drafts').get();
+    snap.forEach(doc => {
+      const d = doc.data();
+      d.id = doc.id;
+      d._isDraft = true;
+      PROBLEMS.push(d);
+    });
+    console.log(`[drafts] loaded ${snap.size} draft problem(s)`);
+  } catch (e) {
+    console.warn('[drafts] load failed:', e.message);
+  }
+}
+
+/* 콘솔용 헬퍼 — admin이 브라우저 콘솔에서 직접 사용
+   사용 예:
+     await addDraft({ id:'lp1', week:'Week 6B...', title:'Sum 1 to N', ... cases:[...] })
+     await listDrafts()
+     await removeDraft('lp1')
+     await publishDraft('lp1')   // JSON을 클립보드에 복사 + Firestore에서 삭제
+*/
+/* JSON 파일에서 한 번에 업로드 — admin/TA의 "비공개 문제 업로드" 버튼이 호출 */
+window._uploadDrafts = async function(file){
+  if (!file) return;
+  if (!isAdmin() && !isTA()) { alert('권한 없음'); return; }
+  try {
+    const text = await file.text();
+    const arr = JSON.parse(text);
+    if (!Array.isArray(arr)) throw new Error('JSON 최상위가 배열이어야 합니다');
+    if (!confirm(`${arr.length}개 문제를 비공개로 업로드합니다. 진행할까요?`)) return;
+    let ok = 0, fail = 0;
+    for (const p of arr) {
+      if (!p.id) { fail++; continue; }
+      const data = { ...p };
+      delete data.id;
+      try {
+        await db.collection('drafts').doc(p.id).set(data);
+        ok++;
+      } catch (e) {
+        console.error(p.id, e);
+        fail++;
+      }
+    }
+    await loadDrafts();
+    if (typeof renderHome === 'function' && view === 'home') renderHome(false);
+    alert(`업로드 완료: 성공 ${ok}개, 실패 ${fail}개`);
+  } catch (e) {
+    alert('업로드 실패: ' + e.message);
+  }
+};
+
+window.addDraft = async function(prob){
+  if (!isAdmin() && !isTA()) { console.error('관리자만 사용 가능'); return; }
+  if (!prob || !prob.id) { console.error('prob.id 필수'); return; }
+  const id = prob.id;
+  const data = { ...prob };
+  delete data.id;          // doc id로 사용
+  delete data._isDraft;
+  await db.collection('drafts').doc(id).set(data);
+  await loadDrafts();
+  if (typeof renderHome === 'function' && view === 'home') renderHome(false);
+  console.log(`[drafts] saved "${id}". 화면 갱신 완료.`);
+};
+window.removeDraft = async function(id){
+  if (!isAdmin() && !isTA()) { console.error('관리자만 사용 가능'); return; }
+  await db.collection('drafts').doc(id).delete();
+  await loadDrafts();
+  if (typeof renderHome === 'function' && view === 'home') renderHome(false);
+  console.log(`[drafts] removed "${id}".`);
+};
+window.listDrafts = async function(){
+  if (!isAdmin() && !isTA()) { console.error('관리자만 사용 가능'); return; }
+  const snap = await db.collection('drafts').get();
+  const arr = [];
+  snap.forEach(doc => arr.push({ id: doc.id, title: doc.data().title, week: doc.data().week }));
+  console.table(arr);
+  return arr;
+};
+window.publishDraft = async function(id){
+  if (!isAdmin() && !isTA()) { console.error('관리자만 사용 가능'); return; }
+  const doc = await db.collection('drafts').doc(id).get();
+  if (!doc.exists) { console.error(`draft "${id}" 없음`); return; }
+  const data = { id, ...doc.data() };
+  delete data._isDraft;
+  // PROBLEMS 배열 형식으로 직렬화
+  const json = JSON.stringify(data, null, 2);
+  try {
+    await navigator.clipboard.writeText(json + ',');
+    console.log(`[drafts] "${id}" JSON을 클립보드에 복사했습니다.\n→ index.html PROBLEMS 배열에 붙여넣고 commit/push 하세요.\n→ 푸시 후 removeDraft("${id}")로 Firestore에서 삭제하세요.`);
+  } catch (e) {
+    console.log(json);
+    console.warn('클립보드 복사 실패. 위 JSON을 수동 복사하세요.');
+  }
+  return data;
+};
+
+/* publishAllDrafts(): 모든 draft를 한 번에 PROBLEMS 배열용 코드로 출력
+   - 클립보드에 복사된 텍스트를 index.html PROBLEMS 배열에 한 번에 붙여넣기
+   - 그 후 commit & push → 모두 공개되면 removeAllDrafts() 호출
+   - week / id 기준으로 정렬해서 출력
+*/
+window.publishAllDrafts = async function(){
+  if (!isAdmin() && !isTA()) { console.error('관리자만 사용 가능'); return; }
+  const snap = await db.collection('drafts').get();
+  if (snap.empty) { console.warn('[drafts] 비어있음'); return; }
+  const arr = [];
+  snap.forEach(doc => {
+    const d = { id: doc.id, ...doc.data() };
+    delete d._isDraft;
+    arr.push(d);
+  });
+  arr.sort((a, b) => {
+    const wa = (a.week || '').localeCompare(b.week || '');
+    return wa !== 0 ? wa : a.id.localeCompare(b.id);
+  });
+  // 각 항목을 PROBLEMS 배열에 그대로 붙여넣을 수 있는 형식으로
+  const body = arr.map(p => JSON.stringify(p, null, 2)).join(',\n') + ',';
+  // week 별 그룹 헤더 주석
+  let grouped = '';
+  let curWeek = null;
+  for (const p of arr) {
+    if (p.week !== curWeek) {
+      curWeek = p.week;
+      grouped += `\n/* ── ${curWeek} ────────────────── */\n`;
+    }
+    grouped += JSON.stringify(p, null, 2) + ',\n';
+  }
+  try {
+    await navigator.clipboard.writeText(grouped);
+    console.log(`[drafts] ${arr.length}개 문제 JSON을 클립보드에 복사했습니다.\n→ index.html PROBLEMS 배열 내부에 붙여넣고 commit & push 하세요.\n→ 배포 확인 후 window.removeAllDrafts() 로 Firestore 정리.`);
+    console.table(arr.map(p => ({ id: p.id, week: p.week, title: p.title })));
+  } catch (e) {
+    console.log(grouped);
+    console.warn('클립보드 복사 실패. 위 텍스트를 수동 복사하세요.');
+  }
+  return arr;
+};
+
+window.removeAllDrafts = async function(){
+  if (!isAdmin() && !isTA()) { console.error('관리자만 사용 가능'); return; }
+  const snap = await db.collection('drafts').get();
+  if (snap.empty) { console.warn('[drafts] 이미 비어있음'); return; }
+  const ok = confirm(`drafts ${snap.size}개를 모두 삭제합니다. 진행할까요?`);
+  if (!ok) return;
+  const batch = db.batch();
+  snap.forEach(doc => batch.delete(doc.ref));
+  await batch.commit();
+  await loadDrafts();
+  if (typeof renderHome === 'function' && view === 'home') renderHome(false);
+  console.log(`[drafts] ${snap.size}개 모두 삭제 완료.`);
+};
+
 function userBar(){
   const isDark = document.body.classList.contains('dark');
   const themeBtn = `<button onclick="toggleTheme()" title="테마 전환" style="font-size:15px;background:none;border:none;cursor:pointer;padding:2px 6px;line-height:1">${isDark ? '☀️' : '🌙'}</button>`;
@@ -1140,16 +1127,23 @@ function renderHome(push=true){
       <div style="font-size:12px;color:var(--text3);margin-bottom:.6rem;line-height:1.5">학번과 이름을<br>등록해 주세요</div>
       <button onclick="doRegisterName()" style="font-size:12px;font-weight:600;padding:6px 0;background:var(--text);color:var(--bg);border:none;border-radius:6px;cursor:pointer;width:100%;margin-bottom:.5rem">학번_이름 등록</button>
       <button onclick="doLogout()" class="link-btn" style="font-size:11px;color:var(--text5)">로그아웃</button>`;
+    const draftButtons = `
+      <label style="font-size:12px;padding:5px 0;color:#C9A600;border:1px solid #C9A600;font-weight:600;width:100%;border-radius:5px;cursor:pointer;background:none;margin-bottom:.4rem;display:block;text-align:center;box-sizing:border-box">
+        📥 비공개 문제 업로드
+        <input type="file" accept=".json" onchange="_uploadDrafts(this.files[0])" style="display:none">
+      </label>`;
     if (isAdmin()) return `
       <div style="font-size:22px;margin-bottom:.3rem">👨‍🏫</div>
       <div style="font-size:14px;font-weight:700;color:#D85A30">관리자</div>
       <div style="font-size:12px;color:var(--text2);margin:.25rem 0 .7rem;line-height:1.5">원경호 교수님<br>환영합니다</div>
       <button onclick="renderAdmin()" style="font-size:12px;padding:5px 0;color:#D85A30;border:1px solid #D85A30;font-weight:600;width:100%;border-radius:5px;cursor:pointer;background:none;margin-bottom:.4rem">관리자 패널</button>
+      ${draftButtons}
       <button onclick="doLogout()" class="link-btn" style="font-size:11px;color:var(--text5)">로그아웃</button>`;
     if (isTA()) return `
       <div style="font-size:22px;margin-bottom:.3rem">🧑‍💻</div>
       <div style="font-size:14px;font-weight:700;color:var(--link)">TA</div>
       <div style="font-size:12px;color:var(--text2);margin:.25rem 0 .7rem;line-height:1.5">황주옥님<br>환영합니다</div>
+      ${draftButtons}
       <button onclick="doLogout()" class="link-btn" style="font-size:11px;color:var(--text5)">로그아웃</button>`;
     const parts = username.split('_');
     const sid = parts[0] || '';
@@ -1356,9 +1350,9 @@ function renderHome(push=true){
       const open = isOpen(p);
       const entries = hist[p.id] || [];
 
-      return `<div class="prob-card" onclick="goProb('${p.id}')">
+      return `<div class="prob-card${p._isDraft?' draft-card':''}" onclick="goProb('${p.id}')">
         <div class="prob-card-title">
-          <span style="font-family:'Menlo','Consolas',monospace;font-size:11px;font-weight:500;color:var(--text4);margin-right:5px;background:var(--surface3);border:1px solid var(--border);border-radius:3px;padding:1px 4px">${p.id}</span>${p.title}${isNewProblem(p)?'<span class="new-badge">NEW</span>':''}</div>
+          <span style="font-family:'Menlo','Consolas',monospace;font-size:11px;font-weight:500;color:var(--text4);margin-right:5px;background:var(--surface3);border:1px solid var(--border);border-radius:3px;padding:1px 4px">${p.id}</span>${p.title}${p._isDraft?'<span class="draft-badge">DRAFT</span>':''}${isNewProblem(p)?'<span class="new-badge">NEW</span>':''}</div>
         ${fmtDL(p.deadline) ? `<div class="prob-card-dl">마감 ${fmtDL(p.deadline)}</div>` : ''}
         <div class="prob-card-footer">
           <span class="open-badge ${open?'open':'closed'}">${open?'제출 가능':'마감'}</span>
@@ -2453,10 +2447,16 @@ auth.onAuthStateChanged(async (user) => {
     }
     // Firestore에서 이력 불러오기
     await loadHistoryFromFirestore();
+    // 관리자/TA면 비공개 drafts 로드
+    await loadDrafts();
   } else {
     username = '';
     historyCache = null;
     localStorage.removeItem(LS_USER);
+    // 로그아웃 시 draft 제거
+    for (let i = PROBLEMS.length - 1; i >= 0; i--) {
+      if (PROBLEMS[i]._isDraft) PROBLEMS.splice(i, 1);
+    }
   }
   renderHome(false);
 });

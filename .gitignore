@@ -20,6 +20,12 @@ PROFESSOR_GUIDE.md
 assets/mascot/
 mascot/
 
+# 관리자 전용 비공개 도구 (drafts 시드, 디버깅 등)
+_admin_*.html
+_admin_*.js
+_admin_*.json
+_admin_*.txt
+
 # OS
 .DS_Store
 Thumbs.db
