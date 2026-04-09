@@ -740,6 +740,8 @@ firebase.initializeApp({
 const auth = firebase.auth();
 const db   = firebase.firestore();
 let firebaseUser = null;   // Firebase Auth 유저 객체
+let isApproved = false;    // 승인 상태 (admin/TA는 자동 true)
+let _pendingCount = 0;     // 승인 대기 인원 수 (admin/TA 전용)
 
 let view = 'home', curPid = null, curTab = 'prob';
 let code = STARTER, tcResults = {}, submitting = false;
@@ -1124,6 +1126,107 @@ window.removeAllDrafts = async function(){
   console.log(`[drafts] ${snap.size}개 모두 삭제 완료.`);
 };
 
+/* ─── 가입 승인 대기열 ─── */
+async function _loadPendingCount(){
+  if (!isAdmin() && !isTA()) { _pendingCount = 0; return; }
+  try {
+    const snap = await db.collection('users').where('approved', '==', false).get();
+    _pendingCount = snap.size;
+  } catch(e) {
+    console.warn('[approval] pending count load failed:', e);
+    _pendingCount = 0;
+  }
+}
+
+window._openApprovalQueue = async function(){
+  if (!isAdmin() && !isTA()) { alert('권한 없음'); return; }
+  const snap = await db.collection('users').where('approved', '==', false).get();
+  const pending = [];
+  snap.forEach(d => pending.push({ uid: d.id, ...d.data() }));
+
+  // 모달 배경
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem';
+  overlay.onclick = (e) => { if (e.target === overlay) document.body.removeChild(overlay); };
+
+  const rowsHtml = pending.length === 0
+    ? '<div style="text-align:center;padding:2rem;color:var(--text3)">승인 대기 중인 사용자가 없습니다.</div>'
+    : pending.map(p => `
+        <div data-uid="${p.uid}" style="display:flex;align-items:center;gap:.6rem;padding:.7rem;border-bottom:1px solid var(--border2)">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:14px;font-weight:600;color:var(--text)">${p.username || '(이름 미등록)'}</div>
+            <div style="font-size:11px;color:var(--text4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.email || ''}</div>
+          </div>
+          <button onclick="_approveUser('${p.uid}')" style="font-size:12px;padding:5px 12px;background:#5B8C3E;color:white;border:none;border-radius:5px;cursor:pointer;font-weight:600">승인</button>
+          <button onclick="_rejectUser('${p.uid}','${(p.username||'').replace(/'/g,'')}')" style="font-size:12px;padding:5px 12px;background:#c44;color:white;border:none;border-radius:5px;cursor:pointer;font-weight:600">거절</button>
+        </div>`).join('');
+
+  overlay.innerHTML = `
+    <div style="background:var(--bg);border:1px solid var(--border2);border-radius:10px;width:min(520px,100%);max-height:80vh;display:flex;flex-direction:column;box-shadow:0 10px 40px rgba(0,0,0,.3)">
+      <div style="padding:1rem 1.2rem;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:15px;font-weight:700;color:var(--text)">⏳ 가입 승인 대기 (${pending.length})</div>
+        <button id="_approvalCloseBtn" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--text3);padding:0 4px">×</button>
+      </div>
+      <div id="_approvalList" style="flex:1;overflow-y:auto">${rowsHtml}</div>
+      <div style="padding:.7rem 1.2rem;border-top:1px solid var(--border2);display:flex;gap:.5rem;justify-content:space-between;align-items:center">
+        <button onclick="_approveAllLegacy()" style="font-size:11px;padding:6px 10px;background:none;color:var(--text3);border:1px solid var(--border2);border-radius:5px;cursor:pointer" title="approved 필드 자체가 없는 기존 유저(초기 도입 전 가입자)를 일괄 승인">기존 유저 일괄 승인</button>
+        <div style="font-size:11px;color:var(--text4)">박스 바깥 클릭 시 닫힘</div>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  document.getElementById('_approvalCloseBtn').onclick = () => document.body.removeChild(overlay);
+};
+
+window._approveUser = async function(uid){
+  try {
+    await db.collection('users').doc(uid).update({ approved: true, approvedAt: new Date().toISOString() });
+    // 모달에서 해당 행 제거
+    const row = document.querySelector(`[data-uid="${uid}"]`);
+    if (row) row.remove();
+    await _loadPendingCount();
+    if (view === 'home') renderHome(false);
+  } catch(e) {
+    alert('승인 실패: ' + e.message);
+  }
+};
+
+window._rejectUser = async function(uid, username){
+  if (!confirm(`정말 거절하시겠습니까?\n이 계정은 삭제됩니다.`)) return;
+  try {
+    await db.collection('users').doc(uid).delete();
+    if (username) await db.collection('usernames').doc(username).delete().catch(()=>{});
+    const row = document.querySelector(`[data-uid="${uid}"]`);
+    if (row) row.remove();
+    await _loadPendingCount();
+    if (view === 'home') renderHome(false);
+  } catch(e) {
+    alert('거절 실패: ' + e.message);
+  }
+};
+
+window._approveAllLegacy = async function(){
+  if (!isAdmin() && !isTA()) { alert('권한 없음'); return; }
+  if (!confirm('approved 필드가 없는 기존 유저를 모두 승인합니다.\n(이미 approved:false로 마킹된 신규 대기자는 제외)\n진행할까요?')) return;
+  const snap = await db.collection('users').get();
+  const batch = db.batch();
+  let count = 0;
+  snap.forEach(d => {
+    const data = d.data();
+    if (data.approved === undefined) {
+      batch.update(d.ref, { approved: true, approvedAt: new Date().toISOString() });
+      count++;
+    }
+  });
+  if (count === 0) { alert('일괄 승인할 기존 유저가 없습니다.'); return; }
+  await batch.commit();
+  alert(`${count}명 일괄 승인 완료.`);
+  // 모달 닫고 다시 열기
+  const overlay = document.querySelector('div[style*="z-index:9999"]');
+  if (overlay) document.body.removeChild(overlay);
+  await _loadPendingCount();
+  if (view === 'home') renderHome(false);
+};
+
 function userBar(){
   const isDark = document.body.classList.contains('dark');
   const themeBtn = `<button onclick="toggleTheme()" title="테마 전환" style="font-size:15px;background:none;border:none;cursor:pointer;padding:2px 6px;line-height:1">${isDark ? '☀️' : '🌙'}</button>`;
@@ -1184,7 +1287,9 @@ function renderHome(push=true){
         <input type="file" accept=".json" onchange="_uploadDrafts(this.files[0])" style="display:none">
       </label>
       <button onclick="_downloadDraftsCode()" ${draftCount===0?'disabled':''} style="${btnStyle};color:#5B8C3E;border:1px solid #5B8C3E${draftCount===0?';opacity:.4;cursor:not-allowed':''}">⬇ 공개용 코드</button>
-      <button onclick="_deleteAllDrafts()" ${draftCount===0?'disabled':''} style="${btnStyle};color:#c44;border:1px solid #c44${draftCount===0?';opacity:.4;cursor:not-allowed':''}">🗑 전체 삭제</button>`;
+      <button onclick="_deleteAllDrafts()" ${draftCount===0?'disabled':''} style="${btnStyle};color:#c44;border:1px solid #c44${draftCount===0?';opacity:.4;cursor:not-allowed':''}">🗑 전체 삭제</button>
+      <div style="font-size:10px;color:var(--text4);text-align:center;margin:.4rem 0 .25rem;letter-spacing:.05em">─ 가입 승인 ─</div>
+      <button onclick="_openApprovalQueue()" style="${btnStyle};color:#8B5CF6;border:1px solid #8B5CF6">⏳ 승인 대기${_pendingCount>0?` (${_pendingCount})`:''}</button>`;
     if (isAdmin()) return `
       <div style="font-size:22px;margin-bottom:.3rem">👨‍🏫</div>
       <div style="font-size:14px;font-weight:700;color:#D85A30">관리자</div>
@@ -1201,6 +1306,11 @@ function renderHome(push=true){
     const parts = username.split('_');
     const sid = parts[0] || '';
     const sname = parts[1] || username;
+    if (!isApproved) return `
+      <div style="font-size:22px;margin-bottom:.2rem">⏳</div>
+      <div style="font-size:14px;font-weight:700;color:#C9A600">승인 대기 중</div>
+      <div style="font-size:12px;color:var(--text2);margin:.25rem 0 .7rem;line-height:1.5">${sname}님<br>교수님/TA 승인 후<br>문제 풀이 가능</div>
+      <button onclick="doLogout()" class="link-btn" style="font-size:11px;color:var(--text5)">로그아웃</button>`;
     const rankEmoji = myRank===1?'👑':myRank===2?'🥈':myRank===3?'🥉':'👋';
     const rankLabel = myRank>=1&&myRank<=3 ? `<div style="font-size:11px;font-weight:700;color:${myRank===1?'#D4AF37':myRank===2?'#888':'#B07D50'};margin:.15rem 0 .5rem;letter-spacing:.03em">${myRank}위 · ${myRank===1?'🎉 전체 1위!':myRank===2?'상위권':'Top 3'}</div>` : `<div style="font-size:11px;color:var(--text3);margin-bottom:.65rem">환영합니다${myRank>0?` (${myRank}위)`:''}</div>`;
     return `
@@ -1893,12 +2003,14 @@ function renderHistory(push=true){
 /* 액션 */
 function goProb(pid){
   if (!username){ doSetUser(() => renderProb(pid)); return; }
+  if (!isApproved){ alert('승인 대기 중입니다. 교수님/TA의 승인 후 문제를 풀 수 있습니다.'); return; }
   renderProb(pid);
 }
 
 async function doSubmit(){
   if (submitting) return;
   if (!username){ doSetUser(() => doSubmit()); return; }
+  if (!isApproved){ alert('승인 대기 중입니다. 교수님/TA의 승인 후 제출할 수 있습니다.'); return; }
   const p   = _curProb || PROBLEMS.find(x => x.id === curPid);
   const src = getCode();
   const _starter = (p.starter || STARTER);
@@ -2456,7 +2568,12 @@ async function doRegisterName(cb){
   localStorage.setItem(LS_USER, username);
   try {
     // users 컬렉션에 프로필 저장
-    await db.collection('users').doc(firebaseUser.uid).set({ username, email: firebaseUser.email, updatedAt: new Date().toISOString() }, { merge: true });
+    // 신규 문서일 때만 approved:false로 초기화 (기존 유저의 승인 상태는 보존)
+    const userRef = db.collection('users').doc(firebaseUser.uid);
+    const userDoc = await userRef.get();
+    const payload = { username, email: firebaseUser.email, updatedAt: new Date().toISOString() };
+    if (!userDoc.exists) payload.approved = false;
+    await userRef.set(payload, { merge: true });
     // usernames 컬렉션에 역방향 매핑 저장 (중복 방지용)
     await db.collection('usernames').doc(newName).set({ uid: firebaseUser.uid, email: firebaseUser.email });
     // 이전 이름이 있었으면 삭제
@@ -2479,9 +2596,12 @@ function doChangeUser(){ doRegisterName(() => renderHome()); }
 auth.onAuthStateChanged(async (user) => {
   firebaseUser = user;
   if (user) {
-    // Firestore에서 학번_이름 불러오기
+    // admin/TA는 자동 승인
+    isApproved = isAdmin() || isTA();
+    // Firestore에서 학번_이름 + 승인 상태 불러오기
     try {
       const doc = await db.collection('users').doc(user.uid).get();
+      if (doc.exists && doc.data().approved === true) isApproved = true;
       if (doc.exists && doc.data().username) {
         username = doc.data().username;
         localStorage.setItem(LS_USER, username);
@@ -2500,10 +2620,12 @@ auth.onAuthStateChanged(async (user) => {
     }
     // Firestore에서 이력 불러오기
     await loadHistoryFromFirestore();
-    // 관리자/TA면 비공개 drafts 로드
+    // 관리자/TA면 비공개 drafts + 승인 대기 인원 로드
     await loadDrafts();
+    await _loadPendingCount();
   } else {
     username = '';
+    isApproved = false;
     historyCache = null;
     localStorage.removeItem(LS_USER);
     // 로그아웃 시 draft 제거
