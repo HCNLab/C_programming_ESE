@@ -3382,10 +3382,8 @@ auth.onAuthStateChanged(async (user) => {
     isApproved = false;
     historyCache = null;
     localStorage.removeItem(LS_USER);
-    // 로그아웃 시 draft/published 제거
-    for (let i = PROBLEMS.length - 1; i >= 0; i--) {
-      if (PROBLEMS[i]._isDraft || PROBLEMS[i]._isPublished) PROBLEMS.splice(i, 1);
-    }
+    // 비로그인도 공개 drafts 로드 (loadDrafts 내부에서 splice로 기존 항목 정리함)
+    await loadDrafts();
   }
   renderHome(false);
 });
