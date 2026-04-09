@@ -1668,7 +1668,6 @@ function renderHome(push=true){
       const pctA = _assignPids.length > 0 ? Math.round(avgA / _assignPids.length * 100) : 0;
       const pctP = _practicePids.length > 0 ? Math.round(avgP / _practicePids.length * 100) : 0;
       const avgSub = nT > 0 ? (wc.reduce((a,s)=>a+s.sub,0) / nT).toFixed(1) : '0';
-      const ts = _classProgressCache.loadedAt.toLocaleTimeString('ko-KR');
       classSidebarHtml = `
         <div style="margin-bottom:.7rem">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.3rem">
@@ -1705,10 +1704,6 @@ function renderHome(push=true){
             <div style="font-size:18px;font-weight:700;color:var(--text2)">${avgSub}</div>
             <div style="font-size:10px;color:var(--text3)">평균제출</div>
           </div>
-        </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.6rem;padding-top:.5rem;border-top:1px solid var(--surface4)">
-          <span style="font-size:10px;color:var(--text4)">${ts}</span>
-          <span onclick="_refreshClassProgress()" style="font-size:10px;color:var(--link);cursor:pointer">🔄 새로고침</span>
         </div>`;
     }
   }
@@ -1853,18 +1848,20 @@ function renderHome(push=true){
       <div class="sidebar">
         ${firebaseUser ? `<div class="sidebar-card">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem">
-            <div class="sidebar-title" style="margin-bottom:0;cursor:pointer;flex:1"
-              onclick="(function(){var b=document.getElementById('progress-body');var a=document.getElementById('progress-arrow');var open=b.style.display!=='none';b.style.display=open?'none':'';a.textContent=open?'▶':'▼';localStorage.setItem('oj_progress_open',open?'0':'1')})()">
-              ${(isAdmin()||isTA()) ? (_homeProgMode==='class'?'👥 수강생 진행 요약':'📊 내 제출현황') : '내 제출현황'}
-            </div>
-            <div style="display:flex;align-items:center;gap:5px">
-              ${(isAdmin()||isTA()) ? `
-                <button onclick="window._homeProgMode='class';renderHome(false)" style="font-size:10px;padding:2px 7px;border-radius:3px;border:1px solid var(--border);background:${_homeProgMode==='class'?'var(--link)':'transparent'};color:${_homeProgMode==='class'?'#fff':'var(--text3)'};cursor:pointer">수강생</button>
-                <button onclick="window._homeProgMode='mine';renderHome(false)" style="font-size:10px;padding:2px 7px;border-radius:3px;border:1px solid var(--border);background:${_homeProgMode==='mine'?'var(--link)':'transparent'};color:${_homeProgMode==='mine'?'#fff':'var(--text3)'};cursor:pointer">내꺼</button>
-              ` : ''}
-              <span id="progress-arrow" style="font-size:10px;color:var(--text4);cursor:pointer"
-                onclick="(function(){var b=document.getElementById('progress-body');var a=document.getElementById('progress-arrow');var open=b.style.display!=='none';b.style.display=open?'none':'';a.textContent=open?'▶':'▼';localStorage.setItem('oj_progress_open',open?'0':'1')})()">${localStorage.getItem('oj_progress_open')==='0'?'▶':'▼'}</span>
-            </div>
+            ${(isAdmin()||isTA()) ? `
+              <div style="display:flex;align-items:baseline;gap:.5rem;flex:1;min-width:0">
+                <span onclick="window._homeProgMode='class';renderHome(false)"
+                  style="font-size:14px;font-weight:${_homeProgMode==='class'?'700':'500'};letter-spacing:-.2px;cursor:pointer;color:${_homeProgMode==='class'?'var(--text)':'var(--text5)'};transition:color .15s">수강생 진행</span>
+                <span style="font-size:11px;color:var(--text5)">/</span>
+                <span onclick="window._homeProgMode='mine';renderHome(false)"
+                  style="font-size:14px;font-weight:${_homeProgMode==='mine'?'700':'500'};letter-spacing:-.2px;cursor:pointer;color:${_homeProgMode==='mine'?'var(--text)':'var(--text5)'};transition:color .15s">내 제출</span>
+              </div>
+            ` : `
+              <div class="sidebar-title" style="margin-bottom:0;cursor:pointer;flex:1"
+                onclick="(function(){var b=document.getElementById('progress-body');var a=document.getElementById('progress-arrow');var open=b.style.display!=='none';b.style.display=open?'none':'';a.textContent=open?'▶':'▼';localStorage.setItem('oj_progress_open',open?'0':'1')})()">내 제출현황</div>
+            `}
+            <span id="progress-arrow" style="font-size:10px;color:var(--text4);cursor:pointer;padding:0 .3rem"
+              onclick="(function(){var b=document.getElementById('progress-body');var a=document.getElementById('progress-arrow');var open=b.style.display!=='none';b.style.display=open?'none':'';a.textContent=open?'▶':'▼';localStorage.setItem('oj_progress_open',open?'0':'1')})()">${localStorage.getItem('oj_progress_open')==='0'?'▶':'▼'}</span>
           </div>
           <div id="progress-body" style="display:${localStorage.getItem('oj_progress_open')==='0'?'none':''}">
             ${_homeProgMode==='class' ? classSidebarHtml : progressHtml}
