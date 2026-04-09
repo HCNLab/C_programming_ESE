@@ -124,6 +124,59 @@ textarea:focus{border-color:var(--text3)}
 .list-view .prob-card-dl{font-size:11px;color:var(--text4);white-space:nowrap}
 .list-view .prob-card-footer{margin-top:0;padding-top:0;border-top:none;margin-left:auto;flex-shrink:0}
 .notice{font-size:12px;color:var(--text3);background:var(--surface3);border-left:3px solid var(--border2);padding:.55rem .8rem;border-radius:0 6px 6px 0;margin-bottom:1rem}
+/* 포스트잇 스타일 교수 코멘트 */
+.prof-note{
+  position:relative;
+  margin:1.4rem .6rem .6rem .3rem;
+  background:linear-gradient(135deg,#fff7a8 0%,#ffe97a 100%);
+  color:#3a2f00;
+  border:none;
+  border-radius:2px 14px 3px 2px;
+  box-shadow:
+    2px 3px 6px rgba(0,0,0,.14),
+    0 1px 2px rgba(0,0,0,.08),
+    inset 0 -20px 30px -20px rgba(180,140,0,.18);
+  transform:rotate(-.45deg);
+  transition:transform .18s ease, box-shadow .18s ease;
+}
+.prof-note:hover{transform:rotate(-.15deg) translateY(-1px);box-shadow:3px 5px 12px rgba(0,0,0,.18),0 1px 2px rgba(0,0,0,.08),inset 0 -20px 30px -20px rgba(180,140,0,.18)}
+.prof-note::before{
+  content:'';position:absolute;top:-9px;left:50%;transform:translateX(-50%) rotate(-2deg);
+  width:52px;height:14px;
+  background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(220,220,220,.35));
+  border:1px solid rgba(140,120,60,.18);
+  border-radius:1px;
+  box-shadow:0 1px 2px rgba(0,0,0,.12);
+}
+.prof-note>summary{cursor:pointer;user-select:none;list-style:none;padding:.9rem 1rem .55rem 1rem;font-size:13.5px;font-weight:700;color:#4a3800;display:flex;align-items:center;gap:7px;font-family:'Segoe Print','Comic Sans MS',-apple-system,sans-serif;letter-spacing:.2px}
+.prof-note>summary::-webkit-details-marker{display:none}
+.prof-note>summary::after{content:'▸';font-size:11px;margin-left:auto;color:#806000;transition:transform .2s}
+.prof-note[open]>summary::after{transform:rotate(90deg)}
+.prof-note-body{padding:.15rem 1rem 1rem 1rem;font-size:13.5px;color:#3a2f00;white-space:pre-wrap;line-height:1.65;font-family:'Segoe Print','Comic Sans MS',-apple-system,sans-serif}
+.prof-note-empty{color:#8a7520;font-style:italic}
+.prof-note-actions{display:flex;gap:6px;padding:0 1rem .9rem 1rem}
+.prof-note-actions button{font-size:11px;padding:4px 11px;border-radius:4px;border:1px solid rgba(100,80,0,.35);background:rgba(255,255,255,.55);color:#4a3800;cursor:pointer;font-weight:600}
+.prof-note-actions button:hover{background:rgba(255,255,255,.85)}
+.prof-note-actions button.primary{background:#c89020;border-color:#a06800;color:#fff}
+.prof-note-actions button.primary:hover{background:#b07810}
+.prof-note-actions button.danger{color:#a32d2d;border-color:rgba(163,45,45,.45)}
+.prof-note textarea{width:100%;box-sizing:border-box;min-height:90px;font:13.5px/1.55 'Segoe Print','Comic Sans MS',-apple-system,sans-serif;padding:.6rem .75rem;border:1px dashed rgba(100,80,0,.4);border-radius:3px;background:rgba(255,255,255,.55);color:#3a2f00;resize:vertical;margin-bottom:.4rem}
+.prof-note textarea:focus{outline:none;background:rgba(255,255,255,.85);border-color:rgba(100,80,0,.7)}
+body.dark .prof-note{
+  background:linear-gradient(135deg,#4a3d0a 0%,#3a2f05 100%);
+  color:#ffe580;
+  box-shadow:2px 3px 8px rgba(0,0,0,.5),0 1px 2px rgba(0,0,0,.3),inset 0 -20px 30px -20px rgba(0,0,0,.35);
+}
+body.dark .prof-note>summary{color:#ffe580}
+body.dark .prof-note>summary::after{color:#c8a040}
+body.dark .prof-note-body{color:#ffe580}
+body.dark .prof-note-empty{color:#8a7530}
+body.dark .prof-note::before{background:linear-gradient(180deg,rgba(200,200,200,.2),rgba(120,120,120,.15));border-color:rgba(200,180,100,.2)}
+body.dark .prof-note-actions button{background:rgba(0,0,0,.25);color:#ffe580;border-color:rgba(200,180,100,.35)}
+body.dark .prof-note-actions button:hover{background:rgba(0,0,0,.45)}
+body.dark .prof-note-actions button.primary{background:#a07820;border-color:#c89040;color:#fff}
+body.dark .prof-note textarea{background:rgba(0,0,0,.3);color:#ffe580;border-color:rgba(200,180,100,.4)}
+body.dark .prof-note textarea:focus{background:rgba(0,0,0,.5)}
 code{font-family:'Menlo','Consolas',monospace;background:var(--surface4);padding:1px 4px;border-radius:3px;font-size:12px;color:var(--text)}
 .mobile-user-bar{display:none}
 .how-to-user{flex-shrink:0;width:190px;padding-left:1rem;display:flex;flex-direction:column;align-items:stretch;justify-content:center}
@@ -1213,6 +1266,36 @@ window._uploadDrafts = async function(file){
   }
 };
 
+/* ── Prof Notes (문제별 교수 코멘트) ──
+   notes/{pid} = { text }  — 문제 소스(drafts/하드코딩)와 독립, pid만 키로 사용 */
+window._notesCache = {};
+async function loadNote(pid){
+  try {
+    const doc = await db.collection('notes').doc(pid).get();
+    const text = doc.exists ? (doc.data().text || '') : '';
+    window._notesCache[pid] = text;
+    return text;
+  } catch (e) {
+    console.warn('[notes] load failed:', e.message);
+    return '';
+  }
+}
+window.saveNote = async function(pid, text){
+  if (!isAdmin() && !isTA()) { console.error('관리자만 사용 가능'); return; }
+  const t = (text || '').trim();
+  try {
+    if (t) {
+      await db.collection('notes').doc(pid).set({ text: t });
+    } else {
+      await db.collection('notes').doc(pid).delete();
+    }
+    window._notesCache[pid] = t;
+  } catch (e) {
+    alert('코멘트 저장 실패: ' + e.message);
+    throw e;
+  }
+};
+
 window.addDraft = async function(prob){
   if (!isAdmin() && !isTA()) { console.error('관리자만 사용 가능'); return; }
   if (!prob || !prob.id) { console.error('prob.id 필수'); return; }
@@ -2135,6 +2218,7 @@ function renderProb(pid, push=true){
             <div><div class="section-lbl">예제 입력</div><div class="io-box">${p.ex_in}</div></div>
             <div><div class="section-lbl">예제 출력</div><div class="io-box">${p.ex_out.replace(/\n/g, '<span style="color:var(--text4)">↵</span>\n')}</div></div>
           </div>
+          <div id="prof-note-slot"></div>
         </div>
       </div>
       <div class="code-pane">
@@ -2231,6 +2315,79 @@ function renderProb(pid, push=true){
     });
   }
   window._cm = window._cm || null;
+
+  /* 교수 코멘트(포스트잇) 로드 & 렌더 */
+  renderProfNote(pid);
+}
+
+function renderProfNote(pid, editing){
+  const slot = $('prof-note-slot');
+  if (!slot) return;
+  const staff = isAdmin() || isTA();
+  const cached = window._notesCache[pid];
+  if (cached === undefined && !editing) {
+    slot.innerHTML = '';
+    loadNote(pid).then(() => {
+      if (curPid === pid) renderProfNote(pid);
+    });
+    return;
+  }
+  const text = cached || '';
+  if (!text && !staff) { slot.innerHTML = ''; return; }
+
+  if (editing) {
+    slot.innerHTML = `
+      <div class="prof-note" open>
+        <summary>💡 교수님 코멘트 <span style="font-size:10px;color:var(--text4);font-weight:400;margin-left:auto">편집 중</span></summary>
+        <div style="padding:.4rem .95rem .2rem 1.55rem">
+          <textarea id="prof-note-ta" placeholder="여기에 힌트나 코멘트를 입력하세요. 줄바꿈은 그대로 표시됩니다.">${escapeHtml(text)}</textarea>
+        </div>
+        <div class="prof-note-actions">
+          <button class="primary" onclick="submitProfNote('${pid}')">저장</button>
+          <button onclick="renderProfNote('${pid}')">취소</button>
+        </div>
+      </div>`;
+    const ta = $('prof-note-ta');
+    if (ta) { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }
+    return;
+  }
+
+  const bodyHtml = text
+    ? escapeHtml(text)
+    : '<span class="prof-note-empty">(코멘트 없음)</span>';
+  const actions = staff
+    ? `<div class="prof-note-actions">
+         <button onclick="renderProfNote('${pid}', true)">${text ? '편집' : '+ 코멘트 추가'}</button>
+         ${text ? `<button class="danger" onclick="clearProfNote('${pid}')">삭제</button>` : ''}
+       </div>`
+    : '';
+  slot.innerHTML = `
+    <details class="prof-note"${text ? '' : ' open'}>
+      <summary>💡 교수님 코멘트</summary>
+      <div class="prof-note-body">${bodyHtml}</div>
+      ${actions}
+    </details>`;
+}
+
+window.submitProfNote = async function(pid){
+  const ta = $('prof-note-ta');
+  if (!ta) return;
+  const text = ta.value;
+  try {
+    await saveNote(pid, text);
+    renderProfNote(pid);
+  } catch (e) { /* saveNote에서 alert 처리 */ }
+};
+window.clearProfNote = async function(pid){
+  if (!confirm('이 문제의 교수 코멘트를 삭제할까요?')) return;
+  try {
+    await saveNote(pid, '');
+    renderProfNote(pid);
+  } catch (e) {}
+};
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
 function switchTab(t){
