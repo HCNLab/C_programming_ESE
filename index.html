@@ -119,8 +119,53 @@ textarea:focus{border-color:var(--text3)}
 .notice{font-size:12px;color:var(--text3);background:var(--surface3);border-left:3px solid var(--border2);padding:.55rem .8rem;border-radius:0 6px 6px 0;margin-bottom:1rem}
 code{font-family:'Menlo','Consolas',monospace;background:var(--surface4);padding:1px 4px;border-radius:3px;font-size:12px;color:var(--text)}
 .mobile-user-bar{display:none}
-.how-to-user{flex-shrink:0;width:170px;border-left:1px solid var(--border);padding-left:1.25rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-.how-to-user.staff{width:280px}
+.how-to-user{flex-shrink:0;width:190px;padding-left:1rem;display:flex;flex-direction:column;align-items:stretch;justify-content:center}
+.how-to-user.staff{width:300px}
+.user-card-deco{position:relative;padding:.95rem .85rem;border-radius:14px;border:1.5px solid transparent;
+  background:linear-gradient(var(--surface),var(--surface)) padding-box,
+             linear-gradient(135deg,rgba(59,130,246,.75),rgba(139,92,246,.65),rgba(216,90,48,.7)) border-box;
+  box-shadow:0 3px 14px rgba(59,130,246,.08),0 1px 3px rgba(0,0,0,.04);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  transition:box-shadow .3s,transform .3s}
+.user-card-deco:hover{box-shadow:0 5px 20px rgba(59,130,246,.14),0 2px 6px rgba(0,0,0,.06);transform:translateY(-1px)}
+.user-card-deco.staff{
+  background:linear-gradient(var(--surface),var(--surface)) padding-box,
+             linear-gradient(135deg,#D85A30,#FFD93D,#D85A30) border-box;
+  box-shadow:0 3px 14px rgba(216,90,48,.12),0 1px 3px rgba(0,0,0,.04)}
+.user-card-deco.pending{
+  background:linear-gradient(var(--surface),var(--surface)) padding-box,
+             linear-gradient(135deg,#C9A600,#FFD93D,#C9A600) border-box;
+  box-shadow:0 3px 14px rgba(201,166,0,.15),0 1px 3px rgba(0,0,0,.04)}
+.user-card-deco.guest{
+  background:linear-gradient(var(--surface),var(--surface)) padding-box,
+             linear-gradient(135deg,var(--border2),var(--border),var(--border2)) border-box;
+  box-shadow:0 2px 8px rgba(0,0,0,.04)}
+body.dark .user-card-deco{box-shadow:0 3px 14px rgba(139,92,246,.15),0 1px 3px rgba(0,0,0,.3)}
+body.dark .user-card-deco.staff{box-shadow:0 3px 14px rgba(255,217,61,.12),0 1px 3px rgba(0,0,0,.3)}
+/* 🎉 모든 문제 완료 축하 효과 */
+.confetti-layer{position:fixed;inset:0;pointer-events:none;z-index:99998;overflow:hidden}
+.confetti-piece{position:absolute;top:-24px;width:10px;height:14px;border-radius:2px;opacity:.95;
+  animation:confettiFall linear forwards}
+@keyframes confettiFall{
+  0%{transform:translate3d(0,-24px,0) rotate(0deg)}
+  100%{transform:translate3d(var(--dx,0),105vh,0) rotate(var(--rot,720deg))}
+}
+.celebrate-banner{position:fixed;top:35%;left:50%;transform:translate(-50%,-50%) scale(.3);
+  background:linear-gradient(135deg,#D85A30 0%,#FFD93D 50%,#5B8C3E 100%);
+  color:#fff;padding:1.4rem 2.6rem;border-radius:22px;font-size:28px;font-weight:800;
+  text-align:center;text-shadow:0 2px 6px rgba(0,0,0,.25);letter-spacing:-.02em;
+  box-shadow:0 24px 70px rgba(0,0,0,.35),0 0 0 4px rgba(255,255,255,.5) inset;
+  z-index:99999;pointer-events:none;opacity:0;animation:bannerPop .6s cubic-bezier(.2,1.6,.4,1) forwards,
+  bannerGlow 2.2s ease-in-out .6s infinite}
+@keyframes bannerPop{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.3) rotate(-8deg)}
+  60%{opacity:1;transform:translate(-50%,-50%) scale(1.08) rotate(2deg)}
+  100%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(0)}
+}
+@keyframes bannerGlow{
+  0%,100%{filter:drop-shadow(0 0 8px rgba(255,217,61,.5))}
+  50%{filter:drop-shadow(0 0 18px rgba(255,217,61,.85))}
+}
 .staff-btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;width:100%;margin-top:.1rem}
 .staff-btn-grid > .staff-full{grid-column:1/-1}
 .staff-btn-grid > .staff-divider{grid-column:1/-1;font-size:10px;color:var(--text4);text-align:center;margin:.25rem 0 .1rem;letter-spacing:.05em}
@@ -1328,6 +1373,36 @@ function userBar(){
 }
 
 /* 홈 */
+/* 🎉 모든 문제 완료 축하 — 한 번만 재생 (localStorage로 중복 방지) */
+function _celebrate100(){
+  const key = 'oj_celebrated_100_' + (username || 'anon');
+  if (localStorage.getItem(key) === '1') return;
+  localStorage.setItem(key, '1');
+  const layer = document.createElement('div');
+  layer.className = 'confetti-layer';
+  const colors = ['#D85A30','#FFD93D','#5B8C3E','#8B5CF6','#3B82F6','#EC4899','#06B6D4'];
+  for (let i = 0; i < 90; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti-piece';
+    c.style.left = (Math.random() * 100) + '%';
+    c.style.background = colors[Math.floor(Math.random() * colors.length)];
+    c.style.setProperty('--dx', ((Math.random() - 0.5) * 200) + 'px');
+    c.style.setProperty('--rot', (Math.random() * 1440 - 720) + 'deg');
+    c.style.animationDelay = (Math.random() * 0.6) + 's';
+    c.style.animationDuration = (1.8 + Math.random() * 1.8) + 's';
+    c.style.width = (6 + Math.random() * 8) + 'px';
+    c.style.height = (10 + Math.random() * 8) + 'px';
+    layer.appendChild(c);
+  }
+  document.body.appendChild(layer);
+  const banner = document.createElement('div');
+  banner.className = 'celebrate-banner';
+  banner.innerHTML = '🎉 모든 문제 완료! 🎉<div style="font-size:14px;font-weight:500;margin-top:.5rem;opacity:.95;letter-spacing:0">한 학기 수고하셨습니다 👏</div>';
+  document.body.appendChild(banner);
+  setTimeout(() => { banner.style.transition='opacity .5s'; banner.style.opacity='0'; }, 3800);
+  setTimeout(() => { layer.remove(); banner.remove(); }, 5200);
+}
+
 function renderHome(push=true){
   _taCleanup();
   if(push) history.pushState({view:'home'},'',' ');
@@ -1391,15 +1466,13 @@ function renderHome(push=true){
       ${staffHeader}
       <div class="staff-btn-grid">
         ${adminPanelBtn}
-        <div class="staff-divider">─ 비공개 문제 (${draftCount}) ─</div>
         <label class="staff-btn" style="color:#C9A600;border:1px solid #C9A600">
-          📥 업로드
+          📥 비공개 (${draftCount})
           <input type="file" accept=".json" onchange="_uploadDrafts(this.files[0])" style="display:none">
         </label>
         <button onclick="_downloadDraftsCode()" ${draftCount===0?'disabled':''} class="staff-btn" style="color:#5B8C3E;border:1px solid #5B8C3E${disStyle(draftCount===0)}">⬇ 공개용 코드</button>
-        <button onclick="_deleteAllDrafts()" ${draftCount===0?'disabled':''} class="staff-btn staff-full" style="color:#c44;border:1px solid #c44${disStyle(draftCount===0)}">🗑 drafts 전체 삭제</button>
-        <div class="staff-divider">─ 수강생 관리 ─</div>
-        <button onclick="_openApprovalQueue()" class="staff-btn staff-full" style="color:#8B5CF6;border:1px solid #8B5CF6">⏳ 가입 승인 대기${_pendingCount>0?` (${_pendingCount})`:''}</button>
+        <button onclick="_deleteAllDrafts()" ${draftCount===0?'disabled':''} class="staff-btn" style="color:#c44;border:1px solid #c44${disStyle(draftCount===0)}">🗑 drafts 삭제</button>
+        <button onclick="_openApprovalQueue()" class="staff-btn" style="color:#8B5CF6;border:1px solid #8B5CF6">⏳ 승인${_pendingCount>0?` (${_pendingCount})`:''}</button>
       </div>
       <button onclick="doLogout()" class="link-btn" style="font-size:11px;color:var(--text5);margin-top:.6rem">로그아웃</button>`;
     if (isAdmin() || isTA()) return staffBody;
@@ -1496,9 +1569,9 @@ function renderHome(push=true){
     return podiumHtml + restHtml + totalHtml + myRowHtml;
   })();
 
-  // 진행률 (과제/연습 분리)
-  const assignProbs    = PROBLEMS.filter(p => !p.noSubmit);
-  const practiceProbs  = PROBLEMS.filter(p =>  p.noSubmit);
+  // 진행률 (과제/연습 분리) — draft는 모수에서 제외 (수강생에겐 안 보이므로)
+  const assignProbs    = PROBLEMS.filter(p => !p.noSubmit && !p._isDraft);
+  const practiceProbs  = PROBLEMS.filter(p =>  p.noSubmit && !p._isDraft);
   const doneAssign     = assignProbs.filter(p => hist[p.id] && hist[p.id].length > 0).length;
   const donePractice   = practiceProbs.filter(p => hist[p.id] && hist[p.id].length > 0).length;
   const totalAssign    = assignProbs.length;
@@ -1570,6 +1643,8 @@ function renderHome(push=true){
       </div>
     </div>`;
 
+  // admin/TA 전용: 홈 사이드바 모드 (class=수강생 요약 / mine=내 제출현황)
+  const _homeProgMode = (isAdmin() || isTA()) ? (window._homeProgMode || 'class') : 'mine';
   // admin/TA 전용: 홈 사이드바에 수강생 요약 (세로 버전)
   let classSidebarHtml = '';
   if (isAdmin() || isTA()) {
@@ -1757,7 +1832,9 @@ function renderHome(push=true){
           <div class="how-step"><span class="step-num" style="background:var(--surface4);color:var(--text3)">+</span><span style="color:var(--text4)"><b>⏱ 타임어택</b> — 코드 작성 화면에서 활성화하면 붙여넣기가 차단되고 풀이 시간이 측정됩니다</span></div>
         </div>
       </div>
-      <div class="how-to-user${(isAdmin()||isTA())?' staff':''}">${userCardHtml}</div>
+      <div class="how-to-user${(isAdmin()||isTA())?' staff':''}">
+        <div class="user-card-deco${(isAdmin()||isTA())?' staff':(!firebaseUser?' guest':(!isApproved?' pending':''))}">${userCardHtml}</div>
+      </div>
     </div>
 
     <div class="layout">
@@ -1775,13 +1852,22 @@ function renderHome(push=true){
       </div>
       <div class="sidebar">
         ${firebaseUser ? `<div class="sidebar-card">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem;cursor:pointer"
-            onclick="(function(){var b=document.getElementById('progress-body');var a=document.getElementById('progress-arrow');var open=b.style.display!=='none';b.style.display=open?'none':'';a.textContent=open?'▶':'▼';localStorage.setItem('oj_progress_open',open?'0':'1')})()">
-            <div class="sidebar-title" style="margin-bottom:0">${(isAdmin()||isTA())?'👥 수강생 진행 요약':'내 제출현황'}</div>
-            <span id="progress-arrow" style="font-size:10px;color:var(--text4)">${localStorage.getItem('oj_progress_open')==='0'?'▶':'▼'}</span>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem">
+            <div class="sidebar-title" style="margin-bottom:0;cursor:pointer;flex:1"
+              onclick="(function(){var b=document.getElementById('progress-body');var a=document.getElementById('progress-arrow');var open=b.style.display!=='none';b.style.display=open?'none':'';a.textContent=open?'▶':'▼';localStorage.setItem('oj_progress_open',open?'0':'1')})()">
+              ${(isAdmin()||isTA()) ? (_homeProgMode==='class'?'👥 수강생 진행 요약':'📊 내 제출현황') : '내 제출현황'}
+            </div>
+            <div style="display:flex;align-items:center;gap:5px">
+              ${(isAdmin()||isTA()) ? `
+                <button onclick="window._homeProgMode='class';renderHome(false)" style="font-size:10px;padding:2px 7px;border-radius:3px;border:1px solid var(--border);background:${_homeProgMode==='class'?'var(--link)':'transparent'};color:${_homeProgMode==='class'?'#fff':'var(--text3)'};cursor:pointer">수강생</button>
+                <button onclick="window._homeProgMode='mine';renderHome(false)" style="font-size:10px;padding:2px 7px;border-radius:3px;border:1px solid var(--border);background:${_homeProgMode==='mine'?'var(--link)':'transparent'};color:${_homeProgMode==='mine'?'#fff':'var(--text3)'};cursor:pointer">내꺼</button>
+              ` : ''}
+              <span id="progress-arrow" style="font-size:10px;color:var(--text4);cursor:pointer"
+                onclick="(function(){var b=document.getElementById('progress-body');var a=document.getElementById('progress-arrow');var open=b.style.display!=='none';b.style.display=open?'none':'';a.textContent=open?'▶':'▼';localStorage.setItem('oj_progress_open',open?'0':'1')})()">${localStorage.getItem('oj_progress_open')==='0'?'▶':'▼'}</span>
+            </div>
           </div>
           <div id="progress-body" style="display:${localStorage.getItem('oj_progress_open')==='0'?'none':''}">
-            ${(isAdmin()||isTA()) ? classSidebarHtml : progressHtml}
+            ${_homeProgMode==='class' ? classSidebarHtml : progressHtml}
             <div style="margin-top:.5rem;text-align:right">
               <span onclick="renderHistory()" style="font-size:11px;color:var(--link);cursor:pointer">${(isAdmin()||isTA())?'상세 대시보드 →':'전체 이력 보기 →'}</span>
             </div>
@@ -1819,6 +1905,11 @@ function renderHome(push=true){
         </div>
       </div>
     </div>`;
+
+  // 🎉 모든 문제(과제+연습) 완료 시 축하 (학생만, 한 번만)
+  if (firebaseUser && !isAdmin() && !isTA() && isApproved && totalAll > 0 && pctAll === 100) {
+    setTimeout(_celebrate100, 450);
+  }
 }
 
 /* 문제 */
@@ -2100,8 +2191,9 @@ function renderHistory(push=true){
   ).join('');
 
   // 진행률 계산
-  const _hAssign   = PROBLEMS.filter(p => !p.noSubmit);
-  const _hPractice = PROBLEMS.filter(p =>  p.noSubmit);
+  // draft는 모수에서 제외 (수강생에겐 안 보이므로)
+  const _hAssign   = PROBLEMS.filter(p => !p.noSubmit && !p._isDraft);
+  const _hPractice = PROBLEMS.filter(p =>  p.noSubmit && !p._isDraft);
   const _hDA = _hAssign.filter(p => hist[p.id]?.length > 0).length;
   const _hDP = _hPractice.filter(p => hist[p.id]?.length > 0).length;
   const _hTA = _hAssign.length, _hTP = _hPractice.length;
