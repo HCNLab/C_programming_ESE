@@ -1672,40 +1672,40 @@ function renderHome(push=true){
       const pctP = _practicePids.length > 0 ? Math.round(avgP / _practicePids.length * 100) : 0;
       const avgSub = nT > 0 ? (wc.reduce((a,s)=>a+s.sub,0) / nT).toFixed(1) : '0';
       classSidebarHtml = `
-        <div style="margin-bottom:.7rem">
+        <div style="margin-bottom:.7rem" title="수강생 1명당 평균적으로 완료한 과제 문제 수 (고유 문제 기준, 재제출 중복 제외)">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.3rem">
-            <span style="font-size:11px;font-weight:600;color:var(--text2)">과제 평균</span>
-            <span style="font-size:11px;color:var(--text3)">${avgA.toFixed(1)}/${_assignPids.length}&nbsp;<b style="color:var(--text)">${pctA}%</b></span>
+            <span style="font-size:11px;font-weight:600;color:var(--text2)">과제 진행률 <span style="color:var(--text5);font-weight:400">(1인당)</span></span>
+            <span style="font-size:11px;color:var(--text3)">${avgA.toFixed(1)} / ${_assignPids.length}문제&nbsp;<b style="color:var(--text)">${pctA}%</b></span>
           </div>
           <div style="height:7px;background:var(--surface4);border-radius:4px;overflow:hidden">
             <div style="height:100%;width:${pctA}%;background:${pctA===100?'var(--accent)':'var(--text)'};border-radius:4px;transition:width .4s"></div>
           </div>
         </div>
-        <div style="margin-bottom:.85rem">
+        <div style="margin-bottom:.85rem" title="수강생 1명당 평균적으로 완료한 연습 문제 수">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.3rem">
-            <span style="font-size:11px;font-weight:600;color:var(--text2)">연습 평균</span>
-            <span style="font-size:11px;color:var(--text3)">${avgP.toFixed(1)}/${_practicePids.length}&nbsp;<b style="color:var(--text)">${pctP}%</b></span>
+            <span style="font-size:11px;font-weight:600;color:var(--text2)">연습 진행률 <span style="color:var(--text5);font-weight:400">(1인당)</span></span>
+            <span style="font-size:11px;color:var(--text3)">${avgP.toFixed(1)} / ${_practicePids.length}문제&nbsp;<b style="color:var(--text)">${pctP}%</b></span>
           </div>
           <div style="height:7px;background:var(--surface4);border-radius:4px;overflow:hidden">
             <div style="height:100%;width:${pctP}%;background:var(--accent);border-radius:4px;transition:width .4s"></div>
           </div>
         </div>
         <div style="border-top:1px solid var(--surface4);padding-top:.7rem;display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
-          <div style="text-align:center">
+          <div style="text-align:center" title="전체 수강생 수">
             <div style="font-size:18px;font-weight:700;color:var(--text)">${nT}</div>
             <div style="font-size:10px;color:var(--text3)">수강생</div>
           </div>
-          <div style="text-align:center">
+          <div style="text-align:center" title="모든 과제를 완료한 수강생 수">
             <div style="font-size:18px;font-weight:700;color:var(--accent-text)">${nAll}</div>
-            <div style="font-size:10px;color:var(--text3)">전체 완료</div>
+            <div style="font-size:10px;color:var(--text3)">과제 완주자</div>
           </div>
-          <div style="text-align:center">
+          <div style="text-align:center" title="과제를 하나도 제출하지 않은 수강생 수">
             <div style="font-size:18px;font-weight:700;color:#c44">${nZero}</div>
-            <div style="font-size:10px;color:var(--text3)">미제출</div>
+            <div style="font-size:10px;color:var(--text3)">과제 미착수</div>
           </div>
-          <div style="text-align:center">
+          <div style="text-align:center" title="수강생 1명당 평균 제출 시도 횟수 (같은 문제 재제출 포함)">
             <div style="font-size:18px;font-weight:700;color:var(--text2)">${avgSub}</div>
-            <div style="font-size:10px;color:var(--text3)">평균제출</div>
+            <div style="font-size:10px;color:var(--text3)">1인 시도수</div>
           </div>
         </div>`;
     }
