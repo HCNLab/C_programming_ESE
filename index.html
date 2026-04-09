@@ -1062,7 +1062,13 @@ window._openPublishDialog = async function(){
   overlay.innerHTML = `
     <div style="background:var(--surface);border-radius:14px;padding:1.4rem 1.6rem;max-width:420px;width:100%;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 8px 32px rgba(0,0,0,.3)">
       <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:.3rem">공개 전환</div>
-      <div style="font-size:11px;color:var(--text4);margin-bottom:.8rem">토글 ON → 학생에게 즉시 공개 (커밋/푸쉬 불필요)</div>
+      <div style="font-size:11px;color:var(--text4);margin-bottom:.6rem">토글 ON → 학생에게 즉시 공개 (커밋/푸쉬 불필요)</div>
+      <div style="display:flex;gap:.4rem;margin-bottom:.6rem">
+        <button onclick="_publishBulkToggle(true)"
+          style="font-size:11px;padding:4px 10px;border-radius:5px;border:1px solid var(--accent);background:none;color:var(--accent-text);cursor:pointer;font-weight:600">전체 ON</button>
+        <button onclick="_publishBulkToggle(false)"
+          style="font-size:11px;padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:none;color:var(--text3);cursor:pointer">전체 OFF</button>
+      </div>
       <div style="flex:1;overflow-y:auto;min-height:0;margin-bottom:.8rem">${rows}</div>
       <div style="display:flex;gap:.5rem;justify-content:flex-end">
         <button onclick="document.getElementById('publish-overlay').remove()"
@@ -1072,6 +1078,17 @@ window._openPublishDialog = async function(){
       </div>
     </div>`;
   document.body.appendChild(overlay);
+};
+
+window._publishBulkToggle = function(on){
+  const overlay = document.getElementById('publish-overlay');
+  if (!overlay) return;
+  overlay.querySelectorAll('input[data-pid]').forEach(chk => {
+    if (chk.checked !== on) {
+      chk.checked = on;
+      chk.dispatchEvent(new Event('change'));
+    }
+  });
 };
 
 window._applyPublishChanges = async function(){
@@ -1567,6 +1584,7 @@ function renderHome(push=true){
     const draftCount = PROBLEMS.filter(p => p._isDraft).length;
     const publishedCount = PROBLEMS.filter(p => p._isPublished).length;
     const disStyle = d => d ? ';opacity:.4;cursor:not-allowed' : '';
+    const approvalLink = `<button onclick="_openApprovalQueue()" class="link-btn" style="font-size:10px;color:#8B5CF6;font-weight:600;white-space:nowrap">가입 승인${_pendingCount>0?` (${_pendingCount})`:''}</button>`;
     const staffHeader = isAdmin()
       ? `<div style="display:flex;align-items:center;gap:.5rem;width:100%;margin-bottom:.6rem">
           <div style="font-size:22px">👨‍🏫</div>
@@ -1574,6 +1592,7 @@ function renderHome(push=true){
             <div style="font-size:13px;font-weight:700;color:#D85A30">관리자</div>
             <div style="font-size:11px;color:var(--text2);line-height:1.35">원경호 교수님</div>
           </div>
+          ${approvalLink}
         </div>`
       : `<div style="display:flex;align-items:center;gap:.5rem;width:100%;margin-bottom:.6rem">
           <div style="font-size:22px">🧑‍💻</div>
@@ -1581,6 +1600,7 @@ function renderHome(push=true){
             <div style="font-size:13px;font-weight:700;color:var(--link)">TA</div>
             <div style="font-size:11px;color:var(--text2);line-height:1.35">황주옥님</div>
           </div>
+          ${approvalLink}
         </div>`;
     const adminPanelBtn = isAdmin()
       ? `<button onclick="renderAdmin()" class="staff-btn staff-full" style="color:#D85A30;border:1px solid #D85A30">🛠 관리자 패널</button>`
@@ -1596,7 +1616,6 @@ function renderHome(push=true){
         <button onclick="_openPublishDialog()" ${draftCount+publishedCount===0?'disabled':''} class="staff-btn" style="color:#5B8C3E;border:1px solid #5B8C3E${disStyle(draftCount+publishedCount===0)}">🔓 공개 전환</button>
         <button onclick="_downloadDraftsCode()" ${draftCount+publishedCount===0?'disabled':''} class="staff-btn" style="color:var(--text4);border:1px solid var(--border)${disStyle(draftCount+publishedCount===0)}">⬇ 코드</button>
         <button onclick="_deleteAllDrafts()" ${draftCount+publishedCount===0?'disabled':''} class="staff-btn" style="color:#c44;border:1px solid #c44${disStyle(draftCount+publishedCount===0)}">🗑 삭제</button>
-        <button onclick="_openApprovalQueue()" class="staff-btn" style="color:#8B5CF6;border:1px solid #8B5CF6">⏳ 승인${_pendingCount>0?` (${_pendingCount})`:''}</button>
       </div>
       <button onclick="doLogout()" class="link-btn" style="font-size:11px;color:var(--text5);margin-top:.6rem">로그아웃</button>`;
     if (isAdmin() || isTA()) return staffBody;
