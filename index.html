@@ -935,6 +935,13 @@ function loadHistory(){
   try{ return JSON.parse(localStorage.getItem(LS_HIST)||'{}'); }catch{ return {}; }
 }
 
+// 클라우드 저장용 캡: pid당 최신 5개만 (doc size 1MB 한도 대비)
+function _capHistoryForCloud(h){
+  const out = {};
+  for (const pid in h) out[pid] = (h[pid] || []).slice(0, 5);
+  return out;
+}
+
 function addHistory(pid, entry){
   const h = loadHistory();
   if (!h[pid]) h[pid] = [];
@@ -942,47 +949,59 @@ function addHistory(pid, entry){
   if (h[pid].length > 20) h[pid] = h[pid].slice(0, 20);
   localStorage.setItem(LS_HIST, JSON.stringify(h));
   historyCache = h;
-  // Firestore에 비동기 저장
+  // Firestore에 비동기 저장: users/{uid}.history.{pid} 필드 업데이트 (추가 read 0)
   if (firebaseUser) {
+    const capped = h[pid].slice(0, 5);
     db.collection('users').doc(firebaseUser.uid)
-      .collection('history').doc(pid).set({ entries: h[pid] })
-      .catch(() => {});
+      .update({ [`history.${pid}`]: capped })
+      .catch(() => {
+        // doc이 아직 없으면 merge로 생성
+        db.collection('users').doc(firebaseUser.uid)
+          .set({ history: { [pid]: capped } }, { merge: true })
+          .catch(() => {});
+      });
   }
 }
 
-async function loadHistoryFromFirestore(){
+// users/{uid} 메인 doc이 이미 onAuthStateChanged에서 읽혔으므로 거기서 history 필드만 꺼내 씀
+// 구 구조(users/{uid}/history 서브컬렉션)는 1회 마이그레이션 후 메인 doc 필드로 이동
+async function loadHistoryFromMainDoc(mainDocData){
   if (!firebaseUser) { historyCache = null; return; }
   try {
+    const d = mainDocData || {};
+    let localH = {};
+    try { localH = JSON.parse(localStorage.getItem(LS_HIST) || '{}'); } catch(e){}
+
+    if (d.history && typeof d.history === 'object') {
+      // 새 구조 히트: 메인 doc의 history 필드 사용 (+ localStorage 최신 엔트리 머지)
+      const merged = { ...d.history };
+      for (const pid in localH) {
+        const lTs = localH[pid] && localH[pid][0] && localH[pid][0].ts;
+        const cTs = merged[pid] && merged[pid][0] && merged[pid][0].ts;
+        if (!merged[pid] || (lTs && (!cTs || lTs > cTs))) merged[pid] = localH[pid];
+      }
+      historyCache = merged;
+      localStorage.setItem(LS_HIST, JSON.stringify(historyCache));
+      return;
+    }
+
+    // 마이그레이션: 구 서브컬렉션 → 메인 doc 필드 (유저당 1회)
     const snap = await db.collection('users').doc(firebaseUser.uid)
       .collection('history').get();
     const cloudH = {};
     snap.forEach(doc => { cloudH[doc.id] = doc.data().entries || []; });
-    const hasCloud = Object.keys(cloudH).length > 0;
+    const source = Object.keys(cloudH).length > 0 ? cloudH
+                  : (Object.keys(localH).length > 0 ? localH : {});
 
-    // 기존 localStorage 이력 확인
-    let localH = {};
-    try { localH = JSON.parse(localStorage.getItem(LS_HIST) || '{}'); } catch(e){}
-    const hasLocal = Object.keys(localH).length > 0;
-
-    if (!hasCloud && hasLocal) {
-      // 첫 로그인: localStorage → Firestore 마이그레이션
-      const batch = db.batch();
-      for (const pid of Object.keys(localH)) {
-        const ref = db.collection('users').doc(firebaseUser.uid)
-          .collection('history').doc(pid);
-        batch.set(ref, { entries: localH[pid] });
-      }
-      await batch.commit().catch(() => {});
-      historyCache = localH;
-    } else if (hasCloud) {
-      // Firestore 데이터 사용
-      localStorage.setItem(LS_HIST, JSON.stringify(cloudH));
-      historyCache = cloudH;
-    } else {
-      historyCache = {};
+    historyCache = source;
+    if (Object.keys(source).length > 0) {
+      localStorage.setItem(LS_HIST, JSON.stringify(source));
+      await db.collection('users').doc(firebaseUser.uid)
+        .set({ history: _capHistoryForCloud(source) }, { merge: true })
+        .catch(() => {});
     }
   } catch(e) {
-    historyCache = null; // fallback to localStorage
+    historyCache = null;
   }
 }
 
@@ -1430,11 +1449,18 @@ window.removeAllDrafts = async function(){
 async function _loadPendingCount(){
   if (!isAdmin() && !isTA()) { _pendingCount = 0; return; }
   try {
-    const snap = await db.collection('users').where('approved', '==', false).get();
-    _pendingCount = snap.size;
+    // Firestore 집계 쿼리: N개 doc 전부 읽지 않고 카운트만 (1 read)
+    const agg = await db.collection('users').where('approved', '==', false).count().get();
+    _pendingCount = agg.data().count || 0;
   } catch(e) {
-    console.warn('[approval] pending count load failed:', e);
-    _pendingCount = 0;
+    // count() 미지원 SDK 등의 경우 폴백 (대기자 많지 않으면 비용 무시 가능)
+    try {
+      const snap = await db.collection('users').where('approved', '==', false).get();
+      _pendingCount = snap.size;
+    } catch(e2) {
+      console.warn('[approval] pending count load failed:', e2);
+      _pendingCount = 0;
+    }
   }
 }
 
@@ -1544,28 +1570,14 @@ async function _loadClassProgress(force=false){
   }
   if (!SHEETS_URL) return null;
   try {
-    // Sheets에서 제출 데이터(read 0), Firestore users(~55 reads)에서 메타데이터 병렬 조회
-    // ※ 과거에는 collectionGroup('history') 사용했으나 학생 1명당 ~30 reads → 총 ~1,650 reads/호출
-    //   → Sheets에 동일 데이터가 있으므로 비싸지 않은 경로로 전환
-    const [sheetRes, usersSnap] = await Promise.all([
-      fetch(SHEETS_URL + '?mode=admin', { method:'GET', mode:'cors' }),
-      db.collection('users').get(),
-    ]);
+    // Sheets에서만 제출 데이터 조회 (Firestore read 0)
+    // ※ 과거 collectionGroup('history')는 ~1,650 reads, users.get()은 ~55 reads였음
+    //   staff 제외는 Apps Script EXCLUDE(원경호) + 클라이언트 이름 필터로 처리
+    //   승인 상태는 어차피 미승인은 submit 자체가 안 되므로 Sheets에 나타나지 않음 → approved:true 가정
+    const sheetRes = await fetch(SHEETS_URL + '?mode=admin', { method:'GET', mode:'cors' });
     if (!sheetRes.ok) throw new Error('sheets fetch failed: ' + sheetRes.status);
     const d = await sheetRes.json();
     const subs = d.submissions || [];
-
-    // username → { approved, email } 매핑 (Firestore users)
-    const metaByUsername = {};
-    usersSnap.forEach(doc => {
-      const u = doc.data();
-      if (u.username) {
-        metaByUsername[u.username] = {
-          approved: u.approved === true,
-          email: u.email || '',
-        };
-      }
-    });
 
     // 학생별 집계 (Sheets submissions 기준)
     const byUser = {};
@@ -1576,15 +1588,15 @@ async function _loadClassProgress(force=false){
       byUser[s.username].submitCount += 1;
     });
 
-    // staff(관리자/TA) 제외 + students 배열 구성
+    // staff 이름 제외 (Apps Script EXCLUDE는 원경호만 처리, TA 이름 있으면 여기 추가)
+    const STAFF_NAMES = ['원경호'];
     const students = [];
     Object.entries(byUser).forEach(([username, agg]) => {
-      const meta = metaByUsername[username] || {};
-      if (meta.email && (ADMIN_EMAILS.includes(meta.email) || TA_EMAILS.includes(meta.email))) return;
+      if (STAFF_NAMES.some(n => username.includes(n))) return;
       students.push({
         username,
-        email: meta.email || '',
-        approved: meta.approved === true,
+        email: '',
+        approved: true,
         completed: agg.completed,
         submitCount: agg.submitCount,
       });
@@ -3795,12 +3807,14 @@ auth.onAuthStateChanged(async (user) => {
   if (user) {
     // admin/TA는 자동 승인
     isApproved = isAdmin() || isTA();
-    // Firestore에서 학번_이름 + 승인 상태 불러오기
+    // Firestore에서 학번_이름 + 승인 상태 + 이력 한 번에 불러오기 (read 1회로 통합)
+    let _mainDocData = null;
     try {
       const doc = await db.collection('users').doc(user.uid).get();
-      if (doc.exists && doc.data().approved === true) isApproved = true;
-      if (doc.exists && doc.data().username) {
-        username = doc.data().username;
+      if (doc.exists) _mainDocData = doc.data();
+      if (_mainDocData && _mainDocData.approved === true) isApproved = true;
+      if (_mainDocData && _mainDocData.username) {
+        username = _mainDocData.username;
         localStorage.setItem(LS_USER, username);
       } else {
         // Firestore에 없으면 localStorage 값 확인
@@ -3821,8 +3835,8 @@ auth.onAuthStateChanged(async (user) => {
         .then(url => { _mascotUrl = url; })
         .catch(() => {});
     }
-    // Firestore에서 이력 불러오기
-    await loadHistoryFromFirestore();
+    // 이력 로드: 위에서 이미 가져온 메인 doc 데이터 재사용 (추가 read 0)
+    await loadHistoryFromMainDoc(_mainDocData);
     // 관리자/TA면 비공개 drafts + 승인 대기 인원 로드
     await loadDrafts();
     await _loadPendingCount();
