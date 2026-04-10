@@ -1542,59 +1542,61 @@ async function _loadClassProgress(force=false){
       return _classProgressCache;
     }
   }
-  const [usersSnap, histSnap] = await Promise.all([
-    db.collection('users').get(),
-    db.collectionGroup('history').get()
-  ]);
+  if (!SHEETS_URL) return null;
+  try {
+    // Sheets에서 제출 데이터(read 0), Firestore users(~55 reads)에서 메타데이터 병렬 조회
+    // ※ 과거에는 collectionGroup('history') 사용했으나 학생 1명당 ~30 reads → 총 ~1,650 reads/호출
+    //   → Sheets에 동일 데이터가 있으므로 비싸지 않은 경로로 전환
+    const [sheetRes, usersSnap] = await Promise.all([
+      fetch(SHEETS_URL + '?mode=admin', { method:'GET', mode:'cors' }),
+      db.collection('users').get(),
+    ]);
+    if (!sheetRes.ok) throw new Error('sheets fetch failed: ' + sheetRes.status);
+    const d = await sheetRes.json();
+    const subs = d.submissions || [];
 
-  // uid -> user doc 정보
-  const userByUid = {};
-  usersSnap.forEach(d => { userByUid[d.id] = { uid: d.id, ...d.data() }; });
-
-  // uid -> 집계된 history (여러 문제)
-  const histByUid = {};
-  histSnap.forEach(d => {
-    const parent = d.ref.parent.parent;
-    if (!parent) return;
-    const uid = parent.id;
-    const pid = d.id;
-    const entries = d.data().entries || [];
-    if (!histByUid[uid]) histByUid[uid] = { completed: new Set(), submitCount: 0 };
-    if (entries.length > 0) {
-      histByUid[uid].completed.add(pid);
-      histByUid[uid].submitCount += entries.length;
-    }
-  });
-
-  // users 문서가 있는 uid + history만 있는 orphan uid 모두 포함 (uid 기준, 병합 X)
-  // 동명이인 오집계 방지를 위해 username으로 병합하지 않음
-  const allUids = new Set([...Object.keys(userByUid), ...Object.keys(histByUid)]);
-  const students = [];
-  allUids.forEach(uid => {
-    const u = userByUid[uid] || {};
-    const h = histByUid[uid] || { completed: new Set(), submitCount: 0 };
-    // staff 제외
-    if (u.email && (ADMIN_EMAILS.includes(u.email) || TA_EMAILS.includes(u.email))) return;
-    const hasUserDoc = !!userByUid[uid];
-    const username = u.username && u.username.trim()
-      ? u.username
-      : `(미등록 ${uid.slice(0,6)})`;
-    // user 문서도 없고 제출도 0이면 아예 제외
-    if (!hasUserDoc && h.submitCount === 0) return;
-    students.push({
-      uid,
-      username,
-      email: u.email || '',
-      approved: u.approved === true,
-      hasUserDoc,
-      completed: h.completed,
-      submitCount: h.submitCount,
+    // username → { approved, email } 매핑 (Firestore users)
+    const metaByUsername = {};
+    usersSnap.forEach(doc => {
+      const u = doc.data();
+      if (u.username) {
+        metaByUsername[u.username] = {
+          approved: u.approved === true,
+          email: u.email || '',
+        };
+      }
     });
-  });
 
-  _classProgressCache = { students, loadedAt: new Date() };
-  _saveClassCache(_classProgressCache);
-  return _classProgressCache;
+    // 학생별 집계 (Sheets submissions 기준)
+    const byUser = {};
+    subs.forEach(s => {
+      if (!s.username) return;
+      if (!byUser[s.username]) byUser[s.username] = { completed: new Set(), submitCount: 0 };
+      byUser[s.username].completed.add(s.pid);
+      byUser[s.username].submitCount += 1;
+    });
+
+    // staff(관리자/TA) 제외 + students 배열 구성
+    const students = [];
+    Object.entries(byUser).forEach(([username, agg]) => {
+      const meta = metaByUsername[username] || {};
+      if (meta.email && (ADMIN_EMAILS.includes(meta.email) || TA_EMAILS.includes(meta.email))) return;
+      students.push({
+        username,
+        email: meta.email || '',
+        approved: meta.approved === true,
+        completed: agg.completed,
+        submitCount: agg.submitCount,
+      });
+    });
+
+    _classProgressCache = { students, loadedAt: new Date() };
+    _saveClassCache(_classProgressCache);
+    return _classProgressCache;
+  } catch(e) {
+    console.warn('_loadClassProgress error', e);
+    return null;
+  }
 }
 
 window._toggleClassProgress = async function(){
