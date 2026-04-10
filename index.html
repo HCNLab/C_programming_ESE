@@ -3094,24 +3094,28 @@ async function toggleDifficulty(pid){
   }
   const uid = firebaseUser.uid;
   const ref = db.collection('difficulty').doc(pid);
-  const btn = document.getElementById('diff-btn');
-  if (btn) btn.disabled = true;
+  const prev = _difficulty[pid] || { count:0, voters:[] };
+  const prevVoters = Array.isArray(prev.voters) ? prev.voters : [];
+  const has = prevVoters.includes(uid);
+
+  // 낙관적 UI 업데이트 (즉시 반영)
+  const newVoters = has ? prevVoters.filter(v => v !== uid) : [...prevVoters, uid];
+  _difficulty[pid] = { count: newVoters.length, voters: newVoters };
+  renderDifficultyBtn(pid);
+
+  // 백그라운드로 Firestore 동기화 (서버 측 원자 연산)
+  const FV = firebase.firestore.FieldValue;
+  const op = has
+    ? { count: FV.increment(-1), voters: FV.arrayRemove(uid) }
+    : { count: FV.increment(1),  voters: FV.arrayUnion(uid) };
   try {
-    await db.runTransaction(async t => {
-      const snap = await t.get(ref);
-      const cur = snap.exists ? (snap.data() || {}) : {};
-      const voters = Array.isArray(cur.voters) ? cur.voters : [];
-      const has = voters.includes(uid);
-      const newVoters = has ? voters.filter(v => v !== uid) : [...voters, uid];
-      t.set(ref, { count: newVoters.length, voters: newVoters });
-      _difficulty[pid] = { count: newVoters.length, voters: newVoters };
-    });
-    renderDifficultyBtn(pid);
+    await ref.set(op, { merge: true });
   } catch(e) {
+    // 실패 시 롤백
     console.warn('difficulty error', e);
+    _difficulty[pid] = prev;
+    renderDifficultyBtn(pid);
     alert('오류: ' + (e.message || e));
-  } finally {
-    if (btn) btn.disabled = false;
   }
 }
 
