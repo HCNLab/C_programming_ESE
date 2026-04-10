@@ -229,6 +229,29 @@ body.dark .user-card-deco.staff{box-shadow:0 3px 14px rgba(255,217,61,.12),0 1px
   0%,100%{filter:drop-shadow(0 0 8px rgba(255,217,61,.5))}
   50%{filter:drop-shadow(0 0 18px rgba(255,217,61,.85))}
 }
+
+/* 마스코트 응원 토스트 (우측 하단) */
+.mascot-toast{position:fixed;right:24px;bottom:24px;z-index:99997;
+  display:flex;align-items:flex-end;gap:8px;pointer-events:none;
+  transform:translateY(140%);opacity:0;
+  transition:transform .55s cubic-bezier(.2,.9,.25,1.15),opacity .35s}
+.mascot-toast.show{transform:translateY(0);opacity:1}
+.mascot-toast img{width:130px;height:auto;filter:drop-shadow(0 6px 14px rgba(0,0,0,.22))}
+.mascot-toast .bubble{position:relative;margin-bottom:38px;
+  background:#fff;border:2px solid #1f2937;border-radius:14px;
+  padding:.6rem .95rem;font-size:13px;font-weight:700;color:#1f2937;
+  box-shadow:0 6px 18px rgba(0,0,0,.14);max-width:200px;line-height:1.35}
+.mascot-toast .bubble::after{content:'';position:absolute;right:-11px;bottom:14px;
+  width:0;height:0;border:9px solid transparent;border-left-color:#1f2937}
+.mascot-toast .bubble::before{content:'';position:absolute;right:-7px;bottom:16px;
+  width:0;height:0;border:7px solid transparent;border-left-color:#fff;z-index:1}
+body.dark .mascot-toast .bubble{background:#1e293b;border-color:#cbd5e1;color:#f1f5f9}
+body.dark .mascot-toast .bubble::after{border-left-color:#cbd5e1}
+body.dark .mascot-toast .bubble::before{border-left-color:#1e293b}
+@media (max-width:640px){
+  .mascot-toast img{width:96px}
+  .mascot-toast .bubble{font-size:12px;padding:.5rem .75rem;margin-bottom:24px}
+}
 @keyframes feedbackPop{
   0%{opacity:0;transform:translateY(-8px) scale(.97)}
   60%{opacity:1;transform:translateY(0) scale(1.01)}
@@ -267,6 +290,7 @@ body.dark .CodeMirror-focused{border-color:#888}
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
 </head>
 <body>
 <div class="wrap"><div id="app"></div></div>
@@ -861,8 +885,10 @@ firebase.initializeApp({
   messagingSenderId: "445892894009",
   appId: "1:445892894009:web:1e76ea8e04bc6de2731ce8"
 });
-const auth = firebase.auth();
-const db   = firebase.firestore();
+const auth    = firebase.auth();
+const db      = firebase.firestore();
+const storage = firebase.storage();
+let _mascotUrl = null;  // 로그인 후 프리로드된 마스코트 다운로드 URL
 let firebaseUser = null;   // Firebase Auth 유저 객체
 let isApproved = false;    // 승인 상태 (admin/TA는 자동 true)
 let _pendingCount = 0;     // 승인 대기 인원 수 (admin/TA 전용)
@@ -1480,10 +1506,42 @@ window._rejectUser = async function(uid, username){
 
 /* ─── 수강생 진행 현황 집계 (admin/TA 전용) ─── */
 let _classProgressCache = null;  // { students: [...], loadedAt: Date }
+const _CLASS_CACHE_KEY = 'oj_class_progress_v1';
+const _CLASS_CACHE_TTL = 30 * 60 * 1000;  // 30분 (Firestore 읽기 절약)
+
+function _saveClassCache(data){
+  try {
+    localStorage.setItem(_CLASS_CACHE_KEY, JSON.stringify({
+      loadedAt: data.loadedAt.toISOString(),
+      students: data.students.map(s => ({ ...s, completed: [...s.completed] })),
+    }));
+  } catch(e) {}
+}
+function _restoreClassCache(){
+  try {
+    const raw = localStorage.getItem(_CLASS_CACHE_KEY);
+    if (!raw) return null;
+    const obj = JSON.parse(raw);
+    const loadedAt = new Date(obj.loadedAt);
+    if (Date.now() - loadedAt.getTime() > _CLASS_CACHE_TTL) return null;
+    return {
+      loadedAt,
+      students: obj.students.map(s => ({ ...s, completed: new Set(s.completed) })),
+    };
+  } catch(e) { return null; }
+}
 
 async function _loadClassProgress(force=false){
   if (!isAdmin() && !isTA()) return null;
   if (!force && _classProgressCache) return _classProgressCache;
+  // localStorage 캐시 시도 (30분 TTL)
+  if (!force) {
+    const restored = _restoreClassCache();
+    if (restored) {
+      _classProgressCache = restored;
+      return _classProgressCache;
+    }
+  }
   const [usersSnap, histSnap] = await Promise.all([
     db.collection('users').get(),
     db.collectionGroup('history').get()
@@ -1535,6 +1593,7 @@ async function _loadClassProgress(force=false){
   });
 
   _classProgressCache = { students, loadedAt: new Date() };
+  _saveClassCache(_classProgressCache);
   return _classProgressCache;
 }
 
@@ -1596,6 +1655,50 @@ function userBar(){
 }
 
 /* 홈 */
+/* 🐣 마스코트 응원 토스트 */
+const _MASCOT_PRAISES = [
+  '잘했어요! 🎉','완벽해요!','훌륭해요!','깔끔하게 풀었네요!',
+  '나이스 👍','대단해요!','정답 입니다!','이 맛에 코딩하죠!'
+];
+
+function showMascot(msg, opts){
+  opts = opts || {};
+  document.querySelectorAll('.mascot-toast').forEach(el => el.remove());
+  const t = document.createElement('div');
+  t.className = 'mascot-toast';
+  const imgHtml = _mascotUrl
+    ? `<img src="${_mascotUrl}" alt="">`
+    : `<div style="font-size:96px;line-height:1">🎉</div>`;
+  t.innerHTML = `<div class="bubble">${msg}</div>${imgHtml}`;
+  document.body.appendChild(t);
+  requestAnimationFrame(() => t.classList.add('show'));
+  const dur = opts.duration || 2800;
+  setTimeout(() => {
+    t.classList.remove('show');
+    setTimeout(() => t.remove(), 550);
+  }, dur);
+}
+
+function _checkMascotEvents(pid, isFirstPerfect){
+  if (!isFirstPerfect) return;
+  const p = PROBLEMS.find(x => x.id === pid);
+  if (!p) return;
+  // 주차 완등 체크 (history에는 이미 새 100점이 반영되어 있음)
+  const h = loadHistory();
+  const isPerfect = (id) => (h[id] || []).some(e => e.score != null && e.max != null && e.score >= e.max);
+  const weekProbs = PROBLEMS.filter(x => x.week === p.week);
+  const weekClear = weekProbs.length > 1 && weekProbs.every(x => isPerfect(x.id));
+  const weekKey = 'oj_week_clear_' + (username || 'anon') + '_' + p.week;
+
+  if (weekClear && localStorage.getItem(weekKey) !== '1') {
+    localStorage.setItem(weekKey, '1');
+    setTimeout(() => showMascot(`${p.week} 완료! 🏁`, { duration: 4000 }), 700);
+  } else {
+    const msg = _MASCOT_PRAISES[Math.floor(Math.random()*_MASCOT_PRAISES.length)];
+    setTimeout(() => showMascot(msg), 500);
+  }
+}
+
 /* 🎉 모든 문제 완료 축하 — 한 번만 재생 (localStorage로 중복 방지) */
 function _celebrate100(){
   const key = 'oj_celebrated_100_' + (username || 'anon');
@@ -2896,7 +2999,11 @@ async function doSubmit(){
     });
     submitScore = tot; submitMax = mx;
   }
+  // 마스코트 트리거를 위해 추가 전에 기존 100점 여부 확인
+  const _wasPerfectBefore = (loadHistory()[p.id] || []).some(e => e.score != null && e.max != null && e.score >= e.max);
   addHistory(p.id, { ts, submitted: true, score: submitScore, max: submitMax, code: src });
+  const _isFirstPerfect = !_wasPerfectBefore && submitScore != null && submitMax != null && submitScore >= submitMax;
+  if (_isFirstPerfect && !isAdmin() && !isTA()) _checkMascotEvents(p.id, true);
   // TC 결과 정리
   const tcSummary = p.cases.map(tc => {
     const r = tcResults[tc.id];
@@ -3121,11 +3228,27 @@ async function toggleDifficulty(pid){
 
 /* ── 난이도 별점 ── */
 let _ratings = {};  // { pid: { sum, count } }
+const _RATINGS_CACHE_KEY = 'oj_ratings_cache_v1';
+const _RATINGS_TTL = 10 * 60 * 1000;  // 10분 TTL
 
-async function fetchRatings(){
+async function fetchRatings(force){
+  // localStorage 캐시 시도 (10분 TTL)
+  if (!force) {
+    try {
+      const raw = localStorage.getItem(_RATINGS_CACHE_KEY);
+      if (raw) {
+        const obj = JSON.parse(raw);
+        if (Date.now() - obj.loadedAt < _RATINGS_TTL) {
+          _ratings = obj.data || {};
+          return;
+        }
+      }
+    } catch(e) {}
+  }
   try {
     const snap = await db.collection('ratings').get();
     snap.forEach(doc => { _ratings[doc.id] = doc.data(); });
+    try { localStorage.setItem(_RATINGS_CACHE_KEY, JSON.stringify({ data: _ratings, loadedAt: Date.now() })); } catch(e) {}
   } catch(e) {}
 }
 
@@ -3678,6 +3801,12 @@ auth.onAuthStateChanged(async (user) => {
       }
     } catch(e) {
       username = localStorage.getItem(LS_USER) || '';
+    }
+    // 마스코트 이미지 URL 프리로드 (실패해도 무시 — 토스트는 텍스트만 표시됨)
+    if (!_mascotUrl) {
+      storage.ref('mascot/mascot.jpg').getDownloadURL()
+        .then(url => { _mascotUrl = url; })
+        .catch(() => {});
     }
     // Firestore에서 이력 불러오기
     await loadHistoryFromFirestore();
