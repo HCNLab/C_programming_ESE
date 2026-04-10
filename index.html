@@ -2243,6 +2243,10 @@ function renderProb(pid, push=true){
           <button onclick="doReset()">초기화</button>
           <button id="ta-btn" onclick="startTimeAttack()" style="margin-left:auto;font-size:12px;color:#e94560;border-color:#e94560" title="타임어택: 복붙 차단 후 타이머 시작">⏱ 타임어택</button>
         </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:.5rem .75rem;margin-bottom:.75rem;background:var(--surface3);border:1px solid var(--border);border-radius:6px;font-size:12px;flex-wrap:wrap">
+          <button id="diff-btn" onclick="toggleDifficulty('${p.id}')" style="font-size:12px;padding:4px 10px;cursor:pointer" title="이 문제가 많이 어려우면 눌러주세요 (한 번 더 누르면 취소)">😵 어려워요 <span id="diff-count">-</span></button>
+          <span style="color:var(--text4)">많이 어려우면 교수님이 힌트를 드려요</span>
+        </div>
         <details style="margin-bottom:.75rem;font-size:12px;color:var(--text3)">
           <summary style="cursor:pointer;user-select:none;list-style:none;display:flex;align-items:center;gap:4px">
             <span style="font-size:10px">▶</span> 채점 결과 안내
@@ -2321,6 +2325,9 @@ function renderProb(pid, push=true){
 
   /* 교수 코멘트(포스트잇) 로드 & 렌더 */
   renderProfNote(pid);
+
+  /* 어려워요 카운트 로드 */
+  loadDifficulty(pid);
 }
 
 function renderProfNote(pid, editing){
@@ -3053,6 +3060,61 @@ function doReset(){
   renderResults();
 }
 
+/* ── 어려워요 버튼 ── */
+let _difficulty = {};  // { pid: { count, voters } }
+
+async function loadDifficulty(pid){
+  try {
+    const doc = await db.collection('difficulty').doc(pid).get();
+    _difficulty[pid] = doc.exists ? (doc.data() || { count:0, voters:[] }) : { count:0, voters:[] };
+  } catch(e) {
+    _difficulty[pid] = { count:0, voters:[] };
+  }
+  renderDifficultyBtn(pid);
+}
+
+function renderDifficultyBtn(pid){
+  const btn = document.getElementById('diff-btn');
+  if (!btn || curPid !== pid) return;
+  const d = _difficulty[pid] || { count:0, voters:[] };
+  const uid = firebaseUser ? firebaseUser.uid : null;
+  const voted = uid && (d.voters || []).includes(uid);
+  btn.innerHTML = voted
+    ? `✓ 어려워요 취소 <b>${d.count || 0}</b>`
+    : `😵 어려워요 <b>${d.count || 0}</b>`;
+  btn.style.background = voted ? 'var(--warn-bg)' : '';
+  btn.style.borderColor = voted ? 'var(--warn-border)' : '';
+  btn.style.color = voted ? 'var(--warn-text, #a35e00)' : '';
+}
+
+async function toggleDifficulty(pid){
+  if (!firebaseUser) {
+    alert('로그인 후 이용 가능합니다.');
+    return;
+  }
+  const uid = firebaseUser.uid;
+  const ref = db.collection('difficulty').doc(pid);
+  const btn = document.getElementById('diff-btn');
+  if (btn) btn.disabled = true;
+  try {
+    await db.runTransaction(async t => {
+      const snap = await t.get(ref);
+      const cur = snap.exists ? (snap.data() || {}) : {};
+      const voters = Array.isArray(cur.voters) ? cur.voters : [];
+      const has = voters.includes(uid);
+      const newVoters = has ? voters.filter(v => v !== uid) : [...voters, uid];
+      t.set(ref, { count: newVoters.length, voters: newVoters });
+      _difficulty[pid] = { count: newVoters.length, voters: newVoters };
+    });
+    renderDifficultyBtn(pid);
+  } catch(e) {
+    console.warn('difficulty error', e);
+    alert('오류: ' + (e.message || e));
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
 /* ── 난이도 별점 ── */
 let _ratings = {};  // { pid: { sum, count } }
 
@@ -3284,11 +3346,85 @@ async function renderAdmin(push=true){
       <div style="display:flex;gap:4px;border-bottom:2px solid var(--border);margin-bottom:1rem">
         <button style="${tabStyle('users')}" onclick="_adminTab='users';renderAdmin(false)">사용자 매핑</button>
         <button style="${tabStyle('submissions')}" onclick="_adminTab='submissions';renderAdmin(false)">제출 현황</button>
+        <button style="${tabStyle('difficulty')}" onclick="_adminTab='difficulty';renderAdmin(false)">어려워요</button>
       </div>
       <div id="admin-content"><p>불러오는 중...</p></div>
     </div>`;
   if (_adminTab === 'users') await renderAdminUsers();
+  else if (_adminTab === 'difficulty') await renderAdminDifficulty();
   else await renderAdminSubmissions();
+}
+
+async function renderAdminDifficulty(){
+  const adminEl = $('admin-content');
+  adminEl.innerHTML = '<p>어려워요 데이터 불러오는 중...</p>';
+  try {
+    const snap = await db.collection('difficulty').get();
+    const rows = [];
+    snap.forEach(doc => {
+      const d = doc.data() || {};
+      rows.push({
+        pid: doc.id,
+        count: d.count || 0,
+        voters: Array.isArray(d.voters) ? d.voters : []
+      });
+    });
+    // PROBLEMS에서 제목/주차 매칭
+    const pmap = {};
+    PROBLEMS.forEach(p => { pmap[p.id] = p; });
+    rows.forEach(r => {
+      const p = pmap[r.pid];
+      r.title = p ? p.title : '(삭제된 문제)';
+      r.week  = p ? p.week  : '-';
+    });
+    // count 내림차순 정렬
+    rows.sort((a, b) => b.count - a.count || a.pid.localeCompare(b.pid));
+
+    if (rows.length === 0) {
+      adminEl.innerHTML = '<p style="color:var(--text3)">아직 "어려워요"를 누른 문제가 없습니다.</p>';
+      return;
+    }
+
+    const total = rows.reduce((s, r) => s + r.count, 0);
+    const maxCount = rows[0].count || 1;
+
+    let html = `<p style="color:var(--text3);margin-bottom:0.8rem">총 ${rows.length}개 문제 · 누적 ${total}회</p>
+      <table style="width:100%;border-collapse:collapse;font-size:14px">
+      <thead><tr style="border-bottom:2px solid var(--border)">
+        <th style="padding:8px 12px;text-align:left;width:40px">#</th>
+        <th style="padding:8px 12px;text-align:left;width:80px">문제 ID</th>
+        <th style="padding:8px 12px;text-align:left">주차</th>
+        <th style="padding:8px 12px;text-align:left">제목</th>
+        <th style="padding:8px 12px;text-align:right;width:80px">카운트</th>
+        <th style="padding:8px 12px;text-align:left;width:30%">분포</th>
+        <th style="padding:8px 12px;text-align:left;width:60px"></th>
+      </tr></thead><tbody>` +
+      rows.map((r, i) => {
+        const pct = Math.round((r.count / maxCount) * 100);
+        const hot = r.count >= 5;
+        const barColor = hot ? 'var(--fail)' : r.count >= 2 ? '#f5a623' : 'var(--text4)';
+        const countStyle = hot ? 'color:var(--fail);font-weight:700' : 'font-weight:600';
+        return `<tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:8px 12px;color:var(--text3)">${i+1}</td>
+          <td style="padding:8px 12px;font-family:'Menlo','Consolas',monospace;font-size:12px;color:var(--text3)">${r.pid}</td>
+          <td style="padding:8px 12px;font-size:13px;color:var(--text3)">${escapeHtml(r.week)}</td>
+          <td style="padding:8px 12px">${escapeHtml(r.title)}</td>
+          <td style="padding:8px 12px;text-align:right;${countStyle}">${r.count}명</td>
+          <td style="padding:8px 12px">
+            <div style="background:var(--surface3);border-radius:4px;height:8px;overflow:hidden">
+              <div style="background:${barColor};height:100%;width:${pct}%"></div>
+            </div>
+          </td>
+          <td style="padding:8px 12px">
+            <button onclick="renderProb('${r.pid}')" style="font-size:11px;padding:2px 8px">열기</button>
+          </td>
+        </tr>`;
+      }).join('') + '</tbody></table>';
+    adminEl.innerHTML = html;
+  } catch(e) {
+    console.warn(e);
+    adminEl.innerHTML = '<p style="color:var(--fail)">데이터를 불러올 수 없습니다: ' + escapeHtml(e.message || String(e)) + '</p>';
+  }
 }
 
 async function renderAdminUsers(){
