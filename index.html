@@ -1608,6 +1608,14 @@ window._toggleClassProgress = async function(){
   if (view === 'history') renderHistory(false);
 };
 
+// 명시적 lazy 로드 (자동 fetch 제거 후 버튼 클릭용)
+window._lazyLoadClassProgress = async function(){
+  if (!isAdmin() && !isTA()) return;
+  await _loadClassProgress();
+  if (view === 'home') renderHome(false);
+  else if (view === 'history') renderHistory(false);
+};
+
 window._refreshClassProgress = async function(){
   const btn = document.getElementById('_classRefreshBtn');
   if (btn) { btn.disabled = true; btn.textContent = '새로고침 중...'; }
@@ -1997,8 +2005,10 @@ function renderHome(push=true){
   let classSidebarHtml = '';
   if (isAdmin() || isTA()) {
     if (!_classProgressCache) {
-      _loadClassProgress().then(() => { if (view === 'home') renderHome(false); });
-      classSidebarHtml = `<div style="font-size:12px;color:var(--text3);text-align:center;padding:.7rem 0">불러오는 중...</div>`;
+      classSidebarHtml = `<div style="font-size:12px;color:var(--text3);text-align:center;padding:.7rem 0">
+        <button onclick="_lazyLoadClassProgress()" style="font-size:12px;padding:6px 12px;cursor:pointer">📊 수강생 진행 불러오기</button>
+        <div style="font-size:10px;color:var(--text4);margin-top:.4rem">Firestore 읽기 절약을 위해 자동 로드 안 함</div>
+      </div>`;
     } else {
       const _cAll = _classProgressCache.students;
       const _assignPids = assignProbs.map(p => p.id);
@@ -2852,14 +2862,16 @@ function renderHistory(push=true){
   let classSummaryBody = '';
   if (_isStaff && _topMode === 'class') {
     if (!_classProgressCache) {
-      // 첫 진입: async 로드 후 재렌더
-      _loadClassProgress().then(() => { if (view === 'history') renderHistory(false); });
+      // 자동 fetch 제거 — 명시적 버튼 클릭 시에만 로드 (Firestore 읽기 절약)
       classSummaryBody = `
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem">
           <div style="font-size:13px;font-weight:700;color:var(--text)">👥 수강생 진행 요약</div>
           ${topToggleBtn}
         </div>
-        <div style="text-align:center;padding:1rem;color:var(--text3);font-size:12px">불러오는 중...</div>`;
+        <div style="text-align:center;padding:1rem;color:var(--text3);font-size:12px">
+          <button onclick="_lazyLoadClassProgress()" style="font-size:12px;padding:6px 14px;cursor:pointer">📊 불러오기</button>
+          <div style="font-size:10px;color:var(--text4);margin-top:.5rem">Firestore 읽기 절약을 위해 자동 로드 안 함</div>
+        </div>`;
     } else {
       const _cAll = _classProgressCache.students;
       const _assignPids = _hAssign.map(p => p.id);
