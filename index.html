@@ -2008,8 +2008,8 @@ function renderHome(push=true){
   if (isAdmin() || isTA()) {
     if (!_classProgressCache) {
       classSidebarHtml = `<div style="font-size:12px;color:var(--text3);text-align:center;padding:.7rem 0">
-        <button onclick="_lazyLoadClassProgress()" style="font-size:12px;padding:6px 12px;cursor:pointer">📊 수강생 진행 불러오기</button>
-        <div style="font-size:10px;color:var(--text4);margin-top:.4rem">Firestore 읽기 절약을 위해 자동 로드 안 함</div>
+        <div style="color:var(--text4)">수강생 진행 불러오는 중...</div>
+        <button onclick="_lazyLoadClassProgress()" style="font-size:11px;padding:4px 10px;cursor:pointer;margin-top:.4rem">다시 시도</button>
       </div>`;
     } else {
       const _cAll = _classProgressCache.students;
@@ -2864,15 +2864,14 @@ function renderHistory(push=true){
   let classSummaryBody = '';
   if (_isStaff && _topMode === 'class') {
     if (!_classProgressCache) {
-      // 자동 fetch 제거 — 명시적 버튼 클릭 시에만 로드 (Firestore 읽기 절약)
       classSummaryBody = `
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem">
           <div style="font-size:13px;font-weight:700;color:var(--text)">👥 수강생 진행 요약</div>
           ${topToggleBtn}
         </div>
         <div style="text-align:center;padding:1rem;color:var(--text3);font-size:12px">
-          <button onclick="_lazyLoadClassProgress()" style="font-size:12px;padding:6px 14px;cursor:pointer">📊 불러오기</button>
-          <div style="font-size:10px;color:var(--text4);margin-top:.5rem">Firestore 읽기 절약을 위해 자동 로드 안 함</div>
+          불러오는 중...
+          <div style="margin-top:.5rem"><button onclick="_lazyLoadClassProgress()" style="font-size:11px;padding:4px 10px;cursor:pointer">다시 시도</button></div>
         </div>`;
     } else {
       const _cAll = _classProgressCache.students;
@@ -3827,6 +3826,15 @@ auth.onAuthStateChanged(async (user) => {
     // 관리자/TA면 비공개 drafts + 승인 대기 인원 로드
     await loadDrafts();
     await _loadPendingCount();
+    // 관리자/TA면 수강생 진행 현황도 백그라운드 로드 (Sheets 기반, Firestore read ~55)
+    if (isAdmin() || isTA()) {
+      _loadClassProgress().then(res => {
+        if (res && (view === 'home' || view === 'history')) {
+          if (view === 'history') renderHistory(false);
+          else renderHome(false);
+        }
+      });
+    }
   } else {
     username = '';
     isApproved = false;
