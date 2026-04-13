@@ -7,14 +7,18 @@ __pycache__/
 CLAUDE_CODE_CONTEXT.md
 claude-code-context.md
 project-context.md
+.claude/
 
 # 채점 결과
 grade_result*.csv
 submissions*.csv
+stress-test.mjs
 
 # 강의자료
 lecture_notes/
 PROFESSOR_GUIDE.md
+_plan_exam_mode.md
+publish_drafts_2026-04-13.txt
 
 # 학교 마스코트 이미지 (저작권 보호, 웹 공개 금지)
 assets/mascot/
