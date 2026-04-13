@@ -58,6 +58,7 @@ button.primary:hover{background:var(--text6)}
 .section-lbl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.3rem;margin-top:.85rem}
 .section-lbl:first-child{margin-top:0}
 .body-text{font-size:14px;line-height:1.7;color:var(--text)}
+.prob-pane{-webkit-user-select:none;user-select:none}
 .io-box{font-family:'Menlo','Consolas',monospace;font-size:13px;padding:.55rem .8rem;background:var(--surface3);border:1px solid var(--border);border-radius:8px;white-space:pre-wrap;word-break:break-word;color:var(--text)}
 textarea{width:100%;min-height:200px;font-family:'Menlo','Consolas',monospace;font-size:13px;padding:.75rem;border:1px solid var(--border2);border-radius:8px;background:var(--surface);color:var(--text);resize:vertical;outline:none;line-height:1.6;margin-bottom:.75rem}
 textarea:focus{border-color:var(--text3)}
@@ -4062,6 +4063,15 @@ fetchRatings();
     if (e.ctrlKey && (e.key === 'u' || e.key === 'U')) { e.preventDefault(); _devWarn('Ctrl+U'); return; }
     // Ctrl+S (저장)
     if (e.ctrlKey && (e.key === 's' || e.key === 'S') && !e.shiftKey) { e.preventDefault(); _devWarn('Ctrl+S'); return; }
+  });
+
+  // 문제 영역 복사 차단 (Ctrl+C / Ctrl+A)
+  document.addEventListener('copy', function(e){
+    if (e.target.closest('.CodeMirror') || e.target.closest('textarea') || e.target.closest('input')) return;
+    if (isAdmin() || isTA()) return;
+    if (e.target.closest('.prob-pane') || document.querySelector('.prob-pane')) {
+      e.preventDefault();
+    }
   });
 
   // 우클릭 차단
