@@ -299,6 +299,7 @@ body.dark .CodeMirror-focused{border-color:#888}
    ★ 교수님 설정 구역 ★
 ============================================================ */
 const SHEETS_URL  = 'https://script.google.com/macros/s/AKfycbwHaOaYbjhbwDK6wggzPdSBZ5uH_kJKEwYisR26I9Y7r21ra8Z_D8cvYXOJgegy_qDd/exec';          // Google Sheets 웹앱 URL
+const SHEETS_KEY  = 'h0vBgzOeEvfvK0WQYqXdDw';  // admin/ratings 모드 인증 키
 const COURSE_NAME = 'C Programming (1)';
 
 // 공지사항 (빈 문자열이면 숨김)
@@ -1734,7 +1735,7 @@ async function _loadClassProgress(force=false){
     // ※ 과거 collectionGroup('history')는 ~1,650 reads, users.get()은 ~55 reads였음
     //   staff 제외는 Apps Script EXCLUDE(원경호) + 클라이언트 이름 필터로 처리
     //   승인 상태는 어차피 미승인은 submit 자체가 안 되므로 Sheets에 나타나지 않음 → approved:true 가정
-    const sheetRes = await fetch(SHEETS_URL + '?mode=admin', { method:'GET', mode:'cors' });
+    const sheetRes = await fetch(SHEETS_URL + '?mode=admin&key=' + SHEETS_KEY, { method:'GET', mode:'cors' });
     if (!sheetRes.ok) throw new Error('sheets fetch failed: ' + sheetRes.status);
     const d = await sheetRes.json();
     const subs = d.submissions || [];
@@ -3428,7 +3429,7 @@ async function fetchRatings(force){
   }
   if (!SHEETS_URL) return;
   try {
-    const r = await fetch(SHEETS_URL + '?mode=ratings', { method:'GET', mode:'cors' });
+    const r = await fetch(SHEETS_URL + '?mode=ratings&key=' + SHEETS_KEY, { method:'GET', mode:'cors' });
     if (!r.ok) return;
     const d = await r.json();
     if (d.ratings) _ratings = d.ratings;
@@ -3751,7 +3752,7 @@ async function renderAdminUsers(){
     const dupWarnings = Object.entries(duplicates).filter(([,v]) => v.length > 1);
     let html = dupWarnings.length > 0 ? `<div style="background:var(--fail-bg);border:1px solid var(--fail);border-radius:8px;padding:0.8rem 1rem;margin-bottom:1rem">
       <b style="color:var(--fail)">중복 의심 (${dupWarnings.length}건)</b><br>` +
-      dupWarnings.map(([id, arr]) => `학번 ${id}: ${arr.map(a => a.username + ' ('+a.email+')').join(', ')}`).join('<br>') + '</div>' : '';
+      dupWarnings.map(([id, arr]) => `학번 ${escapeHtml(id)}: ${arr.map(a => escapeHtml(a.username) + ' ('+escapeHtml(a.email)+')').join(', ')}`).join('<br>') + '</div>' : '';
     html += `<p style="color:var(--text3);margin-bottom:0.5rem">총 ${users.length}명 등록</p>
     <table style="width:100%;border-collapse:collapse;font-size:14px">
     <thead><tr style="border-bottom:2px solid var(--border)">
@@ -3766,10 +3767,10 @@ async function renderAdminUsers(){
       const isDup = duplicates[stuId] && duplicates[stuId].length > 1;
       return `<tr style="border-bottom:1px solid var(--border);${isDup ? 'background:var(--fail-bg)' : ''}">
         <td style="padding:8px 12px;color:var(--text3)">${i+1}</td>
-        <td style="padding:8px 12px;font-weight:500">${u.username}</td>
-        <td style="padding:8px 12px;font-family:monospace;font-size:13px">${u.email}</td>
+        <td style="padding:8px 12px;font-weight:500">${escapeHtml(u.username)}</td>
+        <td style="padding:8px 12px;font-family:monospace;font-size:13px">${escapeHtml(u.email)}</td>
         <td style="padding:8px 12px">${isDup ? '<span style="color:var(--fail);font-weight:600">중복 의심</span>' : '<span style="color:var(--accent)">정상</span>'}</td>
-        <td style="padding:8px 12px"><button onclick="adminDeleteUser('${u.username}')"
+        <td style="padding:8px 12px"><button onclick="adminDeleteUser('${escapeHtml(u.username)}')"
           style="font-size:11px;padding:2px 8px;color:var(--error);border-color:var(--fail-badge-bg)">삭제</button></td>
       </tr>`;
     }).join('') + '</tbody></table>';
@@ -3793,7 +3794,7 @@ async function renderAdminSubmissions(){
   const adminEl = $('admin-content');
   adminEl.innerHTML = '<p>제출 데이터 불러오는 중...</p>';
   try {
-    const r = await fetch(SHEETS_URL + '?mode=admin', { method:'GET', mode:'cors' });
+    const r = await fetch(SHEETS_URL + '?mode=admin&key=' + SHEETS_KEY, { method:'GET', mode:'cors' });
     if (!r.ok) throw new Error('fetch failed');
     const d = await r.json();
     if (!d.submissions || d.submissions.length === 0) {
