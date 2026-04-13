@@ -4026,6 +4026,52 @@ history.replaceState({view:'home'}, '', ' ');
 // 초기 렌더링은 onAuthStateChanged 콜백에서 수행
 fetchSubmitCounts();
 fetchRatings();
+
+/* ── DevTools / 소스 보기 감지 (심리적 억제 + 로깅) ── */
+(function(){
+  let _devWarnCount = 0;
+  const _devWarnMax = 3;
+
+  function _devWarn(method){
+    if (isAdmin() || isTA()) return;  // 관리자/TA 제외
+    _devWarnCount++;
+    // 경고 표시
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:center;justify-content:center;padding:2rem';
+    overlay.innerHTML = `<div style="background:#fff;border-radius:12px;padding:2rem;max-width:420px;text-align:center">
+      <div style="font-size:48px;margin-bottom:12px">⚠️</div>
+      <div style="font-size:18px;font-weight:700;color:#d32f2f;margin-bottom:8px">개발자 도구 감지</div>
+      <div style="font-size:14px;color:#333;line-height:1.6">
+        개발자 도구 또는 소스 보기 시도가 감지되었습니다.<br>
+        <b>이 행위는 관리자에게 자동으로 기록됩니다.</b><br>
+        (${username || '미로그인'} / ${_devWarnCount}회)
+      </div>
+      <button onclick="this.closest('div[style]').remove()" style="margin-top:16px;padding:8px 24px;
+        background:#d32f2f;color:#fff;border:none;border-radius:6px;font-size:14px;cursor:pointer">확인</button>
+    </div>`;
+    document.body.appendChild(overlay);
+  }
+
+  // 키보드 단축키 차단
+  document.addEventListener('keydown', function(e){
+    // F12
+    if (e.key === 'F12') { e.preventDefault(); _devWarn('F12'); return; }
+    // Ctrl+Shift+I/J/C (DevTools)
+    if (e.ctrlKey && e.shiftKey && ['I','i','J','j','C','c'].includes(e.key)) { e.preventDefault(); _devWarn('Ctrl+Shift+'+e.key.toUpperCase()); return; }
+    // Ctrl+U (소스 보기)
+    if (e.ctrlKey && (e.key === 'u' || e.key === 'U')) { e.preventDefault(); _devWarn('Ctrl+U'); return; }
+    // Ctrl+S (저장)
+    if (e.ctrlKey && (e.key === 's' || e.key === 'S') && !e.shiftKey) { e.preventDefault(); _devWarn('Ctrl+S'); return; }
+  });
+
+  // 우클릭 차단
+  document.addEventListener('contextmenu', function(e){
+    // 코드 에디터 영역은 허용 (복사/붙여넣기 필요)
+    if (e.target.closest('.CodeMirror') || e.target.closest('textarea')) return;
+    e.preventDefault();
+    _devWarn('우클릭');
+  });
+})();
 </script>
 
 <!--
