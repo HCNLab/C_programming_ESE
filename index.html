@@ -1424,8 +1424,8 @@ window._openPublishDialog = async function(){
   });
   // 주차 → 연습(p/lp) → 도전(c/lc) → 번호순
   const _pubSortKey = (id) => {
-    const isChallenge = /^[lf]?c\d/.test(id);
-    const isPractice  = /^[lf]?p\d/.test(id);
+    const isChallenge = /c\d/.test(id);
+    const isPractice  = /p\d/.test(id);
     const num = parseInt((id||'').replace(/\D/g,''), 10) || 0;
     return (isPractice ? 0 : isChallenge ? 1000 : 5000) + num;
   };
@@ -2054,8 +2054,8 @@ function renderHome(push=true){
   // (드래프트가 Firestore에서 알파벳순으로 들어와도 쉬운 것부터 보이도록)
   const _sortKey = (p) => {
     const id = p.id || '';
-    const isChallenge = /^[lf]?c\d/.test(id);   // c1, lc1, fc1... → 도전
-    const isPractice  = /^[lf]?p\d/.test(id);   // p1, lp1, fp1... → 연습
+    const isChallenge = /c\d/.test(id);   // c1, lc1, fc1, ac1, sc1... → 도전
+    const isPractice  = /p\d/.test(id);   // p1, lp1, fp1, ap1, sp1... → 연습
     const num = parseInt(id.replace(/\D/g,''), 10) || 0;
     // 연습: 0~999, 도전: 1000~1999, 기타: 그대로 (원본 순서 유지 위해 큰 값)
     const base = isPractice ? 0 : isChallenge ? 1000 : 5000;
