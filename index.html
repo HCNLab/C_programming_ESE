@@ -2690,7 +2690,7 @@ function renderHome(push=true){
   const noSubmitWeeks = new Set();
   PROBLEMS.forEach(p => { if (p.noSubmit) noSubmitWeeks.add(p.week); });
   const allWeekKeys = Object.keys(groups);
-  const assignWeeks = allWeekKeys.filter(w => !noSubmitWeeks.has(w)).reverse();
+  const assignWeeks = allWeekKeys.filter(w => !noSubmitWeeks.has(w)).sort((a,b) => b.localeCompare(a));
   const submitWeeks = allWeekKeys.filter(w =>  noSubmitWeeks.has(w));
   const weekKeys = [...assignWeeks, ...submitWeeks];
   const filterHtml = `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.8rem">
