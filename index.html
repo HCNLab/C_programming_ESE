@@ -412,6 +412,302 @@ function buildCases(pid){
 
 const PROBLEMS = [
   {
+    "id": "ac1",
+    "deadline": "2026-05-04T23:59",
+    "cases": [
+      {
+        "pts": 25,
+        "expected": "Diagonal: 15\n",
+        "id": 1,
+        "input": "3\n1 2 3\n4 5 6\n7 8 9"
+      },
+      {
+        "id": 2,
+        "input": "1\n42",
+        "expected": "Diagonal: 42\n",
+        "pts": 25
+      },
+      {
+        "expected": "Diagonal: 10\n",
+        "pts": 25,
+        "input": "4\n1 0 0 0\n0 2 0 0\n0 0 3 0\n0 0 0 4",
+        "id": 3
+      },
+      {
+        "pts": 25,
+        "expected": "Diagonal: -6\n",
+        "id": 4,
+        "input": "3\n-1 5 5\n5 -2 5\n5 5 -3"
+      }
+    ],
+    "output_desc": "형식: <code>Diagonal: &lt;값&gt;</code>",
+    "input_desc": "첫째 줄에 정수 N (1 ≤ N ≤ 10), 이후 N줄에 각 줄에 N개의 정수.",
+    "ex_out": "Diagonal: 15",
+    "title": "Sum of Diagonal",
+    "week": "Week 8A: Arrays",
+    "desc": "N×N 정사각 행렬이 주어졌을 때, <b>주대각선(main diagonal)</b>의 원소들의 합을 출력하시오.<br>주대각선은 <code>A[0][0], A[1][1], ..., A[N-1][N-1]</code> 위치의 원소들이다.<br>Hint: 2차원 배열 <code>int A[10][10]</code>을 선언하고, <code>A[i][i]</code>만 더하면 된다.",
+    "ex_in": "3\n1 2 3\n4 5 6\n7 8 9"
+  },
+  {
+    "id": "ac2",
+    "ex_out": "   1   5   9\n   2   6  10\n   3   7  11\n   4   8  12",
+    "input_desc": "첫째 줄에 두 정수 R, C (1 ≤ R, C ≤ 10), 이후 R줄에 각 줄에 C개의 정수.",
+    "title": "Matrix Transpose",
+    "week": "Week 8A: Arrays",
+    "desc": "R×C 행렬이 주어졌을 때, 그 <b>전치행렬(transpose)</b> C×R을 출력하시오.<br>전치는 <code>T[j][i] = A[i][j]</code>로 행과 열을 바꾸는 연산이다.<br>출력은 각 원소를 4칸 너비로 우정렬: <code>printf(\"%4d\", x)</code>.",
+    "ex_in": "3 4\n1 2 3 4\n5 6 7 8\n9 10 11 12",
+    "deadline": "2026-05-04T23:59",
+    "cases": [
+      {
+        "expected": "   1   5   9\n   2   6  10\n   3   7  11\n   4   8  12\n",
+        "pts": 25,
+        "input": "3 4\n1 2 3 4\n5 6 7 8\n9 10 11 12",
+        "id": 1
+      },
+      {
+        "id": 2,
+        "input": "2 2\n1 2\n3 4",
+        "expected": "   1   3\n   2   4\n",
+        "pts": 25
+      },
+      {
+        "id": 3,
+        "input": "1 5\n10 20 30 40 50",
+        "pts": 25,
+        "expected": "  10\n  20\n  30\n  40\n  50\n"
+      },
+      {
+        "expected": "   1   0   0\n   0   1   0\n   0   0   1\n",
+        "pts": 25,
+        "id": 4,
+        "input": "3 3\n1 0 0\n0 1 0\n0 0 1"
+      }
+    ],
+    "output_desc": "C줄에 걸쳐 전치행렬을 출력. 각 원소는 %4d 형식."
+  },
+  {
+    "id": "ap1",
+    "input_desc": "첫째 줄에 정수 N (1 ≤ N ≤ 100), 둘째 줄에 N개의 정수가 공백으로 구분되어 주어진다.",
+    "ex_out": "50 40 30 20 10",
+    "week": "Week 8A: Arrays",
+    "title": "Reverse Print",
+    "ex_in": "5\n10 20 30 40 50",
+    "desc": "정수 N과 N개의 정수를 입력받아 배열에 저장한 뒤, <b>입력의 역순으로</b> 한 줄에 공백으로 구분하여 출력하시오.<br>배열을 다루는 가장 기본적인 패턴 — <code>for (i = N-1; i >= 0; i--)</code> 로 뒤에서부터 접근.",
+    "cases": [
+      {
+        "id": 1,
+        "input": "5\n10 20 30 40 50",
+        "pts": 25,
+        "expected": "50 40 30 20 10\n"
+      },
+      {
+        "id": 2,
+        "input": "1\n7",
+        "expected": "7\n",
+        "pts": 25
+      },
+      {
+        "pts": 25,
+        "expected": "1 8 -2 5 0 -3\n",
+        "input": "6\n-3 0 5 -2 8 1",
+        "id": 3
+      },
+      {
+        "expected": "10 9 8 7 6 5 4 3 2 1\n",
+        "pts": 25,
+        "input": "10\n1 2 3 4 5 6 7 8 9 10",
+        "id": 4
+      }
+    ],
+    "deadline": "2026-05-04T23:59",
+    "output_desc": "역순으로 N개의 정수를 한 줄에 공백으로 구분하여 출력. 끝에 줄바꿈."
+  },
+  {
+    "id": "ap2",
+    "week": "Week 8A: Arrays",
+    "title": "Above Average",
+    "ex_in": "5\n70 80 90 60 50",
+    "desc": "N명의 점수가 주어졌을 때, 평균을 넘는 학생이 몇 명인지 출력하시오.<br><code>double avg</code>로 평균을 계산한 뒤, 한 번 더 순회하며 <code>score[i] &gt; avg</code> 조건으로 카운트한다.",
+    "ex_out": "Above: 2",
+    "input_desc": "첫째 줄에 정수 N (1 ≤ N ≤ 100), 둘째 줄에 N개의 정수 점수가 공백으로 구분되어 주어진다.",
+    "output_desc": "형식: <code>Above: &lt;값&gt;</code>",
+    "cases": [
+      {
+        "expected": "Above: 2\n",
+        "pts": 25,
+        "input": "5\n70 80 90 60 50",
+        "id": 1
+      },
+      {
+        "expected": "Above: 0\n",
+        "pts": 25,
+        "input": "1\n100",
+        "id": 2
+      },
+      {
+        "input": "6\n10 10 10 10 10 10",
+        "id": 3,
+        "pts": 25,
+        "expected": "Above: 0\n"
+      },
+      {
+        "input": "8\n100 95 87 60 55 40 30 70",
+        "id": 4,
+        "expected": "Above: 4\n",
+        "pts": 25
+      }
+    ],
+    "deadline": "2026-05-04T23:59"
+  },
+  {
+    "id": "ap3",
+    "output_desc": "형식: <code>Second: &lt;값&gt;</code>",
+    "deadline": "2026-05-04T23:59",
+    "cases": [
+      {
+        "input": "5\n3 1 4 1 5",
+        "id": 1,
+        "pts": 25,
+        "expected": "Second: 4\n"
+      },
+      {
+        "id": 2,
+        "input": "4\n5 3 5 1",
+        "pts": 25,
+        "expected": "Second: 3\n"
+      },
+      {
+        "pts": 25,
+        "expected": "Second: 50\n",
+        "input": "6\n10 20 30 40 50 60",
+        "id": 3
+      },
+      {
+        "expected": "Second: 7\n",
+        "pts": 25,
+        "id": 4,
+        "input": "5\n7 7 7 7 7"
+      }
+    ],
+    "desc": "N개의 정수가 주어졌을 때, <b>두 번째로 큰 값</b>을 출력하시오.<br>주의: 같은 값이 여러 개 있어도 두 번째로 큰 \"값\"을 의미한다. 예: <code>{5, 3, 5, 1}</code>의 두 번째 큰 값은 <code>3</code>.<br>Hint: 한 번의 순회로 <code>max1, max2</code> 두 변수를 갱신할 수 있다.",
+    "ex_in": "5\n3 1 4 1 5",
+    "title": "Second Largest",
+    "week": "Week 8A: Arrays",
+    "ex_out": "Second: 4",
+    "input_desc": "첫째 줄에 정수 N (2 ≤ N ≤ 100), 둘째 줄에 N개의 정수가 공백으로 구분되어 주어진다."
+  },
+  {
+    "id": "ap4",
+    "week": "Week 8A: Arrays",
+    "title": "Count Occurrences",
+    "ex_in": "8\n3 1 4 1 5 9 2 6\n1",
+    "desc": "N개의 정수가 주어진 뒤 정수 X가 추가로 주어진다. 배열 안에서 X가 몇 번 나타나는지 출력하시오.<br>선형 탐색 패턴 — 배열을 한 번 순회하며 카운트.",
+    "ex_out": "Count: 2",
+    "input_desc": "첫째 줄에 정수 N (1 ≤ N ≤ 100), 둘째 줄에 N개의 정수, 셋째 줄에 정수 X가 주어진다.",
+    "output_desc": "형식: <code>Count: &lt;값&gt;</code>",
+    "cases": [
+      {
+        "pts": 25,
+        "expected": "Count: 2\n",
+        "id": 1,
+        "input": "8\n3 1 4 1 5 9 2 6\n1"
+      },
+      {
+        "id": 2,
+        "input": "5\n7 7 7 7 7\n7",
+        "expected": "Count: 5\n",
+        "pts": 25
+      },
+      {
+        "id": 3,
+        "input": "5\n1 2 3 4 5\n10",
+        "pts": 25,
+        "expected": "Count: 0\n"
+      },
+      {
+        "expected": "Count: 5\n",
+        "pts": 25,
+        "id": 4,
+        "input": "10\n0 1 0 1 0 1 0 1 0 1\n0"
+      }
+    ],
+    "deadline": "2026-05-04T23:59"
+  },
+  {
+    "id": "ap5",
+    "week": "Week 8A: Arrays",
+    "title": "Shift Right by One",
+    "ex_in": "5\n1 2 3 4 5",
+    "desc": "N개의 정수를 입력받아 <b>오른쪽으로 한 칸씩 회전(rotate)</b>한 결과를 출력하시오. 맨 끝 값이 맨 앞으로 이동한다.<br>예: <code>1 2 3 4 5</code> → <code>5 1 2 3 4</code><br>Hint: 마지막 원소를 임시 변수에 저장한 뒤, 뒤에서부터 한 칸씩 옮긴다.",
+    "input_desc": "첫째 줄에 정수 N (1 ≤ N ≤ 100), 둘째 줄에 N개의 정수가 공백으로 구분되어 주어진다.",
+    "ex_out": "5 1 2 3 4",
+    "output_desc": "회전된 N개의 정수를 한 줄에 공백으로 구분하여 출력. 끝에 줄바꿈.",
+    "cases": [
+      {
+        "input": "5\n1 2 3 4 5",
+        "id": 1,
+        "pts": 25,
+        "expected": "5 1 2 3 4\n"
+      },
+      {
+        "pts": 25,
+        "expected": "42\n",
+        "id": 2,
+        "input": "1\n42"
+      },
+      {
+        "input": "6\n10 20 30 40 50 60",
+        "id": 3,
+        "pts": 25,
+        "expected": "60 10 20 30 40 50\n"
+      },
+      {
+        "input": "4\n-1 -2 -3 -4",
+        "id": 4,
+        "expected": "-4 -1 -2 -3\n",
+        "pts": 25
+      }
+    ],
+    "deadline": "2026-05-04T23:59"
+  },
+  {
+    "id": "ap6",
+    "output_desc": "회문이면 <code>Palindrome: Yes</code>, 아니면 <code>Palindrome: No</code>를 출력.",
+    "cases": [
+      {
+        "expected": "Palindrome: Yes\n",
+        "pts": 25,
+        "id": 1,
+        "input": "5\n1 2 3 2 1"
+      },
+      {
+        "pts": 25,
+        "expected": "Palindrome: No\n",
+        "id": 2,
+        "input": "3\n1 2 3"
+      },
+      {
+        "pts": 25,
+        "expected": "Palindrome: Yes\n",
+        "id": 3,
+        "input": "1\n42"
+      },
+      {
+        "id": 4,
+        "input": "6\n1 2 3 3 2 1",
+        "expected": "Palindrome: Yes\n",
+        "pts": 25
+      }
+    ],
+    "deadline": "2026-05-04T23:59",
+    "week": "Week 8A: Arrays",
+    "title": "Palindrome Array",
+    "ex_in": "5\n1 2 3 2 1",
+    "desc": "N개의 정수로 이루어진 배열이 <b>회문(palindrome)</b>인지 판정하시오. 회문 배열이란 앞뒤로 읽어도 같은 배열을 말한다. 예: <code>{1, 2, 3, 2, 1}</code>은 회문, <code>{1, 2, 3}</code>은 회문 아님.<br>두 포인터(<code>i = 0, j = N-1</code>)로 양 끝부터 비교.",
+    "ex_out": "Palindrome: Yes",
+    "input_desc": "첫째 줄에 정수 N (1 ≤ N ≤ 100), 둘째 줄에 N개의 정수가 공백으로 구분되어 주어진다."
+  },
+  {
     id:'p1', week:'Week 6: Control flow - switch, if-else if', title:'Calculator with switch',
     desc:'한 줄로 <code>a op b</code>를 입력받아 switch(op)로 연산 결과를 출력하시오. 연산자: <code>+</code> <code>-</code> <code>*</code> <code>/</code>. 0으로 나누기는 <code>/</code> 케이스 안에서 if로 처리.',
     input_desc:'한 줄에 <code>a op b</code> 형식으로 주어진다. (예: <code>5 + 3</code>)',
