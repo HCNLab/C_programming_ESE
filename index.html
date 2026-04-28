@@ -1725,7 +1725,7 @@ window._openPublishDialog = async function(){
     const num = parseInt((id||'').replace(/\D/g,''), 10) || 0;
     return (isPractice ? 0 : isChallenge ? 1000 : 5000) + num;
   };
-  items.sort((a,b) => a.week.localeCompare(b.week) || _pubSortKey(a.id) - _pubSortKey(b.id));
+  items.sort((a,b) => b.week.localeCompare(a.week) || _pubSortKey(a.id) - _pubSortKey(b.id));
 
   const overlay = document.createElement('div');
   overlay.id = 'publish-overlay';
