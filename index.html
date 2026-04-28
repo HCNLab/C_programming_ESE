@@ -125,7 +125,7 @@ textarea:focus{border-color:var(--text3)}
 .list-view .prob-card-dl{font-size:11px;color:var(--text4);white-space:nowrap}
 .list-view .prob-card-footer{margin-top:0;padding-top:0;border-top:none;margin-left:auto;flex-shrink:0}
 .notice{font-size:12px;color:var(--text3);background:var(--surface3);border-left:3px solid var(--border2);padding:.55rem .8rem;border-radius:0 6px 6px 0;margin-bottom:1rem}
-/* 포스트잇 스타일 교수 코멘트 */
+/* Post-it style professor comment */
 .prof-note{
   position:relative;
   margin:1.4rem .6rem .6rem .3rem;
@@ -206,7 +206,7 @@ code{font-family:'Menlo','Consolas',monospace;background:var(--surface4);padding
   box-shadow:0 2px 8px rgba(0,0,0,.04)}
 body.dark .user-card-deco{box-shadow:0 3px 14px rgba(139,92,246,.15),0 1px 3px rgba(0,0,0,.3)}
 body.dark .user-card-deco.staff{box-shadow:0 3px 14px rgba(255,217,61,.12),0 1px 3px rgba(0,0,0,.3)}
-/* 🎉 모든 문제 완료 축하 효과 */
+/* 🎉 All-problems-complete celebration effect */
 .confetti-layer{position:fixed;inset:0;pointer-events:none;z-index:99998;overflow:hidden}
 .confetti-piece{position:absolute;top:-24px;width:10px;height:14px;border-radius:2px;opacity:.95;
   animation:confettiFall linear forwards}
@@ -231,7 +231,7 @@ body.dark .user-card-deco.staff{box-shadow:0 3px 14px rgba(255,217,61,.12),0 1px
   50%{filter:drop-shadow(0 0 18px rgba(255,217,61,.85))}
 }
 
-/* 마스코트 응원 토스트 (우측 하단) */
+/* Mascot encouragement toast (bottom right) */
 .mascot-toast{position:fixed;right:24px;bottom:24px;z-index:99997;
   display:flex;align-items:flex-end;gap:8px;pointer-events:none;
   transform:translateY(140%);opacity:0;
@@ -299,18 +299,18 @@ body.dark .CodeMirror-focused{border-color:#888}
 /* ============================================================
    ★ 교수님 설정 구역 ★
 ============================================================ */
-const SHEETS_URL  = 'https://script.google.com/macros/s/AKfycbwHaOaYbjhbwDK6wggzPdSBZ5uH_kJKEwYisR26I9Y7r21ra8Z_D8cvYXOJgegy_qDd/exec';          // Google Sheets 웹앱 URL
-const SHEETS_KEY  = 'h0vBgzOeEvfvK0WQYqXdDw';  // admin/ratings 모드 인증 키
+const SHEETS_URL  = 'https://script.google.com/macros/s/AKfycbwHaOaYbjhbwDK6wggzPdSBZ5uH_kJKEwYisR26I9Y7r21ra8Z_D8cvYXOJgegy_qDd/exec';          // Google Sheets web app URL
+const SHEETS_KEY  = 'h0vBgzOeEvfvK0WQYqXdDw';  // auth key for admin/ratings mode
 const COURSE_NAME = 'C Programming (1)';
 
-// 공지사항 (빈 문자열이면 숨김)
+// Notice (empty string = hidden)
 const NOTICE = 'Week 9A 문제가 업로드 되었습니다. / Week 9B는 동시간 이러닝 보강입니다.';
 
-// 관리자 이메일 (이 이메일로 로그인 시 관리자 패널 표시)
+// Admin emails (admin panel shown on login with these accounts)
 const ADMIN_EMAILS = ['khwon.public@gmail.com'];
 const TA_EMAILS    = ['ghkdwndhr227@inu.ac.kr'];
 
-/* ── 랜덤 테스트케이스 생성기 ── */
+/* ── Random test case generator ── */
 function ri(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
 function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
 
@@ -989,7 +989,7 @@ const PROBLEMS = [
 
 ];
 
-/* ── week01-04 연습문제 (noSubmit) ── */
+/* ── Week 01-04 practice problems (noSubmit) ── */
 PROBLEMS.push(
   {
     id:'r01', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
@@ -1104,7 +1104,7 @@ PROBLEMS.push(
       {id:3, input:'1.786',  expected:'1.79', pts:33},
     ]
   },
-  /* ── OJ / P / CH 추가 (Week04_연습문제실습) ── */
+  /* ── OJ / P / CH additions (Week04 practice) ── */
   {
     id:'r09', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'나머지 연산',
@@ -1226,7 +1226,7 @@ PROBLEMS.push(
       {id:2, input:'1.5 2.5 3.0', expected:'11.25', pts:50},
     ]
   },
-  /* ── Practice 문제 (Week04_Bitwise_IO) ── */
+  /* ── Practice problems (Week04 Bitwise IO) ── */
   {
     id:'r18', week:'1~5주차 연습문제 (과제 아님, 테스트 가능)', noSubmit:true,
     title:'시간 변환기',
@@ -1459,7 +1459,7 @@ const STARTER = '#define _CRT_SECURE_NO_WARNINGS\n#include <stdio.h>\n// 추가 
 const LS_USER = 'oj_username';
 const LS_HIST = 'oj_history';
 
-/* Firebase 초기화 */
+/* Firebase initialization */
 firebase.initializeApp({
   apiKey: "AIzaSyDM3eYScMxQeMY-AY7fmv1q-J4XbE_8dnM",
   authDomain: "cprogramming-ese.firebaseapp.com",
@@ -1471,15 +1471,15 @@ firebase.initializeApp({
 const auth    = firebase.auth();
 const db      = firebase.firestore();
 const storage = firebase.storage();
-let _mascotUrl = null;  // 로그인 후 프리로드된 마스코트 다운로드 URL
-let firebaseUser = null;   // Firebase Auth 유저 객체
-let isApproved = false;    // 승인 상태 (admin/TA는 자동 true)
-let _pendingCount = 0;     // 승인 대기 인원 수 (admin/TA 전용)
+let _mascotUrl = null;  // mascot download URL preloaded after login
+let firebaseUser = null;   // Firebase Auth user object
+let isApproved = false;    // approval status (auto-approved for admin/TA)
+let _pendingCount = 0;     // pending approval count (admin/TA only)
 
 let view = 'home', curPid = null, curTab = 'prob';
 let code = STARTER, tcResults = {}, submitting = false;
 let _curProb = null;
-let _taActive = false, _taStart = null, _taTimer = null; // 타임어택
+let _taActive = false, _taStart = null, _taTimer = null; // time attack
 let username = localStorage.getItem(LS_USER) || '';
 
 function resizeProb(mode){
@@ -1493,7 +1493,7 @@ function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 function trim(s){ return (s || '').replace(/\r/g, '').trimEnd(); }
 function $(id){ return document.getElementById(id); }
 function isOpen(p){ return new Date() <= new Date(p.deadline); }
-// 게시 후 NEW_DAYS일 동안 NEW 뱃지 표시
+// show NEW badge for NEW_DAYS days after publish
 const NEW_DAYS = 2;
 function isNewProblem(p){
   if(!p.createdAt) return false;
@@ -1509,16 +1509,16 @@ function fmtDL(dl){
   return dl;
 }
 
-/* 이력 */
-/* 이력: Firestore 우선, fallback localStorage */
-let historyCache = null;  // 메모리 캐시
+/* Submission history */
+/* History: Firestore primary, fallback to localStorage */
+let historyCache = null;  // in-memory cache
 
 function loadHistory(){
   if (historyCache) return historyCache;
   try{ return JSON.parse(localStorage.getItem(LS_HIST)||'{}'); }catch{ return {}; }
 }
 
-// 클라우드 저장용 캡: pid당 최신 5개만 (doc size 1MB 한도 대비)
+// cap for cloud: latest 5 per pid (against 1MB Firestore doc limit)
 function _capHistoryForCloud(h){
   const out = {};
   for (const pid in h) out[pid] = (h[pid] || []).slice(0, 5);
@@ -1532,13 +1532,13 @@ function addHistory(pid, entry){
   if (h[pid].length > 20) h[pid] = h[pid].slice(0, 20);
   localStorage.setItem(LS_HIST, JSON.stringify(h));
   historyCache = h;
-  // Firestore에 비동기 저장: users/{uid}.history.{pid} 필드 업데이트 (추가 read 0)
+  // async save to Firestore: update users/{uid}.history.{pid} (0 extra reads)
   if (firebaseUser) {
     const capped = h[pid].slice(0, 5);
     db.collection('users').doc(firebaseUser.uid)
       .update({ [`history.${pid}`]: capped })
       .catch(() => {
-        // doc이 아직 없으면 merge로 생성
+        // create with merge if doc does not exist yet
         db.collection('users').doc(firebaseUser.uid)
           .set({ history: { [pid]: capped } }, { merge: true })
           .catch(() => {});
@@ -1546,8 +1546,8 @@ function addHistory(pid, entry){
   }
 }
 
-// users/{uid} 메인 doc이 이미 onAuthStateChanged에서 읽혔으므로 거기서 history 필드만 꺼내 씀
-// 구 구조(users/{uid}/history 서브컬렉션)는 1회 마이그레이션 후 메인 doc 필드로 이동
+// main doc already read in onAuthStateChanged — extract history field from it
+// legacy structure (users/{uid}/history subcollection) migrated to main doc field (one-time)
 async function loadHistoryFromMainDoc(mainDocData){
   if (!firebaseUser) { historyCache = null; return; }
   try {
@@ -1556,7 +1556,7 @@ async function loadHistoryFromMainDoc(mainDocData){
     try { localH = JSON.parse(localStorage.getItem(LS_HIST) || '{}'); } catch(e){}
 
     if (d.history && typeof d.history === 'object') {
-      // 새 구조 히트: 메인 doc의 history 필드 사용 (+ localStorage 최신 엔트리 머지)
+      // new structure: use history field from main doc (merged with latest localStorage entries)
       const merged = { ...d.history };
       for (const pid in localH) {
         const lTs = localH[pid] && localH[pid][0] && localH[pid][0].ts;
@@ -1568,7 +1568,7 @@ async function loadHistoryFromMainDoc(mainDocData){
       return;
     }
 
-    // 마이그레이션: 구 서브컬렉션 → 메인 doc 필드 (유저당 1회)
+    // migration: legacy subcollection -> main doc field (once per user)
     const snap = await db.collection('users').doc(firebaseUser.uid)
       .collection('history').get();
     const cloudH = {};
@@ -1588,7 +1588,7 @@ async function loadHistoryFromMainDoc(mainDocData){
   }
 }
 
-/* Google Sheets */
+/* Google Sheets integration */
 function sendToSheets(payload){
   if (!SHEETS_URL) return;
   fetch(SHEETS_URL, { method:'POST', mode:'no-cors',
@@ -1616,7 +1616,7 @@ async function runCase(tc, src){
   try{
     let d = await callWandbox(src, tc.input);
     if (!d) return { status:'fail', msg:'채점 서버 오류' };
-    // 서버 과부하 에러 (OCI runtime error 등)는 컴파일 오류로 표시하지 않고 재시도
+    // server overload errors (OCI runtime etc.) — retry instead of showing compile error
     let serverBusy = false;
     if (d.compiler_error && (
       d.compiler_error.includes('OCI runtime') ||
@@ -1635,7 +1635,7 @@ async function runCase(tc, src){
       return { status:'fail', msg:'컴파일 오류',
         detail: d.compiler_error.trim().slice(0, 400) };
     }
-    // 타임아웃 / 런타임 오류 감지
+    // detect timeout / runtime errors
     if (d.signal) {
       const isTimeout = d.signal === 'Killed' || d.signal === 'Timeout';
       return { status:'fail',
@@ -1654,7 +1654,7 @@ async function runCase(tc, src){
   } catch { return { status:'fail', msg:'네트워크 오류' }; }
 }
 
-/* ── 렌더 ── */
+/* ── Render ── */
 function toggleTheme(){
   const dark = document.body.classList.toggle('dark');
   localStorage.setItem('oj_theme', dark ? 'dark' : 'light');
@@ -1668,18 +1668,18 @@ function toggleTheme(){
 function isAdmin(){ return firebaseUser && ADMIN_EMAILS.includes(firebaseUser.email); }
 function isTA()   { return firebaseUser && TA_EMAILS.includes(firebaseUser.email); }
 
-/* ── Firestore Drafts (비공개/공개 문제) ── */
-// 비공개(draft) 문제: Firestore drafts/{pid}, published 필드 없음 → staff만 보임
-// 공개 전환된 문제: drafts/{pid} + published:true → 모든 로그인 유저에게 보임
-// git에 하드코딩된 문제와 함께 PROBLEMS 배열에 병합됨
+/* ── Firestore Drafts (private/published problems) ── */
+// private (draft): Firestore drafts/{pid}, no published field -> staff only
+// published: drafts/{pid} + published:true -> visible to all logged-in users
+// merged into PROBLEMS array alongside hardcoded problems in git
 async function loadDrafts(){
-  // 기존 Firestore 항목 제거 (중복 방지)
+  // remove existing Firestore entries to prevent duplicates
   for (let i = PROBLEMS.length - 1; i >= 0; i--) {
     if (PROBLEMS[i]._isDraft || PROBLEMS[i]._isPublished) PROBLEMS.splice(i, 1);
   }
   try {
     if (isAdmin() || isTA()) {
-      // staff: 모든 drafts 로드 (비공개+공개)
+      // staff: load all drafts (private + published)
       const snap = await db.collection('drafts').get();
       snap.forEach(doc => {
         const d = doc.data();
@@ -1693,7 +1693,7 @@ async function loadDrafts(){
       });
       console.log(`[drafts] loaded ${snap.size} (staff)`);
     } else {
-      // 학생 및 비로그인 게스트: 공개된 것만 로드
+      // students and guests: load published only
       const snap = await db.collection('drafts').where('published', '==', true).get();
       snap.forEach(doc => {
         const d = doc.data();
@@ -1708,7 +1708,7 @@ async function loadDrafts(){
   }
 }
 
-/* 공개 전환 팝업 */
+/* Publish toggle dialog */
 window._openPublishDialog = async function(){
   if (!isAdmin() && !isTA()) return;
   const snap = await db.collection('drafts').get();
@@ -1718,7 +1718,7 @@ window._openPublishDialog = async function(){
     const d = doc.data();
     items.push({ id: doc.id, title: d.title || doc.id, week: d.week || '', published: !!d.published });
   });
-  // 주차 → 연습(p/lp) → 도전(c/lc) → 번호순
+  // sort: week -> practice (p/lp) -> challenge (c/lc) -> number
   const _pubSortKey = (id) => {
     const isChallenge = /c\d/.test(id);
     const isPractice  = /p\d/.test(id);
@@ -1788,7 +1788,7 @@ window._applyPublishChanges = async function(){
   const btn = document.getElementById('publish-save-btn');
   if (btn) { btn.disabled = true; btn.textContent = '저장 중...'; }
   const checks = overlay.querySelectorAll('input[data-pid]');
-  // 현재 DB 상태 조회 (createdAt 유무 및 기존 published 확인)
+  // fetch current DB state (check createdAt and existing published flag)
   const snap = await db.collection('drafts').get();
   const current = {};
   snap.forEach(doc => { current[doc.id] = doc.data(); });
@@ -1800,7 +1800,7 @@ window._applyPublishChanges = async function(){
     const shouldPublish = chk.checked;
     const cur = current[pid] || {};
     const update = { published: shouldPublish || false };
-    // 처음 공개되는 순간 createdAt 찍어서 NEW 뱃지 표시
+    // stamp createdAt on first publish so NEW badge shows
     if (shouldPublish && !cur.createdAt) update.createdAt = nowIso;
     batch.update(db.collection('drafts').doc(pid), update);
     changed++;
@@ -1812,14 +1812,14 @@ window._applyPublishChanges = async function(){
   alert(`${changed}개 문제 상태 저장 완료`);
 };
 
-/* 콘솔용 헬퍼 — admin이 브라우저 콘솔에서 직접 사용
-   사용 예:
+/* Console helpers — for admin use in browser console
+   Usage:
      await addDraft({ id:'lp1', week:'Week 6B...', title:'Sum 1 to N', ... cases:[...] })
      await listDrafts()
      await removeDraft('lp1')
-     await publishDraft('lp1')   // JSON을 클립보드에 복사 + Firestore에서 삭제
+     await publishDraft('lp1')   // copies JSON to clipboard and deletes from Firestore
 */
-/* 모든 drafts를 PROBLEMS 배열용 코드(.txt)로 다운로드 */
+/* Download all drafts as PROBLEMS array code (.txt) */
 window._downloadDraftsCode = async function(){
   if (!isAdmin() && !isTA()) { alert('권한 없음'); return; }
   const snap = await db.collection('drafts').get();
@@ -1843,7 +1843,7 @@ window._downloadDraftsCode = async function(){
     }
     body += '  ' + JSON.stringify(p, null, 2).replace(/\n/g, '\n  ') + ',\n';
   }
-  const header = `// ${arr.length} problem(s) — index.html의 "const PROBLEMS = [" 배열 안에 붙여넣고 git push\n`;
+  const header = `// ${arr.length} problem(s) -- paste inside the "const PROBLEMS = [" array in index.html and git push\n`;
   const blob = new Blob([header + body], { type: 'text/plain;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -1853,7 +1853,7 @@ window._downloadDraftsCode = async function(){
   URL.revokeObjectURL(url);
 };
 
-/* drafts 전체 삭제 */
+/* Delete all drafts */
 window._deleteAllDrafts = async function(){
   if (!isAdmin() && !isTA()) { alert('권한 없음'); return; }
   const snap = await db.collection('drafts').get();
@@ -1867,7 +1867,7 @@ window._deleteAllDrafts = async function(){
   alert(`${snap.size}개 삭제 완료`);
 };
 
-/* JSON 파일에서 한 번에 업로드 — admin/TA의 "비공개 문제 업로드" 버튼이 호출 */
+/* Batch upload from JSON file — called by the admin/TA "upload private problems" button */
 window._uploadDrafts = async function(file){
   if (!file) return;
   if (!isAdmin() && !isTA()) { alert('권한 없음'); return; }
@@ -1897,8 +1897,8 @@ window._uploadDrafts = async function(file){
   }
 };
 
-/* ── Prof Notes (문제별 교수 코멘트) ──
-   notes/{pid} = { text }  — 문제 소스(drafts/하드코딩)와 독립, pid만 키로 사용 */
+/* ── Prof Notes (per-problem professor comments) ──
+   notes/{pid} = { text }  — independent of problem source (drafts/hardcoded), keyed by pid only */
 window._notesCache = {};
 async function loadNote(pid){
   try {
@@ -1932,12 +1932,12 @@ window.addDraft = async function(prob){
   if (!prob || !prob.id) { console.error('prob.id 필수'); return; }
   const id = prob.id;
   const data = { ...prob };
-  delete data.id;          // doc id로 사용
+  delete data.id;          // used as doc id
   delete data._isDraft;
   await db.collection('drafts').doc(id).set(data);
   await loadDrafts();
   if (typeof renderHome === 'function' && view === 'home') renderHome(false);
-  console.log(`[drafts] saved "${id}". 화면 갱신 완료.`);
+  console.log(`[drafts] saved "${id}". UI refreshed.`);
 };
 window.removeDraft = async function(id){
   if (!isAdmin() && !isTA()) { console.error('관리자만 사용 가능'); return; }
@@ -1960,22 +1960,22 @@ window.publishDraft = async function(id){
   if (!doc.exists) { console.error(`draft "${id}" 없음`); return; }
   const data = { id, ...doc.data() };
   delete data._isDraft;
-  // PROBLEMS 배열 형식으로 직렬화
+  // serialize in PROBLEMS array format
   const json = JSON.stringify(data, null, 2);
   try {
     await navigator.clipboard.writeText(json + ',');
-    console.log(`[drafts] "${id}" JSON을 클립보드에 복사했습니다.\n→ index.html PROBLEMS 배열에 붙여넣고 commit/push 하세요.\n→ 푸시 후 removeDraft("${id}")로 Firestore에서 삭제하세요.`);
+    console.log(`[drafts] "${id}" JSON copied to clipboard.\n-> Paste into the PROBLEMS array in index.html and commit/push.\n-> After deploying, call removeDraft("${id}") to clean up Firestore.`);
   } catch (e) {
     console.log(json);
-    console.warn('클립보드 복사 실패. 위 JSON을 수동 복사하세요.');
+    console.warn('Clipboard copy failed. Copy the JSON above manually.');
   }
   return data;
 };
 
-/* publishAllDrafts(): 모든 draft를 한 번에 PROBLEMS 배열용 코드로 출력
-   - 클립보드에 복사된 텍스트를 index.html PROBLEMS 배열에 한 번에 붙여넣기
-   - 그 후 commit & push → 모두 공개되면 removeAllDrafts() 호출
-   - week / id 기준으로 정렬해서 출력
+/* publishAllDrafts(): output all drafts as PROBLEMS array code at once
+   - paste the clipboard text into the PROBLEMS array in index.html
+   - then commit & push -> after all published, call removeAllDrafts()
+   - sorted by week / id
 */
 window.publishAllDrafts = async function(){
   if (!isAdmin() && !isTA()) { console.error('관리자만 사용 가능'); return; }
@@ -1991,9 +1991,9 @@ window.publishAllDrafts = async function(){
     const wa = (a.week || '').localeCompare(b.week || '');
     return wa !== 0 ? wa : a.id.localeCompare(b.id);
   });
-  // 각 항목을 PROBLEMS 배열에 그대로 붙여넣을 수 있는 형식으로
+  // serialize each item for direct paste into the PROBLEMS array
   const body = arr.map(p => JSON.stringify(p, null, 2)).join(',\n') + ',';
-  // week 별 그룹 헤더 주석
+  // group header comments by week
   let grouped = '';
   let curWeek = null;
   for (const p of arr) {
@@ -2005,11 +2005,11 @@ window.publishAllDrafts = async function(){
   }
   try {
     await navigator.clipboard.writeText(grouped);
-    console.log(`[drafts] ${arr.length}개 문제 JSON을 클립보드에 복사했습니다.\n→ index.html PROBLEMS 배열 내부에 붙여넣고 commit & push 하세요.\n→ 배포 확인 후 window.removeAllDrafts() 로 Firestore 정리.`);
+    console.log(`[drafts] ${arr.length} problem(s) copied to clipboard.\n-> Paste inside the PROBLEMS array in index.html and commit & push.\n-> After deploying, call window.removeAllDrafts() to clean up Firestore.`);
     console.table(arr.map(p => ({ id: p.id, week: p.week, title: p.title })));
   } catch (e) {
     console.log(grouped);
-    console.warn('클립보드 복사 실패. 위 텍스트를 수동 복사하세요.');
+    console.warn('Clipboard copy failed. Copy the text above manually.');
   }
   return arr;
 };
@@ -2017,7 +2017,7 @@ window.publishAllDrafts = async function(){
 window.removeAllDrafts = async function(){
   if (!isAdmin() && !isTA()) { console.error('관리자만 사용 가능'); return; }
   const snap = await db.collection('drafts').get();
-  if (snap.empty) { console.warn('[drafts] 이미 비어있음'); return; }
+  if (snap.empty) { console.warn('[drafts] already empty'); return; }
   const ok = confirm(`drafts ${snap.size}개를 모두 삭제합니다. 진행할까요?`);
   if (!ok) return;
   const batch = db.batch();
@@ -2025,18 +2025,18 @@ window.removeAllDrafts = async function(){
   await batch.commit();
   await loadDrafts();
   if (typeof renderHome === 'function' && view === 'home') renderHome(false);
-  console.log(`[drafts] ${snap.size}개 모두 삭제 완료.`);
+  console.log(`[drafts] all ${snap.size} draft(s) deleted.`);
 };
 
-/* ─── 가입 승인 대기열 ─── */
+/* ─── Registration approval queue ─── */
 async function _loadPendingCount(){
   if (!isAdmin() && !isTA()) { _pendingCount = 0; return; }
   try {
-    // Firestore 집계 쿼리: N개 doc 전부 읽지 않고 카운트만 (1 read)
+    // Firestore aggregate query: count only, no full doc reads (1 read)
     const agg = await db.collection('users').where('approved', '==', false).count().get();
     _pendingCount = agg.data().count || 0;
   } catch(e) {
-    // count() 미지원 SDK 등의 경우 폴백 (대기자 많지 않으면 비용 무시 가능)
+    // fallback for SDKs without count() support (negligible cost when queue is small)
     try {
       const snap = await db.collection('users').where('approved', '==', false).get();
       _pendingCount = snap.size;
@@ -2053,7 +2053,7 @@ window._openApprovalQueue = async function(){
   const pending = [];
   snap.forEach(d => pending.push({ uid: d.id, ...d.data() }));
 
-  // 모달 배경
+  // modal backdrop
   const overlay = document.createElement('div');
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem';
   overlay.onclick = (e) => { if (e.target === overlay) document.body.removeChild(overlay); };
@@ -2089,7 +2089,7 @@ window._openApprovalQueue = async function(){
 window._approveUser = async function(uid){
   try {
     await db.collection('users').doc(uid).update({ approved: true, approvedAt: new Date().toISOString() });
-    // 모달에서 해당 행 제거
+    // remove row from modal
     const row = document.querySelector(`[data-uid="${uid}"]`);
     if (row) row.remove();
     await _loadPendingCount();
@@ -2113,10 +2113,10 @@ window._rejectUser = async function(uid, username){
   }
 };
 
-/* ─── 수강생 진행 현황 집계 (admin/TA 전용) ─── */
+/* ─── Class progress summary (admin/TA only) ─── */
 let _classProgressCache = null;  // { students: [...], loadedAt: Date }
 const _CLASS_CACHE_KEY = 'oj_class_progress_v1';
-const _CLASS_CACHE_TTL = 30 * 60 * 1000;  // 30분 (Firestore 읽기 절약)
+const _CLASS_CACHE_TTL = 30 * 60 * 1000;  // 30 min TTL (saves Firestore reads)
 
 function _saveClassCache(data){
   try {
@@ -2143,7 +2143,7 @@ function _restoreClassCache(){
 async function _loadClassProgress(force=false){
   if (!isAdmin() && !isTA()) return null;
   if (!force && _classProgressCache) return _classProgressCache;
-  // localStorage 캐시 시도 (30분 TTL)
+  // try localStorage cache (30 min TTL)
   if (!force) {
     const restored = _restoreClassCache();
     if (restored) {
@@ -2153,16 +2153,16 @@ async function _loadClassProgress(force=false){
   }
   if (!SHEETS_URL) return null;
   try {
-    // Sheets에서만 제출 데이터 조회 (Firestore read 0)
-    // ※ 과거 collectionGroup('history')는 ~1,650 reads, users.get()은 ~55 reads였음
-    //   staff 제외는 Apps Script EXCLUDE(원경호) + 클라이언트 이름 필터로 처리
-    //   승인 상태는 어차피 미승인은 submit 자체가 안 되므로 Sheets에 나타나지 않음 → approved:true 가정
+    // fetch submission data from Sheets only (0 Firestore reads)
+    // NOTE: legacy collectionGroup('history') cost ~1,650 reads, users.get() ~55 reads
+    //   staff exclusion: Apps Script EXCLUDE list + client-side name filter
+    //   unapproved users cannot submit and never appear in Sheets -> assume approved:true
     const sheetRes = await fetch(SHEETS_URL + '?mode=admin&key=' + SHEETS_KEY, { method:'GET', mode:'cors' });
     if (!sheetRes.ok) throw new Error('sheets fetch failed: ' + sheetRes.status);
     const d = await sheetRes.json();
     const subs = d.submissions || [];
 
-    // 학생별 집계 (Sheets submissions 기준)
+    // aggregate by student (based on Sheets submissions)
     const byUser = {};
     subs.forEach(s => {
       if (!s.username) return;
@@ -2171,7 +2171,7 @@ async function _loadClassProgress(force=false){
       byUser[s.username].submitCount += 1;
     });
 
-    // staff 이름 제외 (Apps Script EXCLUDE는 원경호만 처리, TA 이름 있으면 여기 추가)
+    // exclude staff names (Apps Script EXCLUDE handles admin; add TA names here if needed)
     const STAFF_NAMES = ['원경호'];
     const students = [];
     Object.entries(byUser).forEach(([username, agg]) => {
@@ -2205,7 +2205,7 @@ window._toggleClassProgress = async function(){
   if (view === 'history') renderHistory(false);
 };
 
-// 명시적 lazy 로드 (자동 fetch 제거 후 버튼 클릭용)
+// explicit lazy load (triggered by button click)
 window._lazyLoadClassProgress = async function(){
   if (!isAdmin() && !isTA()) return;
   await _loadClassProgress();
@@ -2241,7 +2241,7 @@ window._approveAllLegacy = async function(){
   if (count === 0) { alert('일괄 승인할 기존 유저가 없습니다.'); return; }
   await batch.commit();
   alert(`${count}명 일괄 승인 완료.`);
-  // 모달 닫고 다시 열기
+  // close and reopen modal
   const overlay = document.querySelector('div[style*="z-index:9999"]');
   if (overlay) document.body.removeChild(overlay);
   await _loadPendingCount();
@@ -2259,8 +2259,8 @@ function userBar(){
   return `<button onclick="doLogin()">Google 로그인</button>${themeBtn}`;
 }
 
-/* 홈 */
-/* 🐣 마스코트 응원 토스트 */
+/* Home */
+/* 🐣 Mascot encouragement toast */
 const _MASCOT_PRAISES = [
   '잘했어요! 🎉','완벽해요!','훌륭해요!','깔끔하게 풀었네요!',
   '나이스 👍','대단해요!','정답 입니다!','이 맛에 코딩하죠!'
@@ -2288,7 +2288,7 @@ function _checkMascotEvents(pid, isFirstPerfect){
   if (!isFirstPerfect) return;
   const p = PROBLEMS.find(x => x.id === pid);
   if (!p) return;
-  // 주차 완등 체크 (history에는 이미 새 100점이 반영되어 있음)
+  // check for full-week clear (history already includes the new perfect score)
   const h = loadHistory();
   const isPerfect = (id) => (h[id] || []).some(e => e.score != null && e.max != null && e.score >= e.max);
   const weekProbs = PROBLEMS.filter(x => x.week === p.week);
@@ -2304,7 +2304,7 @@ function _checkMascotEvents(pid, isFirstPerfect){
   }
 }
 
-/* 🎉 모든 문제 완료 축하 — 한 번만 재생 (localStorage로 중복 방지) */
+/* 🎉 All-problems-complete celebration — plays once (localStorage prevents repeat) */
 function _celebrate100(){
   const key = 'oj_celebrated_100_' + (username || 'anon');
   if (localStorage.getItem(key) === '1') return;
@@ -2339,38 +2339,38 @@ function renderHome(push=true){
   if(push) history.pushState({view:'home'},'',' ');
   view = 'home';
   const hist = loadHistory();
-  // 주차별 그룹
+  // group by week
   const groups = {};
   PROBLEMS.forEach(p => {
     const w = p.week;
     if (!groups[w]) groups[w] = [];
     groups[w].push(p);
   });
-  // 각 주차 내 정렬: 연습(p/lp) → 도전(c/lc) → 번호 오름차순
-  // (드래프트가 Firestore에서 알파벳순으로 들어와도 쉬운 것부터 보이도록)
+  // sort within each week: practice (p/lp) -> challenge (c/lc) -> ascending number
+  // (ensures easy problems appear first even if Firestore returns alphabetical order)
   const _sortKey = (p) => {
     const id = p.id || '';
-    const isChallenge = /c\d/.test(id);   // c1, lc1, fc1, ac1, sc1... → 도전
-    const isPractice  = /p\d/.test(id);   // p1, lp1, fp1, ap1, sp1... → 연습
+    const isChallenge = /c\d/.test(id);   // c1, lc1, fc1, ac1, sc1... -> challenge
+    const isPractice  = /p\d/.test(id);   // p1, lp1, fp1, ap1, sp1... -> practice
     const num = parseInt(id.replace(/\D/g,''), 10) || 0;
-    // 연습: 0~999, 도전: 1000~1999, 기타: 그대로 (원본 순서 유지 위해 큰 값)
+    // practice: 0~999, challenge: 1000~1999, other: large value (preserves original order)
     const base = isPractice ? 0 : isChallenge ? 1000 : 5000;
     return base + num;
   };
   Object.keys(groups).forEach(w => {
-    // 안정 정렬: 같은 키는 원본 순서 유지
+    // stable sort: equal keys preserve original order
     groups[w] = groups[w]
       .map((p, i) => ({ p, i, k: _sortKey(p) }))
       .sort((a, b) => a.k - b.k || a.i - b.i)
       .map(x => x.p);
   });
-  // 리더보드 순위 (userCardHtml에서도 사용)
+  // leaderboard rank (also used in userCardHtml)
   const myName = username ? (username.split('_')[1] || username) : null;
   const myRankIdx = username ? _leaderboard.findIndex(item => item.name === username) : -1;
   const myRank = myRankIdx >= 0 ? myRankIdx + 1 : 0;
   const showMyRow = myRank > 10;
 
-  // 동명이인 처리: 이름이 같은 학생이 있으면 학번 뒤 3자리 표시
+  // duplicate name handling: show last 3 digits of student ID if names conflict
   function lbDisplayName(fullName) {
     const parts = fullName.split('_');
     const name = parts.length >= 2 ? parts[1] : fullName;
@@ -2382,7 +2382,7 @@ function renderHome(push=true){
     return (isDup && sid.length >= 3) ? `${name}(${sid.slice(-3)})` : name;
   }
 
-  // 유저 환영 카드
+  // user welcome card
   const userCardHtml = (() => {
     if (!firebaseUser) return `
       <div style="font-size:13px;color:var(--text3);margin-bottom:.7rem;line-height:1.5">로그인 후<br>과제를 제출하세요</div>
@@ -2448,20 +2448,20 @@ function renderHome(push=true){
       <button onclick="doLogout()" class="link-btn" style="font-size:11px;color:var(--text5)">로그아웃</button>`;
   })();
 
-  // 공지사항
+  // notice
   const noticeHtml = NOTICE
     ? `<div style="display:flex;align-items:flex-start;gap:.5rem;font-size:13px;color:var(--warn-text)">
         <span style="flex-shrink:0">📢</span><span>${NOTICE}</span></div>`
     : '';
 
-  // 사이드바 미제출 목록 (과제만, 연습문제 제외)
+  // sidebar: unsubmitted list (assignments only, no practice)
   const now = new Date();
   const upcoming = PROBLEMS
     .filter(p => !p.noSubmit && isOpen(p) && !(hist[p.id] && hist[p.id].length > 0))
     .sort((a,b) => new Date(a.deadline) - new Date(b.deadline));
   const showAll = window._sidebarAll || false;
   const display = showAll ? upcoming : upcoming.slice(0,5);
-  // 리더보드 (포디엄 스타일)
+  // leaderboard (podium style)
   const leaderboardHtml = (() => {
     if (_leaderboard.length === 0)
       return `<div style="font-size:12px;color:var(--text4)">아직 제출 데이터 없음</div>`;
@@ -2469,7 +2469,7 @@ function renderHome(push=true){
     const top3 = _leaderboard.slice(0, Math.min(3, _leaderboard.length));
     const rest  = _leaderboard.slice(3, 10);
 
-    // 포디엄 순서: 2위(왼), 1위(가운데 높음), 3위(오른)
+    // podium order: 2nd (left), 1st (center tall), 3rd (right)
     const podDef = [
       { idx:1, medal:'🥈', color:'#8fa8c0', baseH:50, rank:2 },
       { idx:0, medal:'🥇', color:'#c9a84c', baseH:72, rank:1 },
@@ -2522,7 +2522,7 @@ function renderHome(push=true){
     return podiumHtml + restHtml + totalHtml + myRowHtml;
   })();
 
-  // 진행률 (과제/연습 분리) — draft는 모수에서 제외 (수강생에겐 안 보이므로)
+  // progress (assignment/practice split) — drafts excluded from total (not visible to students)
   const assignProbs    = PROBLEMS.filter(p => !p.noSubmit && !p._isDraft);
   const practiceProbs  = PROBLEMS.filter(p =>  p.noSubmit && !p._isDraft);
   const doneAssign     = assignProbs.filter(p => hist[p.id] && hist[p.id].length > 0).length;
@@ -2534,7 +2534,7 @@ function renderHome(push=true){
   const pctAssign      = totalAssign   > 0 ? Math.round(doneAssign   / totalAssign   * 100) : 0;
   const pctPractice    = totalPractice > 0 ? Math.round(donePractice / totalPractice * 100) : 0;
   const pctAll         = totalAll      > 0 ? Math.round(doneAll      / totalAll      * 100) : 0;
-  // 도넛 차트 계산
+  // donut chart calculation
   const _r = 36, _cx = 50, _cy = 50;
   const _circ = parseFloat((2 * Math.PI * _r).toFixed(2));
   const _aSlice = totalAll > 0 ? parseFloat(((doneAssign   / totalAll) * _circ).toFixed(2)) : 0;
@@ -2596,9 +2596,9 @@ function renderHome(push=true){
       </div>
     </div>`;
 
-  // admin/TA 전용: 홈 사이드바 모드 (class=수강생 요약 / mine=내 제출현황)
+  // admin/TA only: home sidebar mode (class=student summary / mine=my submissions)
   const _homeProgMode = (isAdmin() || isTA()) ? (window._homeProgMode || 'class') : 'mine';
-  // admin/TA 전용: 홈 사이드바에 수강생 요약 (세로 버전)
+  // admin/TA only: student summary in home sidebar (vertical layout)
   let classSidebarHtml = '';
   if (isAdmin() || isTA()) {
     if (!_classProgressCache) {
@@ -2686,7 +2686,7 @@ function renderHome(push=true){
             </button></div>`
         : '');
 
-  // 주차 정렬: 과제 주차는 PROBLEMS 등록 역순(최신이 위), noSubmit 연습문제 그룹은 항상 맨 아래
+  // week sort: assignment weeks newest-first, noSubmit practice groups always at the bottom
   const noSubmitWeeks = new Set();
   PROBLEMS.forEach(p => { if (p.noSubmit) noSubmitWeeks.add(p.week); });
   const allWeekKeys = Object.keys(groups);
@@ -2768,7 +2768,7 @@ function renderHome(push=true){
       <div class="header-hourly" title="최근 24시간 제출 현황">
         ${(()=>{
           const rawMax = Math.max(..._hourly, 0);
-          // y축 상한을 '깔끔한' 수로 (1,2,5,10,20,50,...)
+          // round up y-axis max to a 'nice' number (1,2,5,10,20,50,...)
           const niceCeil = (n) => {
             if (n <= 0) return 1;
             const pow = Math.pow(10, Math.floor(Math.log10(n)));
@@ -2778,7 +2778,7 @@ function renderHome(push=true){
           };
           const yMax = niceCeil(rawMax);
           const yMid = yMax / 2;
-          const plotH = 49; // 막대 영역 실제 픽셀 (60 - 11 padding-bottom)
+          const plotH = 49; // actual bar area pixels (60 - 11 padding-bottom)
           const nowH = new Date().getHours();
           const bars = _hourly.map((v, i) => {
             const h = Math.round((v / yMax) * plotH);
@@ -2885,13 +2885,13 @@ function renderHome(push=true){
       </div>
     </div>`;
 
-  // 🎉 모든 문제(과제+연습) 완료 시 축하 (학생만, 한 번만)
+  // 🎉 celebrate when all problems (assignments + practice) completed (students only, once)
   if (firebaseUser && !isAdmin() && !isTA() && isApproved && totalAll > 0 && pctAll === 100) {
     setTimeout(_celebrate100, 450);
   }
 }
 
-/* 문제 */
+/* Problem */
 function renderProb(pid, push=true){
   if(push) history.pushState({view:'problem',pid},'','#'+pid);
   view = 'problem'; curPid = pid; curTab = 'prob';
@@ -2974,7 +2974,7 @@ function renderProb(pid, push=true){
       </div>
     </div>`;
 
-  /* CodeMirror 초기화 */
+  /* CodeMirror initialization */
   const ta = $('code-ta');
   if (ta && typeof CodeMirror !== 'undefined'){
     window._cm = CodeMirror.fromTextArea(ta, {
@@ -3033,10 +3033,10 @@ function renderProb(pid, push=true){
   }
   window._cm = window._cm || null;
 
-  /* 교수 코멘트(포스트잇) 로드 & 렌더 */
+  /* Load and render professor comment (post-it) */
   renderProfNote(pid);
 
-  /* 어려워요 카운트 로드 */
+  /* Load difficulty count */
   loadDifficulty(pid);
 }
 
@@ -3096,7 +3096,7 @@ window.submitProfNote = async function(pid){
   try {
     await saveNote(pid, text);
     renderProfNote(pid);
-  } catch (e) { /* saveNote에서 alert 처리 */ }
+  } catch (e) { /* alert handled in saveNote */ }
 };
 window.clearProfNote = async function(pid){
   if (!confirm('이 문제의 교수 코멘트를 삭제할까요?')) return;
@@ -3185,7 +3185,7 @@ function renderResults(){
     <div class="tc-list">${rows}</div>`;
 }
 
-/* 이력 */
+/* Submission history */
 window._histCodes = [];
 function viewHistCode(idx){
   const d = window._histCodes[idx];
@@ -3198,7 +3198,7 @@ function renderHistory(push=true){
   view = 'history';
   window._histCodes = [];
   const hist = loadHistory();
-  // 주차별로 그룹화해서 rowspan 계산
+  // group by week and calculate rowspan
   const weekGroups = [];
   PROBLEMS.forEach(p => {
     const entries = hist[p.id] || [];
@@ -3250,8 +3250,8 @@ function renderHistory(push=true){
     })
   ).join('');
 
-  // 진행률 계산
-  // draft는 모수에서 제외 (수강생에겐 안 보이므로)
+  // calculate progress
+  // exclude drafts from total (not visible to students)
   const _hAssign   = PROBLEMS.filter(p => !p.noSubmit && !p._isDraft);
   const _hPractice = PROBLEMS.filter(p =>  p.noSubmit && !p._isDraft);
   const _hDA = _hAssign.filter(p => hist[p.id]?.length > 0).length;
@@ -3260,12 +3260,12 @@ function renderHistory(push=true){
   const _hPA = _hTA > 0 ? Math.round(_hDA/_hTA*100) : 0;
   const _hPP = _hTP > 0 ? Math.round(_hDP/_hTP*100) : 0;
 
-  // 상단 카드 모드 (admin/TA만 토글 가능, 기본 class)
+  // top card mode (admin/TA can toggle, default: class)
   const _isStaff = isAdmin() || isTA();
   if (_isStaff && window._topStatsMode === undefined) window._topStatsMode = 'class';
   const _topMode = _isStaff ? (window._topStatsMode || 'class') : 'mine';
 
-  // 수강생 현황 (admin/TA 전용)
+  // class status (admin/TA only)
   const classStatsHtml = (() => {
     if (!isAdmin() && !isTA()) return '';
     const isOpen = !!window._classStatsOpen;
@@ -3281,7 +3281,7 @@ function renderHistory(push=true){
     const _assignPids = _hAssign.map(p => p.id);
     const _practicePids = _hPractice.map(p => p.id);
 
-    // 학생별 완료 수 계산 (과제만 기준)
+    // calculate completion count per student (assignments only)
     const withCounts = allStudents.map(s => {
       const doneAssign = _assignPids.filter(pid => s.completed.has(pid)).length;
       const donePractice = _practicePids.filter(pid => s.completed.has(pid)).length;
@@ -3294,14 +3294,14 @@ function renderHistory(push=true){
     const avgAssign = total > 0 ? (withCounts.reduce((a,s) => a + s.doneAssign, 0) / total).toFixed(1) : '0';
     const avgSubmit = total > 0 ? (withCounts.reduce((a,s) => a + s.submitCount, 0) / total).toFixed(1) : '0';
 
-    // 문제별 완료 수
+    // completion count per problem
     const perProblem = [..._hAssign, ..._hPractice].map(p => {
       const count = withCounts.filter(s => s.completed.has(p.id)).length;
       const pct = total > 0 ? Math.round(count / total * 100) : 0;
       return { pid: p.id, title: p.title, week: p.week, noSubmit: !!p.noSubmit, count, pct };
     });
 
-    // 학생별 정렬 (과제 완료 수 내림차순)
+    // sort students by assignment completion (descending)
     const sorted = [...withCounts].sort((a,b) => b.doneAssign - a.doneAssign || b.doneTotal - a.doneTotal);
 
     const statsRow = `
@@ -3328,7 +3328,7 @@ function renderHistory(push=true){
         </div>
       </div>`;
 
-    // 문제별 테이블
+    // per-problem table
     const tdStyle = 'padding:.35rem .7rem;font-size:12px;border-bottom:1px solid var(--surface4)';
     const thStyle = 'padding:.45rem .7rem;text-align:left;font-size:11px;font-weight:600;color:var(--text3);background:var(--surface3);border-bottom:1px solid var(--border)';
     const perProbRows = perProblem.map(p => {
@@ -3347,7 +3347,7 @@ function renderHistory(push=true){
       </tr>`;
     }).join('');
 
-    // 학생별 테이블
+    // per-student table
     const studentRows = sorted.map(s => {
       const assignPct = _assignPids.length > 0 ? Math.round(s.doneAssign / _assignPids.length * 100) : 0;
       const approvedBadge = s.approved
@@ -3408,7 +3408,7 @@ function renderHistory(push=true){
       </div>`;
   })();
 
-  // 상단 진행률 카드 (학생용 = 내 진행률, admin/TA = 토글 가능)
+  // top progress card (students: my progress, admin/TA: toggleable)
   const topToggleBtn = _isStaff
     ? `<button onclick="_toggleTopStats()" style="font-size:11px;padding:4px 10px;background:none;color:var(--text2);border:1px solid var(--border2);border-radius:5px;cursor:pointer;font-weight:600">
         ${_topMode === 'class' ? '👤 내 진행률 보기' : '👥 수강생 요약 보기'}
@@ -3455,7 +3455,7 @@ function renderHistory(push=true){
       </div>
     </div>`;
 
-  // 수강생 요약 카드 본문 (admin/TA 전용, 짧은 버전)
+  // student summary card body (admin/TA only, compact)
   let classSummaryBody = '';
   if (_isStaff && _topMode === 'class') {
     if (!_classProgressCache) {
@@ -3567,7 +3567,7 @@ function renderHistory(push=true){
     </div>`;
 }
 
-/* 액션 */
+/* Actions */
 function goProb(pid){
   if (!username){ doSetUser(() => renderProb(pid)); return; }
   if (!isApproved){ alert('승인 대기 중입니다. 교수님/TA의 승인 후 문제를 풀 수 있습니다.'); return; }
@@ -3597,7 +3597,7 @@ async function doSubmit(){
   if (btn){ btn.disabled = true; btn.textContent = '제출 중...'; }
 
   const ts = new Date().toISOString();
-  // 테스트 결과가 있으면 점수도 같이 저장
+  // include score if test results are available
   let submitScore = null, submitMax = null;
   if (Object.keys(tcResults).length > 0){
     let tot = 0, mx = 0;
@@ -3607,12 +3607,12 @@ async function doSubmit(){
     });
     submitScore = tot; submitMax = mx;
   }
-  // 마스코트 트리거를 위해 추가 전에 기존 100점 여부 확인
+  // check existing perfect score before adding, for mascot trigger
   const _wasPerfectBefore = (loadHistory()[p.id] || []).some(e => e.score != null && e.max != null && e.score >= e.max);
   addHistory(p.id, { ts, submitted: true, score: submitScore, max: submitMax, code: src });
   const _isFirstPerfect = !_wasPerfectBefore && submitScore != null && submitMax != null && submitScore >= submitMax;
   if (_isFirstPerfect && !isAdmin() && !isTA()) _checkMascotEvents(p.id, true);
-  // TC 결과 정리
+  // summarize TC results
   const tcSummary = p.cases.map(tc => {
     const r = tcResults[tc.id];
     if (!r) return 'N';
@@ -3633,7 +3633,7 @@ async function doSubmit(){
   submitting = false;
   if (btn){ btn.disabled = false; btn.textContent = '제출'; }
 
-  // 첫 제출 체크 (관리자·TA 제외)
+  // check if first submission (excluding admin/TA)
   const isFirst = !_submitCounts[p.id];
   if (isFirst && username && !isAdmin() && !isTA()) {
     const sname = username.split('_')[1] || username;
@@ -3644,7 +3644,7 @@ async function doSubmit(){
     }
   }
 
-  // 결과 영역: 원래대로 담백한 제출 완료 표시
+  // result area: simple submission complete display
   if ($('results')){
     const lateTag = isLate ? ' &nbsp;<span style="color:var(--error);font-size:12px;font-weight:600">[지각]</span>' : '';
     $('results').innerHTML = `<div style="padding:.85rem 1rem;background:var(--accent-bg);border:1px solid var(--accent);
@@ -3653,10 +3653,10 @@ async function doSubmit(){
     </div>`;
   }
 
-  // 제출 후 리더보드 갱신
+  // refresh leaderboard after submission
   setTimeout(fetchSubmitCounts, 2000);
 
-  // 풍부한 피드백은 팝업(별점 다이얼로그)으로 통합 전달
+  // rich feedback delivered via rating dialog popup
   setTimeout(() => showRatingDialog(p.id, {
     title: p.title,
     noSubmit: !!p.noSubmit,
@@ -3697,10 +3697,10 @@ async function doTest(){
   submitting = true;
   const testBtn = $('test-btn');
   if (testBtn){ testBtn.disabled = true; testBtn.textContent = '실행 중...'; }
-  // 전체 TC 초기화
+  // reset all TCs
   p.cases.forEach(tc => { tcResults[tc.id] = { status:'running' }; });
   renderResults();
-  // 전체 TC 순차 실행 (서버 과부하 방지)
+  // run all TCs sequentially (prevent server overload)
   for (const tc of p.cases) {
     const result = await runCase(tc, src);
     if (result.status === 'fail' &&
@@ -3712,14 +3712,14 @@ async function doTest(){
     renderResults();
   }
   submitting = false;
-  // 채점 완료 후 15초 쿨다운 시작
+  // start 15-second cooldown after grading
   startTestCooldown();
 }
 
 function getCode(){
   return window._cm ? window._cm.getValue() : ($('code-ta')?.value || code);
 }
-/* ── 타임어택 ── */
+/* ── Time Attack ── */
 function _taFmt(sec){
   const h = Math.floor(sec/3600), m = Math.floor((sec%3600)/60), s = sec%60;
   return h > 0
@@ -3731,16 +3731,16 @@ function startTimeAttack(){
   if (_taActive) return;
   if (!confirm('타임어택을 시작하면 코드 붙여넣기(Ctrl+V)가 차단됩니다.\n타이머는 종료 버튼을 누를 때까지 계속 흘러갑니다.\n\n시작하시겠습니까?')) return;
   _taActive = true; _taStart = Date.now();
-  // CodeMirror paste 차단
+  // block CodeMirror paste
   if (window._cm) window._cm.on('paste', _blockPaste);
-  // 일반 paste 이벤트 차단
+  // block native paste events
   document.addEventListener('paste', _blockPaste, true);
-  // UI 전환
+  // switch UI state
   const disp = document.getElementById('ta-display');
   const btn  = document.getElementById('ta-btn');
   if (disp) disp.style.display = 'flex';
   if (btn)  btn.style.display  = 'none';
-  // 타이머 tick
+  // timer tick
   _taTimer = setInterval(() => {
     const el = document.getElementById('ta-clock');
     if (el) el.textContent = _taFmt(Math.floor((Date.now() - _taStart) / 1000));
@@ -3759,7 +3759,7 @@ function stopTimeAttack(){
   if (btn)  btn.style.display  = '';
   alert(`타임어택 종료\n소요 시간: ${_taFmt(elapsed)}`);
 }
-// 문제 페이지 이탈 시 타이머 정리
+// clean up timer when leaving problem page
 function _taCleanup(){ if(_taActive){ clearInterval(_taTimer); _taTimer=null; _taActive=false; _taStart=null; document.removeEventListener('paste',_blockPaste,true); } }
 
 function doReset(){
@@ -3771,7 +3771,7 @@ function doReset(){
   renderResults();
 }
 
-/* ── 어려워요 버튼 ── */
+/* ── Difficulty button ── */
 let _difficulty = {};  // { pid: { count, voters } }
 
 async function loadDifficulty(pid){
@@ -3809,12 +3809,12 @@ async function toggleDifficulty(pid){
   const prevVoters = Array.isArray(prev.voters) ? prev.voters : [];
   const has = prevVoters.includes(uid);
 
-  // 낙관적 UI 업데이트 (즉시 반영)
+  // optimistic UI update (immediate)
   const newVoters = has ? prevVoters.filter(v => v !== uid) : [...prevVoters, uid];
   _difficulty[pid] = { count: newVoters.length, voters: newVoters };
   renderDifficultyBtn(pid);
 
-  // 백그라운드로 Firestore 동기화 (서버 측 원자 연산)
+  // sync to Firestore in background (server-side atomic operation)
   const FV = firebase.firestore.FieldValue;
   const op = has
     ? { count: FV.increment(-1), voters: FV.arrayRemove(uid) }
@@ -3822,7 +3822,7 @@ async function toggleDifficulty(pid){
   try {
     await ref.set(op, { merge: true });
   } catch(e) {
-    // 실패 시 롤백
+    // rollback on failure
     console.warn('difficulty error', e);
     _difficulty[pid] = prev;
     renderDifficultyBtn(pid);
@@ -3830,13 +3830,13 @@ async function toggleDifficulty(pid){
   }
 }
 
-/* ── 난이도 별점 ── */
+/* ── Difficulty rating ── */
 let _ratings = {};  // { pid: { sum, count } }
 const _RATINGS_CACHE_KEY = 'oj_ratings_cache_v1';
-const _RATINGS_TTL = 60 * 60 * 1000;  // 60분 TTL
+const _RATINGS_TTL = 60 * 60 * 1000;  // 60 min TTL
 
 async function fetchRatings(force){
-  // localStorage 캐시 시도 (60분 TTL)
+  // try localStorage cache (60 min TTL)
   if (!force) {
     try {
       const raw = localStorage.getItem(_RATINGS_CACHE_KEY);
@@ -3901,14 +3901,14 @@ function showFirstBadge(){
 function showRatingDialog(pid, info){
   if (!firebaseUser) return;
   const alreadyRated = !!localStorage.getItem('oj_rated_'+pid);
-  // 제출 정보가 없고 이미 별점도 매겼으면 띄울 이유 없음
+  // skip if no submission info and rating already given
   if (!info && alreadyRated) return;
 
   const overlay = document.createElement('div');
   overlay.id = 'rating-overlay';
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;display:flex;align-items:center;justify-content:center;padding:1rem';
 
-  // 제출 피드백 섹션 (info가 있을 때만)
+  // submission feedback section (only when info is available)
   let feedbackHtml = '';
   if (info) {
     const lateTag = info.isLate ? '<span style="background:var(--error);color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;margin-left:.3rem;vertical-align:middle">지각</span>' : '';
@@ -3944,7 +3944,7 @@ function showRatingDialog(pid, info){
       </div>`;
   }
 
-  // 별점 섹션 (이미 매겼으면 숨김)
+  // rating section (hidden if already rated)
   const rateSection = alreadyRated ? '' : `
     <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:.3rem">이 문제 난이도는?</div>
     <div style="font-size:11px;color:var(--text4);margin-bottom:.9rem">쉬움 ←————→ 어려움</div>
@@ -3964,7 +3964,7 @@ function showRatingDialog(pid, info){
   overlay.onclick = e => { if(e.target===overlay) overlay.remove(); };
   document.body.appendChild(overlay);
 
-  // 2초 후 순위 슬롯 업데이트 (fetchSubmitCounts는 doSubmit에서 이미 예약됨)
+  // update rank slot after 2s (fetchSubmitCounts already scheduled in doSubmit)
   if (info) {
     setTimeout(() => {
       const slot = document.getElementById('submit-rank-slot');
@@ -3982,14 +3982,14 @@ function showRatingDialog(pid, info){
   }
 }
 
-/* ── 제출 현황 (Sheets doGet) ── */
+/* ── Submission stats (Sheets doGet) ── */
 let _submitCounts = {};  // { problemId: count }
 let _submitCountsLoaded = false;
 
 let _leaderboard = [];
 let _prevLeaderboard = JSON.parse(localStorage.getItem('oj_prev_lb') || '[]');
-let _hourly = new Array(24).fill(0);  // 24시간 시간대별 제출 수
-const EXCLUDE_NAMES = ['원경호'];  // TA는 순위에 포함
+let _hourly = new Array(24).fill(0);  // submission count per hour (24h)
+const EXCLUDE_NAMES = ['원경호'];  // TA included in rankings
 
 function rankArrow(name){
   if (!_prevLeaderboard.length) return '';
@@ -4013,9 +4013,9 @@ async function fetchSubmitCounts(){
       _submitCountsLoaded = true;
     }
     if (d.leaderboard) {
-      // 이전 순위 = 현재 메모리에 있으면 그걸, 없으면 localStorage에서
+      // previous rank: from memory if available, otherwise from localStorage
       _prevLeaderboard = _leaderboard.length ? _leaderboard : _prevLeaderboard;
-      // 새 데이터를 다음 세션의 prev로 저장
+      // store new data as prev for next session
       localStorage.setItem('oj_prev_lb', JSON.stringify(d.leaderboard));
       _leaderboard = d.leaderboard;
     }
@@ -4060,7 +4060,7 @@ function showCode(code, title, ts){
   }
 }
 
-/* 관리자 패널: 전체 사용자 매핑 조회 */
+/* Admin panel: query full user mapping */
 let _adminTab = 'users';
 async function renderAdmin(push=true){
   if (!isAdmin()) { alert('관리자 권한이 없습니다.'); return; }
@@ -4096,7 +4096,7 @@ async function renderAdminDifficulty(){
         voters: Array.isArray(d.voters) ? d.voters : []
       });
     });
-    // PROBLEMS에서 제목/주차 매칭
+    // match title/week from PROBLEMS
     const pmap = {};
     PROBLEMS.forEach(p => { pmap[p.id] = p; });
     rows.forEach(r => {
@@ -4104,7 +4104,7 @@ async function renderAdminDifficulty(){
       r.title = p ? p.title : '(삭제된 문제)';
       r.week  = p ? p.week  : '-';
     });
-    // count 내림차순 정렬
+    // sort by count descending
     rows.sort((a, b) => b.count - a.count || a.pid.localeCompare(b.pid));
 
     if (rows.length === 0) {
@@ -4224,13 +4224,13 @@ async function renderAdminSubmissions(){
       return;
     }
     const subs = d.submissions;
-    // 주차별 문제 목록 (PROBLEMS 기준)
+    // problem list by week (based on PROBLEMS)
     const weekGroups = {};
     PROBLEMS.forEach(p => {
       if (!weekGroups[p.week]) weekGroups[p.week] = [];
       weekGroups[p.week].push(p);
     });
-    // 학생별 최고점 매핑: { username: { pid: { score, max, ts } } }
+    // best score mapping per student: { username: { pid: { score, max, ts } } }
     const bestByUser = {};
     subs.forEach(s => {
       if (!bestByUser[s.username]) bestByUser[s.username] = {};
@@ -4242,7 +4242,7 @@ async function renderAdminSubmissions(){
       }
     });
     const students = Object.keys(bestByUser).sort();
-    // 주차 필터
+    // week filter
     const weeks = Object.keys(weekGroups);
     let html = `<div style="margin-bottom:1rem;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <span style="font-size:13px;color:var(--text3)">주차 필터:</span>
@@ -4316,17 +4316,17 @@ function setView(mode){
   });
 }
 
-/* Google 로그인 */
+/* Google login */
 async function doLogin(){
   try {
     const provider = new firebase.auth.GoogleAuthProvider();
     await auth.signInWithPopup(provider);
-    // onAuthStateChanged 에서 후속 처리
+    // follow-up handled in onAuthStateChanged
   } catch(e) {
     if (e.code !== 'auth/popup-closed-by-user') alert('로그인 실패: ' + e.message);
   }
 }
-/* 로그아웃 */
+/* Logout */
 async function doLogout(){
   await auth.signOut();
   firebaseUser = null;
@@ -4334,12 +4334,12 @@ async function doLogout(){
   localStorage.removeItem(LS_USER);
   renderHome(false);
 }
-/* 첫 로그인 시 학번_이름 등록 (중복 방지) */
+/* Register studentId_name on first login (duplicate prevention) */
 async function doRegisterName(cb){
   const v = prompt('학번_이름 형식으로 입력하세요\n예) 202312345_홍길동');
   if (!v || !v.trim()) return;
   const newName = v.trim();
-  // 중복 체크: 다른 계정이 같은 학번_이름을 이미 사용 중인지
+  // duplicate check: whether another account already uses the same studentId_name
   try {
     const existing = await db.collection('usernames').doc(newName).get();
     if (existing.exists && existing.data().uid !== firebaseUser.uid) {
@@ -4351,16 +4351,16 @@ async function doRegisterName(cb){
   username = newName;
   localStorage.setItem(LS_USER, username);
   try {
-    // users 컬렉션에 프로필 저장
-    // 신규 문서일 때만 approved:false로 초기화 (기존 유저의 승인 상태는 보존)
+    // save profile to users collection
+    // initialize approved:false only for new docs (preserve existing approval status)
     const userRef = db.collection('users').doc(firebaseUser.uid);
     const userDoc = await userRef.get();
     const payload = { username, email: firebaseUser.email, updatedAt: new Date().toISOString() };
     if (!userDoc.exists) payload.approved = false;
     await userRef.set(payload, { merge: true });
-    // usernames 컬렉션에 역방향 매핑 저장 (중복 방지용)
+    // store reverse mapping in usernames collection (for duplicate prevention)
     await db.collection('usernames').doc(newName).set({ uid: firebaseUser.uid, email: firebaseUser.email });
-    // 이전 이름이 있었으면 삭제
+    // delete previous name mapping if it existed
     if (oldName && oldName !== newName) {
       await db.collection('usernames').doc(oldName).delete().catch(()=>{});
     }
@@ -4368,7 +4368,7 @@ async function doRegisterName(cb){
   if (cb) cb();
   else { history.replaceState({view:'home'}, '', ' '); renderHome(false); }
 }
-/* 기존 호환: doSetUser → 로그인 안 됐으면 로그인, 됐는데 이름 없으면 등록 */
+/* Legacy compat: doSetUser -> login if not logged in, register name if logged in but unnamed */
 function doSetUser(cb){
   if (!firebaseUser) { doLogin(); return; }
   if (!username) { doRegisterName(cb); return; }
@@ -4376,13 +4376,13 @@ function doSetUser(cb){
 }
 function doChangeUser(){ doRegisterName(() => renderHome()); }
 
-/* Firebase Auth 상태 감지 */
+/* Firebase Auth state listener */
 auth.onAuthStateChanged(async (user) => {
   firebaseUser = user;
   if (user) {
-    // admin/TA는 자동 승인
+    // auto-approve admin/TA
     isApproved = isAdmin() || isTA();
-    // Firestore에서 학번_이름 + 승인 상태 + 이력 한 번에 불러오기 (read 1회로 통합)
+    // load studentId_name + approval status + history in one Firestore read
     let _mainDocData = null;
     try {
       const doc = await db.collection('users').doc(user.uid).get();
@@ -4392,7 +4392,7 @@ auth.onAuthStateChanged(async (user) => {
         username = _mainDocData.username;
         localStorage.setItem(LS_USER, username);
       } else {
-        // Firestore에 없으면 localStorage 값 확인
+        // fall back to localStorage if not in Firestore
         const local = localStorage.getItem(LS_USER);
         if (local) {
           username = local;
@@ -4404,18 +4404,18 @@ auth.onAuthStateChanged(async (user) => {
     } catch(e) {
       username = localStorage.getItem(LS_USER) || '';
     }
-    // 마스코트 이미지 URL 프리로드 (실패해도 무시 — 토스트는 텍스트만 표시됨)
+    // preload mascot image URL (failures silently ignored — toast shows text only)
     if (!_mascotUrl) {
       storage.ref('mascot/mascot.jpg').getDownloadURL()
         .then(url => { _mascotUrl = url; })
         .catch(() => {});
     }
-    // 이력 로드: 위에서 이미 가져온 메인 doc 데이터 재사용 (추가 read 0)
+    // load history: reuse main doc data fetched above (0 extra reads)
     await loadHistoryFromMainDoc(_mainDocData);
-    // 관리자/TA면 비공개 drafts + 승인 대기 인원 로드
+    // if admin/TA: load private drafts + pending approval count
     await loadDrafts();
     await _loadPendingCount();
-    // 관리자/TA면 수강생 진행 현황도 백그라운드 로드 (Sheets 기반, Firestore read ~55)
+    // if admin/TA: load class progress in background (Sheets-based)
     if (isAdmin() || isTA()) {
       _loadClassProgress().then(res => {
         if (res && (view === 'home' || view === 'history')) {
@@ -4429,7 +4429,7 @@ auth.onAuthStateChanged(async (user) => {
     isApproved = false;
     historyCache = null;
     localStorage.removeItem(LS_USER);
-    // 비로그인도 공개 drafts 로드 (loadDrafts 내부에서 splice로 기존 항목 정리함)
+    // load published drafts for guests too (loadDrafts cleans up existing entries internally)
     await loadDrafts();
   }
   renderHome(false);
@@ -4445,19 +4445,19 @@ window.addEventListener('popstate', function(e){
 history.replaceState({view:'home'}, '', ' ');
 // Apply saved theme
 (function(){ const t=localStorage.getItem('oj_theme'); if(t==='dark') document.body.classList.add('dark'); })();
-// 초기 렌더링은 onAuthStateChanged 콜백에서 수행
+// initial render performed in onAuthStateChanged callback
 fetchSubmitCounts();
 fetchRatings();
 
-/* ── DevTools / 소스 보기 감지 (심리적 억제 + 로깅) ── */
+/* ── DevTools / view-source detection (psychological deterrent + logging) ── */
 (function(){
   let _devWarnCount = 0;
   const _devWarnMax = 3;
 
   function _devWarn(method){
-    if (isAdmin() || isTA()) return;  // 관리자/TA 제외
+    if (isAdmin() || isTA()) return;  // skip for admin/TA
     _devWarnCount++;
-    // 경고 표시
+    // show warning
     const overlay = document.createElement('div');
     overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:center;justify-content:center;padding:2rem';
     overlay.innerHTML = `<div style="background:#fff;border-radius:12px;padding:2rem;max-width:420px;text-align:center">
@@ -4474,19 +4474,19 @@ fetchRatings();
     document.body.appendChild(overlay);
   }
 
-  // 키보드 단축키 차단
+  // block keyboard shortcuts
   document.addEventListener('keydown', function(e){
     // F12
     if (e.key === 'F12') { e.preventDefault(); _devWarn('F12'); return; }
     // Ctrl+Shift+I/J/C (DevTools)
     if (e.ctrlKey && e.shiftKey && ['I','i','J','j','C','c'].includes(e.key)) { e.preventDefault(); _devWarn('Ctrl+Shift+'+e.key.toUpperCase()); return; }
-    // Ctrl+U (소스 보기)
+    // Ctrl+U (view source)
     if (e.ctrlKey && (e.key === 'u' || e.key === 'U')) { e.preventDefault(); _devWarn('Ctrl+U'); return; }
-    // Ctrl+S (저장)
+    // Ctrl+S (save)
     if (e.ctrlKey && (e.key === 's' || e.key === 'S') && !e.shiftKey) { e.preventDefault(); _devWarn('Ctrl+S'); return; }
   });
 
-  // 문제 영역 복사 차단 (Ctrl+C / Ctrl+A)
+  // block copy in problem area (Ctrl+C / Ctrl+A)
   document.addEventListener('copy', function(e){
     if (e.target.closest('.CodeMirror') || e.target.closest('textarea') || e.target.closest('input')) return;
     if (isAdmin() || isTA()) return;
@@ -4495,9 +4495,9 @@ fetchRatings();
     }
   });
 
-  // 우클릭 차단
+  // block right-click
   document.addEventListener('contextmenu', function(e){
-    // 코드 에디터 영역은 허용 (복사/붙여넣기 필요)
+    // allow in code editor (copy/paste needed)
     if (e.target.closest('.CodeMirror') || e.target.closest('textarea')) return;
     e.preventDefault();
     _devWarn('우클릭');
@@ -4505,147 +4505,6 @@ fetchRatings();
 })();
 </script>
 
-<!--
-================================================================
-  Google Sheets 연동 설정
-================================================================
-1. Google Sheets 새 파일 생성
-2. 확장 프로그램 → Apps Script 열기
-3. 기존 코드 삭제 후 _admin_apps_script.js 내용 붙여넣기
-   (rating/first submit → Ratings 시트, 일반 제출 → 기본 시트)
-
-아래는 참고용 코드 스냅샷 (실제 코드는 _admin_apps_script.js 참조):
-
-function doPost(e) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const d = JSON.parse(e.postData.contents);
-
-  // ── rating / first submit → Ratings 시트에 기록 ──
-  if (d.type === 'rating') {
-    const rs = ss.getSheetByName('Ratings') || ss.insertSheet('Ratings');
-    if (rs.getLastRow() === 0) rs.appendRow(['문제ID','score']);
-    rs.appendRow([d.problemId, d.score]);
-    return ContentService.createTextOutput(JSON.stringify({ ok: true })).setMimeType(ContentService.MimeType.JSON);
-  }
-  if (d.type === 'first') {
-    const rs = ss.getSheetByName('Ratings') || ss.insertSheet('Ratings');
-    if (rs.getLastRow() === 0) rs.appendRow(['문제ID','score']);
-    rs.appendRow([d.problemId, 'first:' + d.name]);
-    return ContentService.createTextOutput(JSON.stringify({ ok: true })).setMimeType(ContentService.MimeType.JSON);
-  }
-
-  // ── 일반 제출 → 첫 번째 시트 ──
-  const sheet = ss.getActiveSheet();
-  if (sheet.getLastRow() === 0) {
-    sheet.appendRow(['시각','학번_이름','주차','문제ID','문제명','점수','만점','TC결과','코드','타입']);
-  }
-  sheet.appendRow([
-    new Date(d.ts), d.username, d.week,
-    d.problemId || '', d.problem,
-    d.score !== null && d.score !== undefined ? d.score : '',
-    d.max   !== null && d.max   !== undefined ? d.max   : '',
-    d.tc || '',
-    d.code || '',
-    d.type || 'assignment'
-  ]);
-  return ContentService
-    .createTextOutput(JSON.stringify({ ok: true }))
-    .setMimeType(ContentService.MimeType.JSON);
-}
-
-function doGet(e) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const mode = (e && e.parameter && e.parameter.mode) || '';
-
-  // ── ratings 모드: Ratings 시트에서 집계 ──
-  if (mode === 'ratings') {
-    const rs = ss.getSheetByName('Ratings');
-    const ratings = {};
-    if (rs && rs.getLastRow() > 1) {
-      const rows = rs.getDataRange().getValues();
-      for (let i = 1; i < rows.length; i++) {
-        const pid = String(rows[i][0] || '').trim();
-        const val = rows[i][1];
-        if (!pid) continue;
-        if (typeof val === 'string' && val.startsWith('first:')) {
-          if (!ratings[pid]) ratings[pid] = { sum:0, count:0 };
-          if (!ratings[pid].firstSubmitter) ratings[pid].firstSubmitter = val.slice(6);
-        } else {
-          if (!ratings[pid]) ratings[pid] = { sum:0, count:0 };
-          ratings[pid].sum += Number(val) || 0;
-          ratings[pid].count += 1;
-        }
-      }
-    }
-    return ContentService.createTextOutput(JSON.stringify({ ratings })).setMimeType(ContentService.MimeType.JSON);
-  }
-
-  // ── 기존 제출 통계 ──
-  const sheet = ss.getActiveSheet();
-  const rows = sheet.getDataRange().getValues();
-  const EXCLUDE = ['원경호', '황주옥'];
-
-  const header = rows[0] || [];
-  const typeCol = header.indexOf('타입');
-
-  const counts = {};
-  const seenPid = new Set();
-  const userProbs = {};
-  const seenUser = new Set();
-  const submissions = [];
-
-  for (let i = 1; i < rows.length; i++) {
-    const user = String(rows[i][1] || '').trim();
-    const pid  = String(rows[i][3] || '').trim();
-    if (!user || !pid) continue;
-
-    const isExcluded = EXCLUDE.some(name => user.includes(name));
-    if (isExcluded) continue;
-
-    const score = rows[i][5];
-    const max   = rows[i][6];
-    const ts    = rows[i][0] ? new Date(rows[i][0]).toLocaleString('ko-KR') : '';
-
-    const keyPid = user + '|' + pid;
-    if (!seenPid.has(keyPid)) {
-      seenPid.add(keyPid);
-      counts[pid] = (counts[pid] || 0) + 1;
-    }
-
-    const keyUser = user + '|' + pid;
-    if (!seenUser.has(keyUser)) {
-      seenUser.add(keyUser);
-      userProbs[user] = (userProbs[user] || 0) + 1;
-    }
-
-    if (mode === 'admin') {
-      submissions.push({ username: user, pid: pid, score: score, max: max, ts: ts });
-    }
-  }
-
-  const leaderboard = Object.entries(userProbs)
-    .map(([full, count]) => {
-      const parts = full.split('_');
-      const name = parts.length > 1 ? parts.slice(1).join('_') : full;
-      return { name, count };
-    })
-    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
-
-  const result = { counts, leaderboard };
-  if (mode === 'admin') result.submissions = submissions;
-
-  return ContentService
-    .createTextOutput(JSON.stringify(result))
-    .setMimeType(ContentService.MimeType.JSON);
-}
-
-4. 배포 → 새 배포 → 웹 앱
-   실행: 나 / 액세스: 모든 사용자
-   → URL 복사
-
-5. 이 파일 상단 SHEETS_URL = '복사한 URL' 수정
-================================================================
--->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
 </body>
