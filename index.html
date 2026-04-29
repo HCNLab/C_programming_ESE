@@ -412,6 +412,302 @@ function buildCases(pid){
 
 const PROBLEMS = [
   {
+    "id": "sc1",
+    "deadline": "2026-05-11T23:59",
+    "desc": "문자열과 정수 k가 주어진다. 영문자만 알파벳 순으로 k칸 시프트하여 출력하시오 (대소문자는 각각 유지, 숫자·공백·기호는 그대로).<br>Z를 넘어가면 A로 돌아오는 wrap-around 처리. k는 음수일 수 있으므로 <code>(c - 'A' + k % 26 + 26) % 26 + 'A'</code> 패턴으로 안전하게 처리.",
+    "ex_in": "Hello, World!\n3",
+    "output_desc": "암호화된 문자열 한 줄.",
+    "title": "Caesar Cipher",
+    "ex_out": "Khoor, Zruog!",
+    "week": "Week 9B: Strings",
+    "input_desc": "첫째 줄에 문자열 (길이 ≤ 200), 둘째 줄에 정수 k (-1000 ≤ k ≤ 1000).",
+    "cases": [
+      {
+        "expected": "Khoor, Zruog!\n",
+        "pts": 25,
+        "id": 1,
+        "input": "Hello, World!\n3\n"
+      },
+      {
+        "input": "abcXYZ\n1\n",
+        "id": 2,
+        "pts": 25,
+        "expected": "bcdYZA\n"
+      },
+      {
+        "id": 3,
+        "input": "Khoor, Zruog!\n-3\n",
+        "expected": "Hello, World!\n",
+        "pts": 25
+      },
+      {
+        "pts": 25,
+        "expected": "Programming 2026!\n",
+        "input": "Programming 2026!\n26\n",
+        "id": 4
+      }
+    ]
+  },
+  {
+    "id": "sc2",
+    "input_desc": "한 줄의 문자열 (길이 ≤ 200).",
+    "cases": [
+      {
+        "input": "Hello World C\n",
+        "id": 1,
+        "pts": 25,
+        "expected": "C World Hello\n"
+      },
+      {
+        "id": 2,
+        "input": "the quick brown fox\n",
+        "expected": "fox brown quick the\n",
+        "pts": 25
+      },
+      {
+        "input": "single\n",
+        "id": 3,
+        "pts": 25,
+        "expected": "single\n"
+      },
+      {
+        "expected": "here spaces multiple\n",
+        "pts": 25,
+        "id": 4,
+        "input": "  multiple   spaces  here\n"
+      }
+    ],
+    "week": "Week 9B: Strings",
+    "ex_out": "C World Hello",
+    "ex_in": "Hello World C",
+    "output_desc": "단어 순서가 뒤집힌 한 줄.",
+    "title": "Reverse Words",
+    "deadline": "2026-05-11T23:59",
+    "desc": "한 줄의 문자열을 받아 <b>단어 단위로</b> 뒤집어 출력하시오. 예: <code>\"Hello World C\"</code> → <code>\"C World Hello\"</code>.<br>단어 사이의 여러 공백은 한 칸으로 줄여서 출력하면 된다.<br>Hint: 단어들의 시작·끝 인덱스를 추적해서 거꾸로 출력."
+  },
+  {
+    "id": "sc3",
+    "cases": [
+      {
+        "expected": "LED is now ON\nLED is now OFF\nUnknown command\n",
+        "pts": 25,
+        "id": 1,
+        "input": "LED ON\nLED OFF\nFOO\nQUIT\nLED ON\n"
+      },
+      {
+        "pts": 25,
+        "expected": "LED is now ON\nLED is now OFF\n",
+        "input": "LED ON\nLED OFF\nQUIT\n",
+        "id": 2
+      },
+      {
+        "pts": 25,
+        "expected": "Unknown command\nUnknown command\nLED is now ON\n",
+        "input": "BAD\nXYZ 5\nLED ON\nQUIT\n",
+        "id": 3
+      },
+      {
+        "expected": "LED is now ON\nUnknown command\nLED is now OFF\nUnknown command\n",
+        "pts": 25,
+        "id": 4,
+        "input": "LED ON\nHELLO\nLED OFF\nWORLD\nQUIT\n"
+      }
+    ],
+    "input_desc": "여러 줄의 명령. 각 줄 길이 ≤ 50. <code>QUIT</code> 또는 EOF가 나오면 종료.",
+    "week": "Week 9B: Strings",
+    "ex_out": "LED is now ON\nLED is now OFF\nUnknown command",
+    "output_desc": "각 명령에 대해 한 줄씩 결과 출력. <code>QUIT</code> 명령 자체는 출력 없음.",
+    "title": "Command Parser",
+    "ex_in": "LED ON\nLED OFF\nFOO\nQUIT\nLED ON",
+    "desc": "간단한 임베디드 명령 파서를 만든다. 각 줄마다 다음 명령 중 하나가 주어진다:<br><code>LED ON</code> → <code>LED is now ON</code><br><code>LED OFF</code> → <code>LED is now OFF</code><br><code>QUIT</code> → 더 이상 명령을 읽지 않고 종료<br>그 외 명령 → <code>Unknown command</code><br><code>strncmp</code>로 명령을 인식하고, <code>fgets</code>로 한 줄씩 읽어 처리한다.",
+    "deadline": "2026-05-11T23:59"
+  },
+  {
+    "id": "sp1",
+    "cases": [
+      {
+        "pts": 25,
+        "expected": "Vowels: 3\nConsonants: 7\n",
+        "input": "Hello World\n",
+        "id": 1
+      },
+      {
+        "input": "AEIOU aeiou\n",
+        "id": 2,
+        "pts": 25,
+        "expected": "Vowels: 10\nConsonants: 0\n"
+      },
+      {
+        "id": 3,
+        "input": "Programming\n",
+        "expected": "Vowels: 3\nConsonants: 8\n",
+        "pts": 25
+      },
+      {
+        "expected": "Vowels: 0\nConsonants: 1\n",
+        "pts": 25,
+        "id": 4,
+        "input": "C 2026\n"
+      }
+    ],
+    "input_desc": "한 줄의 문자열 (길이 ≤ 100, 공백 포함 가능).",
+    "week": "Week 9B: Strings",
+    "ex_out": "Vowels: 3\nConsonants: 7",
+    "title": "Vowel and Consonant Count",
+    "output_desc": "두 줄로 출력.<br>형식: <code>Vowels: &lt;값&gt;</code> (줄바꿈) <code>Consonants: &lt;값&gt;</code>",
+    "ex_in": "Hello World",
+    "desc": "한 줄의 영문 문자열을 입력받아, <b>모음(a, e, i, o, u)</b>과 <b>자음(나머지 영문자)</b>의 개수를 각각 출력하시오. 대소문자 구분 없이 모두 카운트.<br>공백, 숫자, 기호 등 영문자가 아닌 문자는 무시한다.<br><code>fgets</code>로 입력을 받고, <code>tolower</code>로 정규화 후 처리하는 패턴.",
+    "deadline": "2026-05-11T23:59"
+  },
+  {
+    "id": "sp2",
+    "ex_in": "Hello world from C",
+    "output_desc": "형식: <code>Words: &lt;값&gt;</code>",
+    "title": "Word Count",
+    "deadline": "2026-05-11T23:59",
+    "desc": "한 줄의 문자열을 입력받아 <b>단어 개수</b>를 출력하시오. 단어는 공백이 아닌 문자의 연속이며, 여러 개의 공백·탭이 있어도 단어 사이로 본다.<br>Hint: <code>in_word</code> 플래그로 \"단어 안인지\"를 추적하면서 0→1로 바뀌는 순간 카운트.",
+    "input_desc": "한 줄의 문자열 (길이 ≤ 200).",
+    "cases": [
+      {
+        "pts": 25,
+        "expected": "Words: 4\n",
+        "input": "Hello world from C\n",
+        "id": 1
+      },
+      {
+        "pts": 25,
+        "expected": "Words: 3\n",
+        "input": "  multiple   spaces   here  \n",
+        "id": 2
+      },
+      {
+        "input": "single\n",
+        "id": 3,
+        "pts": 25,
+        "expected": "Words: 1\n"
+      },
+      {
+        "input": "       \n",
+        "id": 4,
+        "pts": 25,
+        "expected": "Words: 0\n"
+      }
+    ],
+    "ex_out": "Words: 4",
+    "week": "Week 9B: Strings"
+  },
+  {
+    "id": "sp3",
+    "ex_out": "!dlroW ,olleH",
+    "week": "Week 9B: Strings",
+    "input_desc": "한 줄의 문자열 (길이 ≤ 200, 공백 포함 가능).",
+    "cases": [
+      {
+        "pts": 25,
+        "expected": "!dlroW ,olleH\n",
+        "input": "Hello, World!\n",
+        "id": 1
+      },
+      {
+        "id": 2,
+        "input": "abc\n",
+        "expected": "cba\n",
+        "pts": 25
+      },
+      {
+        "pts": 25,
+        "expected": "racecar\n",
+        "input": "racecar\n",
+        "id": 3
+      },
+      {
+        "input": "C 2026\n",
+        "id": 4,
+        "pts": 25,
+        "expected": "6202 C\n"
+      }
+    ],
+    "deadline": "2026-05-11T23:59",
+    "desc": "한 줄의 문자열을 입력받아 <b>뒤집어서</b> 출력하시오 (공백·기호도 그대로 유지, 그냥 글자 순서만 뒤집기).<br>Hint: 길이를 구한 뒤 양 끝 두 인덱스(i=0, j=len-1)로 swap, 또는 뒤에서부터 출력.",
+    "ex_in": "Hello, World!",
+    "title": "Reverse String",
+    "output_desc": "뒤집힌 문자열 한 줄."
+  },
+  {
+    "id": "sp4",
+    "deadline": "2026-05-11T23:59",
+    "desc": "한 줄의 문자열이 회문인지 판정하시오. <b>대소문자는 무시</b>하고 <b>영문자가 아닌 문자도 무시</b>한다.<br>예: <code>\"A man, a plan, a canal: Panama\"</code> → 회문.",
+    "ex_in": "A man, a plan, a canal: Panama",
+    "output_desc": "회문이면 <code>Palindrome: Yes</code>, 아니면 <code>Palindrome: No</code>.",
+    "title": "Palindrome String",
+    "ex_out": "Palindrome: Yes",
+    "week": "Week 9B: Strings",
+    "input_desc": "한 줄의 문자열 (길이 ≤ 200).",
+    "cases": [
+      {
+        "expected": "Palindrome: Yes\n",
+        "pts": 25,
+        "id": 1,
+        "input": "A man, a plan, a canal: Panama\n"
+      },
+      {
+        "id": 2,
+        "input": "Was it a car or a cat I saw?\n",
+        "expected": "Palindrome: Yes\n",
+        "pts": 25
+      },
+      {
+        "expected": "Palindrome: No\n",
+        "pts": 25,
+        "id": 3,
+        "input": "Hello\n"
+      },
+      {
+        "pts": 25,
+        "expected": "Palindrome: Yes\n",
+        "input": "Madam, I'm Adam\n",
+        "id": 4
+      }
+    ]
+  },
+  {
+    "id": "sp5",
+    "cases": [
+      {
+        "id": 1,
+        "input": "abababab\nab\n",
+        "expected": "Count: 4\n",
+        "pts": 25
+      },
+      {
+        "id": 2,
+        "input": "aaaa\naa\n",
+        "expected": "Count: 2\n",
+        "pts": 25
+      },
+      {
+        "id": 3,
+        "input": "Hello world hello world\nhello\n",
+        "expected": "Count: 1\n",
+        "pts": 25
+      },
+      {
+        "id": 4,
+        "input": "abcdefg\nxyz\n",
+        "expected": "Count: 0\n",
+        "pts": 25
+      }
+    ],
+    "input_desc": "첫째 줄에 문자열 S, 둘째 줄에 부분문자열 P (둘 다 길이 ≤ 200, P는 비어있지 않음).",
+    "week": "Week 9B: Strings",
+    "ex_out": "Count: 4",
+    "output_desc": "형식: <code>Count: &lt;값&gt;</code>",
+    "title": "Substring Count",
+    "ex_in": "abababab\nab",
+    "desc": "문자열 S와 부분문자열 P가 주어진다. S 안에서 P가 <b>몇 번 등장</b>하는지 출력하시오 (겹치지 않는 등장으로 셈, 즉 한 번 매치되면 매치 길이만큼 건너뛰기). <b>대소문자를 구분한다(case-sensitive).</b><br>Hint: 인덱스 i를 0부터 이동하면서, <code>s[i+j] == p[j]</code> 를 j=0..strlen(p)-1 동안 비교하는 중첩 루프. 전부 일치하면 count++, i를 strlen(p)만큼 건너뜀.",
+    "deadline": "2026-05-11T23:59"
+  },
+  {
     "id": "ac1",
     "deadline": "2026-05-04T23:59",
     "cases": [
