@@ -635,38 +635,38 @@ const PROBLEMS = [
   },
   {
     "id": "sp4",
-    "deadline": "2026-05-11T23:59",
-    "desc": "한 줄의 문자열이 회문인지 판정하시오. <b>대소문자는 무시</b>하고 <b>영문자가 아닌 문자도 무시</b>한다.<br>예: <code>\"A man, a plan, a canal: Panama\"</code> → 회문.",
-    "ex_in": "A man, a plan, a canal: Panama",
-    "output_desc": "회문이면 <code>Palindrome: Yes</code>, 아니면 <code>Palindrome: No</code>.",
-    "title": "Palindrome String",
-    "ex_out": "Palindrome: Yes",
     "week": "Week 9B: Strings",
-    "input_desc": "한 줄의 문자열 (길이 ≤ 200).",
+    "title": "Run-Length Encoding",
+    "desc": "한 줄의 문자열을 입력받아 <b>Run-Length Encoding(RLE)</b>으로 압축하여 출력하시오.<br>연속된 같은 문자를 <code>횟수+문자</code>로 표현한다. 예: <code>aaabbc</code> → <code>3a2b1c</code>.<br>Hint: 인덱스 <code>i</code>에서 시작해 <code>s[i]</code>와 같은 문자가 몇 번 연속되는지 <code>count</code>로 세고, <code>printf(\"%d%c\", count, s[i])</code> 출력 후 <code>i += count</code>로 이동.",
+    "input_desc": "한 줄의 문자열 (길이 ≤ 200, 공백 없음).",
+    "output_desc": "RLE 압축 결과 한 줄.",
+    "ex_in": "aaabbc",
+    "ex_out": "3a2b1c",
+    "deadline": "2026-05-11T23:59",
     "cases": [
       {
-        "expected": "Palindrome: Yes\n",
-        "pts": 25,
         "id": 1,
-        "input": "A man, a plan, a canal: Panama\n"
-      },
-      {
-        "id": 2,
-        "input": "Was it a car or a cat I saw?\n",
-        "expected": "Palindrome: Yes\n",
+        "input": "aaabbc\n",
+        "expected": "3a2b1c\n",
         "pts": 25
       },
       {
-        "expected": "Palindrome: No\n",
-        "pts": 25,
-        "id": 3,
-        "input": "Hello\n"
+        "id": 2,
+        "input": "aaa\n",
+        "expected": "3a\n",
+        "pts": 25
       },
       {
-        "pts": 25,
-        "expected": "Palindrome: Yes\n",
-        "input": "Madam, I'm Adam\n",
-        "id": 4
+        "id": 3,
+        "input": "abcd\n",
+        "expected": "1a1b1c1d\n",
+        "pts": 25
+      },
+      {
+        "id": 4,
+        "input": "aaabbbccc\n",
+        "expected": "3a3b3c\n",
+        "pts": 25
       }
     ]
   },
