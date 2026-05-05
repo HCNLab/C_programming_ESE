@@ -412,6 +412,265 @@ function buildCases(pid){
 
 const PROBLEMS = [
   {
+    "id": "pc1",
+    "desc": "정수 배열에서 특정 값의 원소를 모두 제거하는 함수를 <b>읽기/쓰기 두 포인터(read/write pointer)</b>로 in-place 구현하시오.<br>함수 원형: <code>int remove_val(int *arr, int n, int target)</code> — 반환값은 남은 원소 수.<br>Hint: <code>int *rd = arr, *wr = arr;</code>로 시작. <code>rd</code>로 순회하며 <code>*rd != target</code>이면 <code>*wr++ = *rd</code>로 복사. <code>rd</code>는 항상 증가.",
+    "ex_in": "6\n1 2 3 2 4 2\n2",
+    "deadline": "2026-05-11T23:59",
+    "title": "Remove All Occurrences",
+    "ex_out": "Count: 3\n1 3 4",
+    "cases": [
+      {
+        "id": 1,
+        "expected": "Count: 3\n1 3 4\n",
+        "input": "6\n1 2 3 2 4 2\n2\n",
+        "pts": 25
+      },
+      {
+        "pts": 25,
+        "expected": "Count: 4\n1 2 3 4\n",
+        "input": "4\n1 2 3 4\n9\n",
+        "id": 2
+      },
+      {
+        "pts": 25,
+        "id": 3,
+        "expected": "Count: 2\n-1 -2\n",
+        "input": "5\n0 -1 0 -2 0\n0\n"
+      },
+      {
+        "id": 4,
+        "expected": "Count: 0\n",
+        "input": "5\n5 5 5 5 5\n5\n",
+        "pts": 25
+      }
+    ],
+    "output_desc": "첫째 줄: <code>Count: &lt;남은 원소 수&gt;</code><br>남은 원소가 있으면 둘째 줄에 공백으로 구분하여 출력.",
+    "week": "Week 10A: Pointers",
+    "input_desc": "첫째 줄에 n (1 ≤ n ≤ 100). 둘째 줄에 n개 정수. 셋째 줄에 제거할 target."
+  },
+  {
+    "id": "pc3",
+    "input_desc": "첫째 줄에 n (1 ≤ n ≤ 100). 둘째 줄에 n개 정수.",
+    "week": "Week 10A: Pointers",
+    "cases": [
+      {
+        "expected": "Second max: 7\n",
+        "input": "5\n3 7 2 9 5\n",
+        "id": 1,
+        "pts": 25
+      },
+      {
+        "expected": "No second max\n",
+        "input": "5\n1 1 1 1 1\n",
+        "id": 2,
+        "pts": 25
+      },
+      {
+        "id": 3,
+        "expected": "Second max: 4\n",
+        "input": "2\n4 9\n",
+        "pts": 25
+      },
+      {
+        "id": 4,
+        "expected": "Second max: 5\n",
+        "input": "6\n10 10 5 3 10 2\n",
+        "pts": 25
+      }
+    ],
+    "output_desc": "형식: <code>Second max: &lt;값&gt;</code> 또는 <code>No second max</code>",
+    "ex_out": "Second max: 7",
+    "title": "Second Maximum",
+    "ex_in": "5\n3 7 2 9 5",
+    "deadline": "2026-05-11T23:59",
+    "desc": "정수 배열에서 <b>두 번째로 큰 값(second maximum)</b>을 포인터 순회로 구하시오. 두 번째 최댓값은 최댓값보다 작은 원소들 중 가장 큰 값으로 정의한다 (중복 최댓값은 최댓값으로 취급, 예: [9,9,3]의 두 번째 최댓값은 3).<br>모든 원소가 최댓값과 같으면 <code>No second max</code>를 출력한다.<br>Hint: 포인터로 1회 순회해 <code>max1</code>을 구한 뒤, 다시 순회하며 <code>*p != max1</code>인 원소들의 최댓값을 구한다."
+  },
+  {
+    "id": "pp1",
+    "desc": "정수 두 개를 입력받아 <b>포인터를 이용한 swap() 함수</b>로 두 값을 교환한 뒤 출력하시오.<br>함수 원형: <code>void swap(int *a, int *b)</code><br>Hint: <code>int tmp = *a; *a = *b; *b = tmp;</code> — 포인터로 값을 교환하는 기본 패턴.",
+    "deadline": "2026-05-11T23:59",
+    "ex_in": "1 2",
+    "week": "Week 10A: Pointers",
+    "input_desc": "한 줄에 정수 두 개 (공백 구분).",
+    "ex_out": "2 1",
+    "title": "Swap Two Numbers",
+    "output_desc": "교환된 두 정수를 공백으로 구분하여 한 줄 출력.",
+    "cases": [
+      {
+        "id": 1,
+        "input": "1 2\n",
+        "expected": "2 1\n",
+        "pts": 25
+      },
+      {
+        "id": 2,
+        "expected": "-5 10\n",
+        "input": "10 -5\n",
+        "pts": 25
+      },
+      {
+        "pts": 25,
+        "expected": "100 0\n",
+        "input": "0 100\n",
+        "id": 3
+      },
+      {
+        "pts": 25,
+        "id": 4,
+        "input": "-3 -7\n",
+        "expected": "-7 -3\n"
+      }
+    ]
+  },
+  {
+    "id": "pp2",
+    "cases": [
+      {
+        "pts": 25,
+        "id": 1,
+        "input": "5\n1 2 3 4 5\n",
+        "expected": "5 4 3 2 1\n"
+      },
+      {
+        "id": 2,
+        "expected": "40 30 20 10\n",
+        "input": "4\n10 20 30 40\n",
+        "pts": 25
+      },
+      {
+        "pts": 25,
+        "id": 3,
+        "expected": "42\n",
+        "input": "1\n42\n"
+      },
+      {
+        "id": 4,
+        "input": "6\n-3 0 5 -1 2 8\n",
+        "expected": "8 2 -1 5 0 -3\n",
+        "pts": 25
+      }
+    ],
+    "output_desc": "뒤집힌 배열을 공백으로 구분하여 한 줄 출력.",
+    "ex_out": "5 4 3 2 1",
+    "title": "Reverse Array",
+    "input_desc": "첫째 줄에 정수 n (1 ≤ n ≤ 100). 둘째 줄에 공백으로 구분된 정수 n개.",
+    "week": "Week 10A: Pointers",
+    "ex_in": "5\n1 2 3 4 5",
+    "deadline": "2026-05-11T23:59",
+    "desc": "정수 배열을 입력받아 <b>포인터 산술(pointer arithmetic)만 사용</b>하여 in-place로 뒤집어 출력하시오 ([] 인덱싱 사용 금지).<br>Hint: <code>int *left = arr, *right = arr + n - 1;</code>로 시작해, <code>left &lt; right</code>인 동안 <code>*left</code>와 <code>*right</code>를 swap한 뒤 <code>left++; right--;</code>"
+  },
+  {
+    "id": "pp3",
+    "title": "Array Statistics",
+    "ex_out": "Sum: 15\nMin: 1\nMax: 5\nAvg: 3.00",
+    "cases": [
+      {
+        "input": "5\n1 2 3 4 5\n",
+        "expected": "Sum: 15\nMin: 1\nMax: 5\nAvg: 3.00\n",
+        "id": 1,
+        "pts": 25
+      },
+      {
+        "id": 2,
+        "expected": "Sum: 60\nMin: 10\nMax: 30\nAvg: 20.00\n",
+        "input": "3\n10 20 30\n",
+        "pts": 25
+      },
+      {
+        "expected": "Sum: -4\nMin: -5\nMax: 3\nAvg: -1.00\n",
+        "input": "4\n-2 -5 0 3\n",
+        "id": 3,
+        "pts": 25
+      },
+      {
+        "expected": "Sum: 7\nMin: 7\nMax: 7\nAvg: 7.00\n",
+        "input": "1\n7\n",
+        "id": 4,
+        "pts": 25
+      }
+    ],
+    "output_desc": "네 줄 출력: <code>Sum: &lt;값&gt;</code> / <code>Min: &lt;값&gt;</code> / <code>Max: &lt;값&gt;</code> / <code>Avg: &lt;값&gt;</code> (소수점 둘째 자리)",
+    "week": "Week 10A: Pointers",
+    "input_desc": "첫째 줄에 정수 n (1 ≤ n ≤ 100). 둘째 줄에 공백으로 구분된 정수 n개.",
+    "desc": "정수 배열을 입력받아 합계·최솟값·최댓값·평균을 계산하는 함수를 <b>output parameter(포인터 매개변수)</b> 패턴으로 작성하시오.<br>함수 원형: <code>void stats(const int *arr, int n, int *sum, int *mn, int *mx)</code><br>Hint: 순회는 <code>const int *p = arr; p &lt; arr + n; p++</code>. 평균은 main에서 (double)sum / n으로 계산.",
+    "ex_in": "5\n1 2 3 4 5",
+    "deadline": "2026-05-11T23:59"
+  },
+  {
+    "id": "pp4",
+    "desc": "정수 배열에서 <b>첫 번째 음수</b>를 찾아 그 값과 인덱스를 출력하시오. 음수가 없으면 <code>Not found</code>를 출력한다.<br>함수 원형: <code>int *find_neg(int *arr, int n)</code> — 찾으면 해당 원소의 포인터, 없으면 <code>NULL</code> 반환.<br>Hint: main에서 <code>if (result != NULL)</code>로 확인. 인덱스 계산: <code>result - arr</code> (포인터 뺄셈).",
+    "deadline": "2026-05-11T23:59",
+    "ex_in": "5\n3 -1 5 -2 0",
+    "week": "Week 10A: Pointers",
+    "input_desc": "첫째 줄에 정수 n (1 ≤ n ≤ 100). 둘째 줄에 공백으로 구분된 정수 n개.",
+    "ex_out": "Found: -1 at index 1",
+    "title": "Find First Negative",
+    "output_desc": "형식: <code>Found: &lt;값&gt; at index &lt;k&gt;</code> 또는 <code>Not found</code>",
+    "cases": [
+      {
+        "input": "5\n3 -1 5 -2 0\n",
+        "expected": "Found: -1 at index 1\n",
+        "id": 1,
+        "pts": 25
+      },
+      {
+        "pts": 25,
+        "id": 2,
+        "expected": "Not found\n",
+        "input": "4\n1 2 3 4\n"
+      },
+      {
+        "input": "3\n-5 0 1\n",
+        "expected": "Found: -5 at index 0\n",
+        "id": 3,
+        "pts": 25
+      },
+      {
+        "pts": 25,
+        "id": 4,
+        "input": "4\n0 0 0 -3\n",
+        "expected": "Found: -3 at index 3\n"
+      }
+    ]
+  },
+  {
+    "id": "pp5",
+    "deadline": "2026-05-11T23:59",
+    "ex_in": "5\n3 7 2 9 5",
+    "desc": "정수 배열에서 <b>최댓값의 포인터</b>를 반환하는 함수를 작성하고, 반환된 포인터로 최댓값을 0으로 바꾼 뒤 결과 배열을 출력하시오.<br>함수 원형: <code>int *max_ptr(int *arr, int n)</code><br>Hint: 포인터 <code>m</code>이 최댓값 위치를 가리키도록 갱신. 인덱스 계산: <code>m - arr</code>. 반환 후 <code>*m = 0</code>으로 수정.",
+    "output_desc": "두 줄 출력.<br>첫째 줄: <code>Max: &lt;값&gt; at index &lt;k&gt;</code><br>둘째 줄: 최댓값을 0으로 바꾼 배열 (공백 구분)",
+    "cases": [
+      {
+        "pts": 25,
+        "expected": "Max: 9 at index 3\n3 7 2 0 5\n",
+        "input": "5\n3 7 2 9 5\n",
+        "id": 1
+      },
+      {
+        "pts": 25,
+        "id": 2,
+        "input": "4\n-1 -5 -2 -3\n",
+        "expected": "Max: -1 at index 0\n0 -5 -2 -3\n"
+      },
+      {
+        "pts": 25,
+        "input": "5\n10 20 30 20 10\n",
+        "expected": "Max: 30 at index 2\n10 20 0 20 10\n",
+        "id": 3
+      },
+      {
+        "input": "3\n1 1 1\n",
+        "expected": "Max: 1 at index 0\n0 1 1\n",
+        "id": 4,
+        "pts": 25
+      }
+    ],
+    "ex_out": "Max: 9 at index 3\n3 7 2 0 5",
+    "title": "Pointer to Maximum",
+    "input_desc": "첫째 줄에 정수 n (1 ≤ n ≤ 100). 둘째 줄에 공백으로 구분된 정수 n개.",
+    "week": "Week 10A: Pointers"
+  },
+  {
     "id": "sc1",
     "deadline": "2026-05-11T23:59",
     "desc": "문자열과 정수 k가 주어진다. 영문자만 알파벳 순으로 k칸 시프트하여 출력하시오 (대소문자는 각각 유지, 숫자·공백·기호는 그대로).<br>Z를 넘어가면 A로 돌아오는 wrap-around 처리. k는 음수일 수 있으므로 <code>(c - 'A' + k % 26 + 26) % 26 + 'A'</code> 패턴으로 안전하게 처리.",
