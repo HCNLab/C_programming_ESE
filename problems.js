@@ -6,7 +6,7 @@ const SHEETS_KEY  = 'h0vBgzOeEvfvK0WQYqXdDw';  // auth key for admin/ratings mod
 const COURSE_NAME = 'C Programming (1)';
 
 // Notice (empty string = hidden)
-const NOTICE = 'Week 9B -sp4 문제가 업데이트 되었으니 다시 풀어주세요. / Week 10A는 어린이날로 이러닝 보강 예정입니다';
+const NOTICE = 'Week 10A 포인터 문제가 업데이트 되었습니다. 다시 확인해 주세요.';
 
 // Admin emails (admin panel shown on login with these accounts)
 const ADMIN_EMAILS = ['khwon.public@gmail.com'];
@@ -421,7 +421,7 @@ const GEN = {
     if(slot===3) return {input:'5\n0 -1 0 -2 0\n0',expected:'Count: 2\n-1 -2'};
     return gen();
   },
-  pc3: (slot)=>{
+  pc2: (slot)=>{
     const secondMax=arr=>{
       const max1=Math.max(...arr);
       const below=arr.filter(x=>x<max1);
@@ -540,7 +540,7 @@ const PROBLEMS = [
     "input_desc": "첫째 줄에 n (1 ≤ n ≤ 100). 둘째 줄에 n개 정수. 셋째 줄에 제거할 target."
   },
   {
-    "id": "pc3",
+    "id": "pc2",
     "input_desc": "첫째 줄에 n (1 ≤ n ≤ 100). 둘째 줄에 n개 정수.",
     "createdAt": "2026-05-05T00:00",
     "week": "Week 10A: Pointers",
