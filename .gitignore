@@ -4,6 +4,7 @@ __pycache__/
 *.pyc
 
 # Claude 관련
+CLAUDE.md
 CLAUDE_CODE_CONTEXT.md
 claude-code-context.md
 project-context.md
