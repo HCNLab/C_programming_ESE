@@ -445,12 +445,14 @@ const PROBLEMS = [
       }
     ],
     "output_desc": "첫째 줄: <code>Count: &lt;남은 원소 수&gt;</code><br>남은 원소가 있으면 둘째 줄에 공백으로 구분하여 출력.",
+    "createdAt": "2026-05-05T00:00",
     "week": "Week 10A: Pointers",
     "input_desc": "첫째 줄에 n (1 ≤ n ≤ 100). 둘째 줄에 n개 정수. 셋째 줄에 제거할 target."
   },
   {
     "id": "pc3",
     "input_desc": "첫째 줄에 n (1 ≤ n ≤ 100). 둘째 줄에 n개 정수.",
+    "createdAt": "2026-05-05T00:00",
     "week": "Week 10A: Pointers",
     "cases": [
       {
@@ -490,6 +492,7 @@ const PROBLEMS = [
     "desc": "정수 두 개를 입력받아 <b>포인터를 이용한 swap() 함수</b>로 두 값을 교환한 뒤 출력하시오.<br>함수 원형: <code>void swap(int *a, int *b)</code><br>Hint: <code>int tmp = *a; *a = *b; *b = tmp;</code> — 포인터로 값을 교환하는 기본 패턴.",
     "deadline": "2026-05-11T23:59",
     "ex_in": "1 2",
+    "createdAt": "2026-05-05T00:00",
     "week": "Week 10A: Pointers",
     "input_desc": "한 줄에 정수 두 개 (공백 구분).",
     "ex_out": "2 1",
@@ -554,6 +557,7 @@ const PROBLEMS = [
     "ex_out": "5 4 3 2 1",
     "title": "Reverse Array",
     "input_desc": "첫째 줄에 정수 n (1 ≤ n ≤ 100). 둘째 줄에 공백으로 구분된 정수 n개.",
+    "createdAt": "2026-05-05T00:00",
     "week": "Week 10A: Pointers",
     "ex_in": "5\n1 2 3 4 5",
     "deadline": "2026-05-11T23:59",
@@ -590,6 +594,7 @@ const PROBLEMS = [
       }
     ],
     "output_desc": "네 줄 출력: <code>Sum: &lt;값&gt;</code> / <code>Min: &lt;값&gt;</code> / <code>Max: &lt;값&gt;</code> / <code>Avg: &lt;값&gt;</code> (소수점 둘째 자리)",
+    "createdAt": "2026-05-05T00:00",
     "week": "Week 10A: Pointers",
     "input_desc": "첫째 줄에 정수 n (1 ≤ n ≤ 100). 둘째 줄에 공백으로 구분된 정수 n개.",
     "desc": "정수 배열을 입력받아 합계·최솟값·최댓값·평균을 계산하는 함수를 <b>output parameter(포인터 매개변수)</b> 패턴으로 작성하시오.<br>함수 원형: <code>void stats(const int *arr, int n, int *sum, int *mn, int *mx)</code><br>Hint: 순회는 <code>const int *p = arr; p &lt; arr + n; p++</code>. 평균은 main에서 (double)sum / n으로 계산.",
@@ -601,6 +606,7 @@ const PROBLEMS = [
     "desc": "정수 배열에서 <b>첫 번째 음수</b>를 찾아 그 값과 인덱스를 출력하시오. 음수가 없으면 <code>Not found</code>를 출력한다.<br>함수 원형: <code>int *find_neg(int *arr, int n)</code> — 찾으면 해당 원소의 포인터, 없으면 <code>NULL</code> 반환.<br>Hint: main에서 <code>if (result != NULL)</code>로 확인. 인덱스 계산: <code>result - arr</code> (포인터 뺄셈).",
     "deadline": "2026-05-11T23:59",
     "ex_in": "5\n3 -1 5 -2 0",
+    "createdAt": "2026-05-05T00:00",
     "week": "Week 10A: Pointers",
     "input_desc": "첫째 줄에 정수 n (1 ≤ n ≤ 100). 둘째 줄에 공백으로 구분된 정수 n개.",
     "ex_out": "Found: -1 at index 1",
@@ -668,6 +674,7 @@ const PROBLEMS = [
     "ex_out": "Max: 9 at index 3\n3 7 2 0 5",
     "title": "Pointer to Maximum",
     "input_desc": "첫째 줄에 정수 n (1 ≤ n ≤ 100). 둘째 줄에 공백으로 구분된 정수 n개.",
+    "createdAt": "2026-05-05T00:00",
     "week": "Week 10A: Pointers"
   },
   {
@@ -3245,7 +3252,8 @@ function renderHome(push=true){
   const noSubmitWeeks = new Set();
   PROBLEMS.forEach(p => { if (p.noSubmit) noSubmitWeeks.add(p.week); });
   const allWeekKeys = Object.keys(groups);
-  const assignWeeks = allWeekKeys.filter(w => !noSubmitWeeks.has(w)).sort((a,b) => b.localeCompare(a));
+  const weekNum = w => { const m = w.match(/Week\s+(\d+)/i); return m ? parseInt(m[1], 10) : 0; };
+  const assignWeeks = allWeekKeys.filter(w => !noSubmitWeeks.has(w)).sort((a,b) => weekNum(b) - weekNum(a) || b.localeCompare(a));
   const submitWeeks = allWeekKeys.filter(w =>  noSubmitWeeks.has(w));
   const weekKeys = [...assignWeeks, ...submitWeeks];
   const filterHtml = `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.8rem">
