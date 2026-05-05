@@ -296,6 +296,7 @@ body.dark .CodeMirror-focused{border-color:#888}
 <body>
 <div class="wrap"><div id="app"></div></div>
 <script src="problems.js"></script>
+<script src="quiz.js"></script>
 <script>
 
 /* ============================================================
@@ -1186,9 +1187,15 @@ function renderHome(push=true){
   if(push) history.pushState({view:'home'},'',' ');
   view = 'home';
   const hist = loadHistory();
+  // quiz tab state
+  if (!window._homeTab) window._homeTab = 'assign';
+  const hasQuizTab = PROBLEMS.some(p => p.quiz && !p._isDraft);
+  const _visibleProbs = window._homeTab === 'quiz'
+    ? PROBLEMS.filter(p => p.quiz && !p._isDraft)
+    : PROBLEMS.filter(p => !p.quiz);
   // group by week
   const groups = {};
-  PROBLEMS.forEach(p => {
+  _visibleProbs.forEach(p => {
     const w = p.week;
     if (!groups[w]) groups[w] = [];
     groups[w].push(p);
@@ -1304,7 +1311,7 @@ function renderHome(push=true){
   // sidebar: unsubmitted list (assignments only, no practice)
   const now = new Date();
   const upcoming = PROBLEMS
-    .filter(p => !p.noSubmit && isOpen(p) && !(hist[p.id] && hist[p.id].length > 0))
+    .filter(p => !p.noSubmit && !p.quiz && isOpen(p) && !(hist[p.id] && hist[p.id].length > 0))
     .sort((a,b) => new Date(a.deadline) - new Date(b.deadline));
   const showAll = window._sidebarAll || false;
   const display = showAll ? upcoming : upcoming.slice(0,5);
@@ -1370,8 +1377,8 @@ function renderHome(push=true){
   })();
 
   // progress (assignment/practice split) — drafts excluded from total (not visible to students)
-  const assignProbs    = PROBLEMS.filter(p => !p.noSubmit && !p._isDraft);
-  const practiceProbs  = PROBLEMS.filter(p =>  p.noSubmit && !p._isDraft);
+  const assignProbs    = PROBLEMS.filter(p => !p.noSubmit && !p._isDraft && !p.quiz);
+  const practiceProbs  = PROBLEMS.filter(p =>  p.noSubmit && !p._isDraft && !p.quiz);
   const doneAssign     = assignProbs.filter(p => hist[p.id] && hist[p.id].length > 0).length;
   const donePractice   = practiceProbs.filter(p => hist[p.id] && hist[p.id].length > 0).length;
   const totalAssign    = assignProbs.length;
@@ -1535,12 +1542,16 @@ function renderHome(push=true){
 
   // week sort: assignment weeks newest-first, noSubmit practice groups always at the bottom
   const noSubmitWeeks = new Set();
-  PROBLEMS.forEach(p => { if (p.noSubmit) noSubmitWeeks.add(p.week); });
+  _visibleProbs.forEach(p => { if (p.noSubmit) noSubmitWeeks.add(p.week); });
   const allWeekKeys = Object.keys(groups);
   const weekNum = w => { const m = w.match(/Week\s+(\d+)/i); return m ? parseInt(m[1], 10) : 0; };
   const assignWeeks = allWeekKeys.filter(w => !noSubmitWeeks.has(w)).sort((a,b) => weekNum(b) - weekNum(a) || b.localeCompare(a));
   const submitWeeks = allWeekKeys.filter(w =>  noSubmitWeeks.has(w));
   const weekKeys = [...assignWeeks, ...submitWeeks];
+  const tabBarHtml = hasQuizTab ? `<div style="display:flex;gap:6px;margin-bottom:.6rem">
+    <button onclick="window._homeTab='assign';renderHome(false)" style="font-size:13px;padding:5px 16px;border-radius:6px${window._homeTab!=='quiz'?';background:var(--text);color:var(--surface);border-color:transparent':''}">과제 / 연습</button>
+    <button onclick="window._homeTab='quiz';renderHome(false)" style="font-size:13px;padding:5px 16px;border-radius:6px${window._homeTab==='quiz'?';background:var(--text);color:var(--surface);border-color:transparent':''}">퀴즈</button>
+  </div>` : '';
   const filterHtml = `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.8rem">
     <button class="wf-btn${!window._weekFilter?' active':''}" data-wf="" onclick="setWeekFilter('')">전체</button>
     ${weekKeys.map(w => {
@@ -1553,6 +1564,20 @@ function renderHome(push=true){
     const cards = groups[w].map(p => {
       const open = isOpen(p);
       const entries = hist[p.id] || [];
+
+      if (p.quiz) {
+        return `<div class="prob-card${p._isDraft?' draft-card':''}" onclick="goProb('${p.id}')">
+          <div class="prob-card-title">
+            <span style="font-family:'Menlo','Consolas',monospace;font-size:11px;font-weight:500;color:var(--text4);margin-right:5px;background:var(--surface3);border:1px solid var(--border);border-radius:3px;padding:1px 4px">${p.id}</span>${p.title}${p._isDraft?'<span class="draft-badge">DRAFT</span>':''}
+          </div>
+          <div class="prob-card-footer">
+            <span class="open-badge open" style="background:#7C3AED;color:#fff;border-color:#7C3AED">퀴즈</span>
+            <div style="margin-left:auto">
+              ${entries.length ? '<span style="font-size:11px;color:var(--accent-text);font-weight:600">제출됨</span>' : sessionStorage.getItem('draft:'+p.id) ? '<span style="font-size:11px;color:var(--link)">작성중</span>' : '<span style="font-size:11px;color:var(--text3)">미제출</span>'}
+            </div>
+          </div>
+        </div>`;
+      }
 
       return `<div class="prob-card${p._isDraft?' draft-card':''}" onclick="goProb('${p.id}')">
         <div class="prob-card-title">
@@ -1688,6 +1713,7 @@ function renderHome(push=true){
           </div>
         </div>
         ${noticeHtml ? `<div style="font-size:12px;color:var(--warn-text);background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:7px;padding:.45rem .9rem;margin-bottom:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${noticeHtml}</div>` : ''}
+        ${tabBarHtml}
         ${filterHtml}
         <div id="prob-sections">${sectionsHtml}</div>
       </div>
@@ -1777,7 +1803,7 @@ function renderProb(pid, push=true){
           <div class="body-text">${p.output_desc}</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
             <div><div class="section-lbl">예제 입력</div><div class="io-box">${p.ex_in}</div></div>
-            <div><div class="section-lbl">예제 출력</div><div class="io-box">${p.ex_out.replace(/\n/g, '<span style="color:var(--text4)">↵</span>\n')}</div></div>
+            <div><div class="section-lbl">예제 출력</div><div class="io-box">${p.quiz ? '<span style="color:var(--text4);font-size:12px">(시험 중 숨김)</span>' : p.ex_out.replace(/\n/g, '<span style="color:var(--text4)">↵</span>\n')}</div></div>
           </div>
           <div id="prof-note-slot"></div>
         </div>
@@ -1796,7 +1822,7 @@ function renderProb(pid, push=true){
           <button onclick="stopTimeAttack()" style="margin-left:auto;font-size:11px;padding:2px 7px;color:var(--error);border:1px solid var(--error);background:none;border-radius:4px;cursor:pointer">종료</button>
         </div>
         <div class="btn-row">
-          ${p.noSubmit ? '<button class="primary" id="sub-btn" onclick="doSubmit()" style="background:var(--link);border-color:var(--link)" title="제출 순위에 반영됩니다 (성적 무관)">제출 (순위 반영)</button>' : '<button class="primary" id="sub-btn" onclick="doSubmit()">제출</button>'}
+          ${p.quiz ? '<button class="primary" id="sub-btn" onclick="doSubmit()">제출 (채점은 시험 종료 후)</button>' : p.noSubmit ? '<button class="primary" id="sub-btn" onclick="doSubmit()" style="background:var(--link);border-color:var(--link)" title="제출 순위에 반영됩니다 (성적 무관)">제출 (순위 반영)</button>' : '<button class="primary" id="sub-btn" onclick="doSubmit()">제출</button>'}
           <button id="test-btn" onclick="doTest()">테스트 실행</button>
           <button onclick="doReset()">초기화</button>
           <button id="ta-btn" onclick="startTimeAttack()" style="margin-left:auto;font-size:12px;color:#e94560;border-color:#e94560" title="타임어택: 복붙 차단 후 타이머 시작">⏱ 타임어택</button>
@@ -1969,6 +1995,34 @@ function switchTab(t){
 function renderResults(){
   const p = _curProb || PROBLEMS.find(x => x.id === curPid);
   if (!p || !$('results')) return;
+
+  if (p.quiz) {
+    const rows = p.cases.map((tc, i) => {
+      const r = tcResults[tc.id];
+      let badge = '', outputHtml = '';
+      if (!r) badge = '<span class="badge wait">대기</span>';
+      else if (r.status === 'running') badge = '<span class="badge run">채점중</span>';
+      else {
+        badge = '<span class="badge" style="background:var(--run-badge-bg);color:var(--run-badge-tx)">실행됨</span>';
+        if (r.stdout !== undefined) {
+          const isMulti = (r.stdout||'').includes('\n');
+          outputHtml = isMulti
+            ? `<div class="tc-detail">출력:<br><code style="display:block;white-space:pre-wrap;margin-top:2px;padding:4px 6px;background:var(--surface3);border-radius:4px">${r.stdout||'(없음)'}</code></div>`
+            : `<div class="tc-detail">출력: <code>${r.stdout||'(없음)'}</code></div>`;
+        }
+      }
+      return `<div class="tc-row">
+        ${badge}
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12px;color:var(--text3)">TC ${i+1}</div>
+          ${outputHtml}
+        </div>
+      </div>`;
+    }).join('');
+    $('results').innerHTML = `<div class="tc-list">${rows}</div>`;
+    return;
+  }
+
   let total = 0, max = 0;
   p.cases.forEach(tc => {
     max += tc.pts;
@@ -2432,6 +2486,28 @@ async function doSubmit(){
   if (!src.trim() || src.trim() === _starter.trim()){
     alert('코드를 작성한 후 제출하세요.'); return;
   }
+  // ── quiz branch ──
+  if (p.quiz) {
+    if (!confirm(`[퀴즈] ${p.title}\n\n제출하시겠습니까?\n(채점은 시험 종료 후 이루어집니다)`)) return;
+    submitting = true;
+    const btn = $('sub-btn');
+    if (btn){ btn.disabled = true; btn.textContent = '제출 중...'; }
+    const ts = new Date().toISOString();
+    const outputs = p.cases.map(tc => (tcResults[tc.id]?.stdout ?? '')).join(' | ');
+    addHistory(p.id, { ts, submitted: true, score: null, max: null, code: src });
+    sessionStorage.removeItem('draft:'+p.id);
+    sendToSheets({ type:'quiz', ts, username, problemId: p.id, problem: p.title, outputs, code: src });
+    submitting = false;
+    if (btn){ btn.disabled = false; btn.textContent = '제출 (채점은 시험 종료 후)'; }
+    if ($('results')){
+      $('results').innerHTML = `<div style="padding:.85rem 1rem;background:var(--accent-bg);border:1px solid var(--accent);
+        border-radius:8px;color:var(--accent-text);font-size:14px;font-weight:600">
+        제출 완료 ✓ &nbsp;<span style="font-weight:400;font-size:12px">${new Date(ts).toLocaleString('ko-KR')}</span>
+      </div>`;
+    }
+    return;
+  }
+
   const isLate = !isOpen(p) && !p.noSubmit;
   const confirmMsg = p.noSubmit
     ? `[연습문제] ${p.title}\n\n제출 순위에 반영됩니다. (성적 무관)\n계속하시겠습니까?`
@@ -3349,6 +3425,32 @@ fetchRatings();
     if (e.target.closest('.CodeMirror') || e.target.closest('textarea')) return;
     e.preventDefault();
     _devWarn('우클릭');
+  });
+
+  // quiz-only: tab/window switch detection
+  function _quizWarn(method){
+    if (isAdmin() || isTA()) return;
+    _devWarnCount++;
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:center;justify-content:center;padding:2rem';
+    overlay.innerHTML = `<div style="background:#fff;border-radius:12px;padding:2rem;max-width:420px;text-align:center">
+      <div style="font-size:48px;margin-bottom:12px">⚠️</div>
+      <div style="font-size:18px;font-weight:700;color:#d32f2f;margin-bottom:8px">퀴즈 중 이탈 감지</div>
+      <div style="font-size:14px;color:#333;line-height:1.6">
+        퀴즈 진행 중 다른 창/탭 이동이 감지되었습니다.<br>
+        <b>이 행위는 관리자에게 자동으로 기록됩니다.</b><br>
+        (${username || '미로그인'} / ${_devWarnCount}회)
+      </div>
+      <button onclick="this.closest('div[style]').remove()" style="margin-top:16px;padding:8px 24px;
+        background:#d32f2f;color:#fff;border:none;border-radius:6px;font-size:14px;cursor:pointer">확인</button>
+    </div>`;
+    document.body.appendChild(overlay);
+  }
+  document.addEventListener('visibilitychange', function(){
+    if (document.hidden && _curProb && _curProb.quiz) _quizWarn('탭 이탈');
+  });
+  window.addEventListener('blur', function(){
+    if (_curProb && _curProb.quiz) _quizWarn('창 이탈');
   });
 })();
 </script>
