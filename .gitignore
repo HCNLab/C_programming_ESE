@@ -13,6 +13,7 @@ project-context.md
 # 채점 결과
 grade_result*.csv
 submissions*.csv
+채점/
 stress-test.mjs
 
 # 강의자료
