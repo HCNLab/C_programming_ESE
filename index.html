@@ -1805,7 +1805,7 @@ function renderProb(pid, push=true){
             <div><div class="section-lbl">예제 입력</div><div class="io-box">${p.ex_in}</div></div>
             <div><div class="section-lbl">예제 출력</div><div class="io-box">${p.quiz ? '<span style="color:var(--text4);font-size:12px">(시험 중 숨김)</span>' : p.ex_out.replace(/\n/g, '<span style="color:var(--text4)">↵</span>\n')}</div></div>
           </div>
-          <div id="prof-note-slot"></div>
+          ${p.quiz ? '' : '<div id="prof-note-slot"></div>'}
         </div>
       </div>
       <div class="code-pane">
@@ -1831,8 +1831,9 @@ function renderProb(pid, push=true){
           ${p.quiz ? '<button class="primary" id="sub-btn" onclick="doSubmit()">제출</button>' : p.noSubmit ? '<button class="primary" id="sub-btn" onclick="doSubmit()" style="background:var(--link);border-color:var(--link)" title="제출 순위에 반영됩니다 (성적 무관)">제출 (순위 반영)</button>' : '<button class="primary" id="sub-btn" onclick="doSubmit()">제출</button>'}
           <button id="test-btn" onclick="doTest()">테스트 실행</button>
           <button onclick="doReset()">초기화</button>
-          <button id="ta-btn" onclick="startTimeAttack()" style="margin-left:auto;font-size:12px;color:#e94560;border-color:#e94560" title="타임어택: 복붙 차단 후 타이머 시작">⏱ 타임어택</button>
+          ${p.quiz ? '' : '<button id="ta-btn" onclick="startTimeAttack()" style="margin-left:auto;font-size:12px;color:#e94560;border-color:#e94560" title="타임어택: 복붙 차단 후 타이머 시작">⏱ 타임어택</button>'}
         </div>
+        ${p.quiz ? '' : `
         <div style="display:flex;align-items:center;gap:10px;padding:.5rem .75rem;margin-bottom:.75rem;background:var(--surface3);border:1px solid var(--border);border-radius:6px;font-size:12px;flex-wrap:wrap">
           <button id="diff-btn" onclick="toggleDifficulty('${p.id}')" style="font-size:12px;padding:4px 10px;cursor:pointer" title="이 문제가 많이 어려우면 눌러주세요 (한 번 더 누르면 취소)">😵 어려워요 <span id="diff-count">-</span></button>
           <span style="color:var(--text4)">많이 어려우면 교수님이 힌트를 드려요</span>
@@ -1849,7 +1850,7 @@ function renderProb(pid, push=true){
             <div><span class="badge fail" style="font-size:10px;min-width:70px">런타임 오류</span> &nbsp;실행 중 비정상 종료 (segfault 등)</div>
             <div><span class="badge fail" style="font-size:10px;min-width:70px">서버 혼잡</span> &nbsp;채점 서버 과부하 — 잠시 후 재시도</div>
           </div>
-        </details>
+        </details>`}
         <div id="results"></div>
       </div>
     </div>`;
