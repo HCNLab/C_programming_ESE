@@ -16,6 +16,14 @@ function doPost(e) {
     return ContentService.createTextOutput(JSON.stringify({ ok: true })).setMimeType(ContentService.MimeType.JSON);
   }
 
+  // ── 경고 로그 → 경고로그 시트 ──
+  if (d.type === 'warn') {
+    const ws = ss.getSheetByName('경고로그') || ss.insertSheet('경고로그');
+    if (ws.getLastRow() === 0) ws.appendRow(['시각','학번_이름','문제ID','방법']);
+    ws.appendRow([new Date(d.ts), d.username || '', d.problemId || '', d.method || '']);
+    return ContentService.createTextOutput(JSON.stringify({ ok: true })).setMimeType(ContentService.MimeType.JSON);
+  }
+
   // ── 퀴즈 제출 → 퀴즈제출 시트 ──
   if (d.type === 'quiz') {
     const qs = ss.getSheetByName('퀴즈제출') || ss.insertSheet('퀴즈제출');
