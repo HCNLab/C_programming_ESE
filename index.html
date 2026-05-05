@@ -1189,9 +1189,9 @@ function renderHome(push=true){
   const hist = loadHistory();
   // quiz tab state
   if (!window._homeTab) window._homeTab = 'assign';
-  const hasQuizTab = PROBLEMS.some(p => p.quiz && !p._isDraft);
+  const hasQuizTab = PROBLEMS.some(p => p.quiz && (!p._isDraft || isAdmin() || isTA()));
   const _visibleProbs = window._homeTab === 'quiz'
-    ? PROBLEMS.filter(p => p.quiz && !p._isDraft)
+    ? PROBLEMS.filter(p => p.quiz && (!p._isDraft || isAdmin() || isTA()))
     : PROBLEMS.filter(p => !p.quiz);
   // group by week
   const groups = {};
