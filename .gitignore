@@ -32,6 +32,7 @@ _admin_*.js
 _admin_*.json
 _admin_*.txt
 apps_script/
+quiz_prepare.js
 
 # OS
 .DS_Store
