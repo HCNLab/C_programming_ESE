@@ -515,6 +515,7 @@ function toggleTheme(){
 
 function isAdmin(){ return firebaseUser && ADMIN_EMAILS.includes(firebaseUser.email); }
 function isTA()   { return firebaseUser && TA_EMAILS.includes(firebaseUser.email); }
+function _userAllowed(p){ return !p.allowedUsers || isAdmin() || isTA() || p.allowedUsers.includes(username); }
 
 /* ── Firestore Drafts (private/published problems) ── */
 // private (draft): Firestore drafts/{pid}, no published field -> staff only
@@ -1189,9 +1190,9 @@ function renderHome(push=true){
   const hist = loadHistory();
   // quiz tab state
   if (!window._homeTab) window._homeTab = 'assign';
-  const hasQuizTab = PROBLEMS.some(p => p.quiz && (!p._isDraft || isAdmin() || isTA()));
+  const hasQuizTab = PROBLEMS.some(p => p.quiz && (!p._isDraft || isAdmin() || isTA()) && _userAllowed(p));
   const _visibleProbs = window._homeTab === 'quiz'
-    ? PROBLEMS.filter(p => p.quiz && (!p._isDraft || isAdmin() || isTA()))
+    ? PROBLEMS.filter(p => p.quiz && (!p._isDraft || isAdmin() || isTA()) && _userAllowed(p))
     : PROBLEMS.filter(p => !p.quiz);
   // group by week
   const groups = {};
@@ -1770,6 +1771,7 @@ function renderProb(pid, push=true){
   if(push) history.pushState({view:'problem',pid},'','#'+pid);
   view = 'problem'; curPid = pid; curTab = 'prob';
   const _pBase = PROBLEMS.find(x => x.id === pid);
+  if (_pBase && !_userAllowed(_pBase)) { renderHome(); return; }
   const generated = buildCases(pid);
   const p = generated ? Object.assign({}, _pBase, {cases: generated}) : _pBase;
   _curProb = p;
