@@ -1102,7 +1102,7 @@ function userBar(){
   const adminBtn = isAdmin() ? `<button onclick="renderAdmin()" style="color:#D85A30;font-weight:600">관리자</button>` : '';
   if (firebaseUser && username) return `<div class="user-chip">${username}
     <button class="link-btn" onclick="doLogout()">로그아웃</button></div>
-    ${adminBtn}<button onclick="renderHistory()">내 이력</button>${themeBtn}`;
+    ${adminBtn}${(PROBLEMS.some(p=>p.quiz)&&!isAdmin()&&!isTA())?'':'<button onclick="renderHistory()">내 이력</button>'}${themeBtn}`;
   if (firebaseUser && !username) return `${adminBtn}<button onclick="doRegisterName()">학번_이름 등록</button>${themeBtn}`;
   return `<button onclick="doLogin()">Google 로그인</button>${themeBtn}`;
 }
@@ -1789,8 +1789,8 @@ function renderProb(pid, push=true){
       window._probLastCodeTs = new Date(hist[0].ts).toLocaleString('ko-KR');
       return `<div class="notice">제출 이력: <strong>${hist.length}회</strong>
         &nbsp;·&nbsp; 최근 ${new Date(hist[0].ts).toLocaleString('ko-KR')}
-        &nbsp;·&nbsp; <span style="color:var(--link);cursor:pointer" onclick="renderHistory()">이력 보기</span>
-        ${hist[0].code ? `&nbsp;·&nbsp; <span style="color:var(--link);cursor:pointer" onclick="showCode(window._probLastCode,window._probLastCodeTitle,window._probLastCodeTs)">최근 제출 코드 보기</span>` : ''}</div>`;
+        ${(PROBLEMS.some(p=>p.quiz)&&!isAdmin()&&!isTA())?'':'&nbsp;·&nbsp; <span style="color:var(--link);cursor:pointer" onclick="renderHistory()">이력 보기</span>'}
+        ${(hist[0].code&&(!PROBLEMS.some(p=>p.quiz)||isAdmin()||isTA())) ? `&nbsp;·&nbsp; <span style="color:var(--link);cursor:pointer" onclick="showCode(window._probLastCode,window._probLastCodeTitle,window._probLastCodeTs)">최근 제출 코드 보기</span>` : ''}</div>`;
     })() : ''}
     <div class="prob-layout">
       <div class="prob-pane">
@@ -3414,8 +3414,8 @@ fetchRatings();
     if (e.ctrlKey && e.shiftKey && ['I','i','J','j','C','c'].includes(e.key)) { e.preventDefault(); _devWarn('Ctrl+Shift+'+e.key.toUpperCase()); return; }
     // Ctrl+U (view source)
     if (e.ctrlKey && (e.key === 'u' || e.key === 'U')) { e.preventDefault(); _devWarn('Ctrl+U'); return; }
-    // Ctrl+S (save)
-    if (e.ctrlKey && (e.key === 's' || e.key === 'S') && !e.shiftKey) { e.preventDefault(); _devWarn('Ctrl+S'); return; }
+    // Ctrl+S (save) — block silently, no warning
+    if (e.ctrlKey && (e.key === 's' || e.key === 'S') && !e.shiftKey) { e.preventDefault(); return; }
   });
 
   // block copy in problem area (Ctrl+C / Ctrl+A)
