@@ -31,6 +31,7 @@ _admin_*.html
 _admin_*.js
 _admin_*.json
 _admin_*.txt
+apps_script/
 
 # OS
 .DS_Store
