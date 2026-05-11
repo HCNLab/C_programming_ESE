@@ -3427,12 +3427,10 @@ fetchRatings();
     }
   });
 
-  // block right-click
+  // block right-click (no warning — trackpad two-finger tap also triggers contextmenu)
   document.addEventListener('contextmenu', function(e){
-    // allow in code editor (copy/paste needed)
     if (e.target.closest('.CodeMirror') || e.target.closest('textarea')) return;
     e.preventDefault();
-    _devWarn('우클릭');
   });
 
   // quiz-only: tab/window switch detection
