@@ -492,6 +492,54 @@ const GEN = {
     return gen();
   },
 
+  /* ── Week 10B: Pointers Part B ── */
+  bp1: (slot)=>{
+    const x=[5,0,-3,100][slot-1]??ri(-50,50);
+    return {input:`${x}`,expected:`Before: ${x}\nAfter: ${x*2}`};
+  },
+  bp2: (slot)=>{
+    const words=['mississippi','hello','programming','pointer','function','variable','algorithm','compiler'];
+    const s=slot<=2?['mississippi','hello'][slot-1]:pick(words);
+    const chars=[...'abcdefghijklmnopqrstuvwxyz'];
+    const c=slot===1?'s':slot===2?'l':slot===3?pick([...new Set(s.split(''))]):pick(chars);
+    const count=[...s].filter(ch=>ch===c).length;
+    return {input:`${s}\n${c}`,expected:`Count: ${count}`};
+  },
+  bp3: (slot)=>{
+    const n=ri(3,6);
+    const arr=Array.from({length:n},()=>ri(-10,10));
+    const choice=slot<=3?slot:ri(1,3);
+    const fns=[x=>x*x,x=>2*x,x=>-x];
+    const result=arr.map(fns[choice-1]);
+    return {input:`${n}\n${arr.join(' ')}\n${choice}`,expected:result.join(' ')};
+  },
+  bp4: (slot)=>{
+    const ms=[3,2,1,3],ns=[4,3,5,2];
+    const m=ms[slot-1]||ri(2,4),n=ns[slot-1]||ri(2,4);
+    const mat=Array.from({length:m},()=>Array.from({length:n},()=>ri(-10,20)));
+    return {input:`${m} ${n}\n`+mat.map(r=>r.join(' ')).join('\n'),expected:mat.map((row,i)=>`Row ${i}: ${Math.max(...row)}`).join('\n')};
+  },
+  bp5: (slot)=>{
+    const pool=['apple','banana','kiwi','cat','dog','pig','cow','hello','hi','programming','c','fun','world'];
+    const n=ri(3,6);
+    const words=Array.from({length:n},()=>pick(pool));
+    // ensure unique longest
+    const maxLen=Math.max(...words.map(w=>w.length));
+    const longest=words.find(w=>w.length===maxLen);
+    return {input:`${n}\n${words.join('\n')}`,expected:longest};
+  },
+  bc1: (slot)=>{
+    const pool=['Hello','abcde','programming','pointer','reverse','function','algorithm'];
+    const s=slot<=2?['Hello','abcde'][slot-1]:pick(pool);
+    return {input:s,expected:s.split('').reverse().join('')};
+  },
+  bc2: (slot)=>{
+    const pool=['apple','banana','cherry','date','fig','grape','kiwi','lemon','mango','orange','peach','plum'];
+    const n=ri(3,6);
+    const words=Array.from({length:n},()=>pick(pool));
+    const sorted=[...words].sort();
+    return {input:`${n}\n${words.join('\n')}`,expected:sorted.join('\n')};
+  },
 
 };
 
@@ -502,6 +550,90 @@ function buildCases(pid){
 }
 
 const PROBLEMS = [
+  {
+    "id": "bp1",
+    "week": "Week 10B: Pointers – Part B",
+    "createdAt": "2026-05-12T00:00",
+    "deadline": "2026-05-18T23:59",
+    "title": "Pointer to Pointer: Modify Variable",
+    "desc": "정수 변수 <code>x</code>의 값을 <b>이중 포인터</b>(<code>int **pp</code>)를 통해 변경하는 프로그램을 작성하시오.<br><br><b>이중 포인터란?</b><br>포인터의 포인터입니다.<br>• <code>int *p = &x;</code> → <code>p</code>는 <code>x</code>의 주소를 저장. <code>*p</code>로 <code>x</code>에 접근.<br>• <code>int **pp = &p;</code> → <code>pp</code>는 <code>p</code>의 주소를 저장. <code>**pp</code>로 <code>x</code>에 접근.<br>• 즉, <code>**pp = 새값;</code> 이라고 쓰면 <code>x</code>의 값이 바뀝니다.<br><br>함수 원형: <code>void change_value(int **pp, int newval)</code><br>이 함수는 <code>**pp = newval;</code> 한 줄이면 됩니다.<br><br><b>코드 (빈칸을 채우세요):</b><div class=\"io-box\">void change_value(int **pp, int newval) {\n    ___ = newval;    // pp를 두 번 역참조하면 x에 도달\n}\n\nint main(void) {\n    int x;\n    scanf(\"%d\", &x);\n\n    int *p = &x;       // p는 x를 가리킴\n    int **pp = ___;    // pp는 p를 가리킴 (p의 주소)\n\n    printf(\"Before: %d\\n\", x);\n    change_value(pp, x * 2);\n    printf(\"After: %d\\n\", x);\n    return 0;\n}</div>",
+    "input_desc": "정수 하나.",
+    "output_desc": "<code>Before: (원래값)</code><br><code>After: (2배값)</code>",
+    "ex_in": "5",
+    "ex_out": "Before: 5\nAfter: 10"
+  },
+  {
+    "id": "bp2",
+    "week": "Week 10B: Pointers – Part B",
+    "createdAt": "2026-05-12T00:00",
+    "deadline": "2026-05-18T23:59",
+    "title": "Count Character (Pointer Traversal)",
+    "desc": "문자열과 문자 하나를 입력받아, <b>포인터로 문자열을 순회</b>하며 해당 문자가 몇 번 등장하는지 세시오.<br><br><b>포인터 순회 패턴:</b><br>문자열은 끝에 <code>'\\0'</code>(널 문자)이 있습니다.<br>① 포인터 <code>p</code>를 문자열 시작에 놓는다: <code>const char *p = s;</code><br>② <code>*p</code>가 <code>'\\0'</code>이 아닌 동안 반복: <code>while (*p)</code><br>③ 현재 문자 확인 후 다음으로 이동: <code>p++</code><br>이 패턴은 <code>strlen</code> 구현과 동일합니다 (강의 p.27).<br><br>함수 원형: <code>int count_char(const char *s, char c)</code><br><br><b>코드 (빈칸을 채우세요):</b><div class=\"io-box\">int count_char(const char *s, char c) {\n    int count = 0;\n    const char *p = ___;   // 포인터를 문자열 시작에 놓기\n    while (___) {          // 널 문자가 아닌 동안 반복\n        if (*p == c)\n            count++;\n        ___;               // 다음 문자로 이동\n    }\n    return count;\n}</div><br><b>main 코드:</b><div class=\"io-box\">int main(void) {\n    char str[101];\n    char c;\n    scanf(\"%s\", str);\n    scanf(\" %c\", &c);   // \" %c\": 앞의 공백이 줄바꿈을 건너뜀\n    printf(\"Count: %d\\n\", count_char(str, c));\n    return 0;\n}</div>",
+    "input_desc": "첫째 줄에 문자열 (길이 100 이하, 공백 없음). 둘째 줄에 문자 한 개.",
+    "output_desc": "형식: <code>Count: (값)</code>",
+    "ex_in": "mississippi\ns",
+    "ex_out": "Count: 4"
+  },
+  {
+    "id": "bp3",
+    "week": "Week 10B: Pointers – Part B",
+    "createdAt": "2026-05-12T00:00",
+    "deadline": "2026-05-18T23:59",
+    "title": "Apply Function (Function Pointer)",
+    "desc": "정수 배열과 변환 선택(1~3)을 입력받아, <b>함수 포인터</b>로 선택된 함수를 각 원소에 적용하시오.<br>선택: 1 = 제곱, 2 = 2배, 3 = 부호 반전.<br><br><b>함수 포인터란?</b><br>C에서 함수도 메모리에 저장되어 있어서, 그 주소를 변수에 담을 수 있습니다.<br>• <code>int (*fn)(int)</code> = \"int를 받아 int를 리턴하는 함수\"를 가리키는 포인터<br>• 함수 이름 자체가 주소이므로: <code>int (*fn)(int) = square;</code> 이렇게 대입<br>• 호출은 보통 함수처럼: <code>fn(5)</code> → <code>square(5)</code>와 동일<br><br><b>dispatch table이란?</b><br>함수 포인터 여러 개를 배열에 넣으면, 번호로 함수를 골라 호출할 수 있습니다 (강의 p.23).<br><code>int (*ops[3])(int) = { square, dbl, neg };</code><br><code>ops[0](5)</code> → <code>square(5)</code>, <code>ops[1](5)</code> → <code>dbl(5)</code>, ...<br><br><b>코드 (빈칸을 채우세요):</b><div class=\"io-box\">#include &lt;stdio.h&gt;\n\nint square(int x) { return ___; }   // x의 제곱\nint dbl(int x)    { return ___; }   // x의 2배\nint neg(int x)    { return ___; }   // x의 부호 반전\n\n// fn은 함수 포인터: int를 받아 int를 리턴하는 함수\nvoid transform(int *arr, int n, int (*fn)(int)) {\n    int i;\n    for (i = 0; i < n; i++)\n        arr[i] = fn(arr[i]);   // fn을 통해 함수 호출\n}\n\nint main(void) {\n    int arr[50], n, choice, i;\n    scanf(\"%d\", &n);\n    for (i = 0; i < n; i++) scanf(\"%d\", &arr[i]);\n    scanf(\"%d\", &choice);\n\n    // 함수 포인터 배열 (dispatch table)\n    int (*ops[3])(int) = { square, dbl, neg };\n    transform(arr, n, ops[___ - 1]);  // choice에 맞는 함수 선택\n\n    for (i = 0; i < n; i++)\n        printf(\"%d%c\", arr[i], i < n-1 ? ' ' : '\\n');\n    return 0;\n}</div>",
+    "input_desc": "첫째 줄에 n (1 이상 50 이하). 둘째 줄에 정수 n개. 셋째 줄에 선택(1, 2, 3).",
+    "output_desc": "변환된 배열을 공백으로 구분하여 한 줄 출력.",
+    "ex_in": "4\n1 2 3 4\n1",
+    "ex_out": "1 4 9 16"
+  },
+  {
+    "id": "bp4",
+    "week": "Week 10B: Pointers – Part B",
+    "createdAt": "2026-05-12T00:00",
+    "deadline": "2026-05-18T23:59",
+    "title": "2D Array Row Max",
+    "desc": "m x n 행렬을 입력받아 각 행의 최댓값을 출력하시오.<br><br><b>접근 방법:</b><br>1차원 배열에서 최댓값을 구하는 방법을 이미 알고 있을 것입니다.<br>① 첫 번째 원소를 최댓값으로 가정<br>② 나머지 원소와 비교하며 더 큰 값이 나오면 갱신<br>이것을 각 행(row)마다 반복하면 됩니다. 바깥 for문이 행, 안쪽 for문이 열입니다.<br><br>함수 원형: <code>void row_max(int mat[][10], int m, int n, int *result)</code><br><code>result[r]</code>에 r번째 행의 최댓값을 저장합니다.<br><br><b>코드 (빈칸을 채우세요):</b><div class=\"io-box\">void row_max(int mat[][10], int m, int n, int *result) {\n    int r, c;\n    for (r = 0; r < m; r++) {\n        result[r] = mat[r][0];           // 각 행의 첫 원소로 초기화\n        for (c = 1; c < n; c++) {\n            if (mat[r][c] > _____)       // 현재 최댓값보다 크면\n                _____ = mat[r][c];       // 갱신\n        }\n    }\n}</div><br><b>main 코드:</b><div class=\"io-box\">int main(void) {\n    int mat[10][10], result[10], m, n, r, c;\n    scanf(\"%d %d\", &m, &n);\n    for (r = 0; r < m; r++)\n        for (c = 0; c < n; c++)\n            scanf(\"%d\", &mat[r][c]);\n\n    row_max(mat, m, n, result);\n\n    for (r = 0; r < m; r++)\n        printf(\"Row %d: %d\\n\", r, result[r]);\n    return 0;\n}</div>",
+    "input_desc": "첫째 줄에 m, n (1 이상 10 이하). 다음 m줄에 각 n개 정수.",
+    "output_desc": "각 행의 최댓값을 <code>Row 0: (값)</code> 형식으로 한 줄씩 출력.",
+    "ex_in": "3 4\n1 2 3 4\n5 6 7 8\n9 10 11 12",
+    "ex_out": "Row 0: 4\nRow 1: 8\nRow 2: 12"
+  },
+  {
+    "id": "bp5",
+    "week": "Week 10B: Pointers – Part B",
+    "createdAt": "2026-05-12T00:00",
+    "deadline": "2026-05-18T23:59",
+    "title": "Longest String",
+    "desc": "n개의 문자열을 입력받아 가장 긴 문자열을 출력하시오. 길이가 같으면 먼저 입력된 것을 출력.<br><br><b>핵심 개념: 문자열 포인터 배열</b><br>문자열 여러 개를 다루려면 2가지가 필요합니다:<br>① <code>char buf[20][51]</code> — 실제 문자열이 저장되는 공간 (2차원 배열)<br>② <code>const char *arr[20]</code> — 각 문자열의 시작 주소를 저장하는 포인터 배열<br><code>arr[i] = buf[i];</code>로 연결하면, <code>arr[i]</code>를 통해 i번째 문자열에 접근할 수 있습니다.<br><code>strlen(arr[i])</code>로 길이를 비교합니다.<br><br>함수 원형: <code>const char *find_longest(const char *arr[], int n)</code><br>가장 긴 문자열의 포인터를 반환합니다.<br><br><b>함수 코드 (빈칸을 채우세요):</b><div class=\"io-box\">const char *find_longest(const char *arr[], int n) {\n    const char *best = arr[0];   // 첫 문자열이 가장 길다고 가정\n    int i;\n    for (i = 1; i < n; i++) {\n        if (strlen(___) > strlen(___))  // i번째가 best보다 길면\n            best = ___;                 // best를 갱신\n    }\n    return best;\n}</div><br><b>main 코드 (빈칸을 채우세요):</b><div class=\"io-box\">int main(void) {\n    char buf[20][51];       // 문자열 저장 공간\n    const char *arr[20];    // 포인터 배열\n    int n, i;\n    scanf(\"%d\", &n);\n    for (i = 0; i < n; i++) {\n        scanf(\"%s\", buf[i]);     // buf[i]에 문자열 저장\n        arr[i] = ___;            // 포인터가 buf[i]를 가리키게\n    }\n    printf(\"%s\\n\", find_longest(arr, n));\n    return 0;\n}</div>",
+    "input_desc": "첫째 줄에 n (1 이상 20 이하). 다음 n줄에 문자열 (각 길이 50 이하, 공백 없음).",
+    "output_desc": "가장 긴 문자열 한 줄 출력.",
+    "ex_in": "3\napple\nbanana\nkiwi",
+    "ex_out": "banana"
+  },
+  {
+    "id": "bc1",
+    "week": "Week 10B: Pointers – Part B",
+    "createdAt": "2026-05-12T00:00",
+    "deadline": "2026-05-18T23:59",
+    "title": "String Reverse (Pointer)",
+    "desc": "문자열을 입력받아 포인터를 이용하여 뒤집어 출력하시오.<br><br><b>알고리즘 (강의 p.15):</b><br>양쪽 끝에 포인터를 하나씩 놓고, 서로를 향해 한 칸씩 이동하며 문자를 교환합니다.<br>① <code>start</code> = 맨 앞 문자, <code>end</code> = 맨 뒤 문자<br>② <code>start < end</code>인 동안: 두 문자를 swap → <code>start++</code>, <code>end--</code><br>③ 가운데서 만나면 종료 → 문자열이 뒤집혀 있음<br><br>예) <code>\"Hello\"</code> → H와 o 교환 → e와 l 교환 → 가운데 l은 그대로 → <code>\"olleH\"</code><br><br>함수 원형: <code>void str_reverse(char *s)</code><br><br><b>코드 (빈칸을 채우세요):</b><div class=\"io-box\">void str_reverse(char *s) {\n    char *start = s;                  // 맨 앞\n    char *end = s + strlen(s) - 1;    // 맨 뒤\n    while (start < end) {\n        // 두 문자 교환 (swap)\n        char tmp = *start;\n        *start = ___;     // start 위치에 end의 문자를\n        *end = ___;       // end 위치에 tmp(원래 start 문자)를\n        start++;          // 앞에서 한 칸 전진\n        ___;              // 뒤에서 한 칸 후퇴\n    }\n}</div><br><b>main 코드:</b><div class=\"io-box\">int main(void) {\n    char s[101];\n    scanf(\"%s\", s);\n    str_reverse(s);\n    printf(\"%s\\n\", s);\n    return 0;\n}</div>",
+    "input_desc": "문자열 하나 (길이 100 이하, 공백 없음).",
+    "output_desc": "뒤집힌 문자열 한 줄 출력.",
+    "ex_in": "Hello",
+    "ex_out": "olleH"
+  },
+  {
+    "id": "bc2",
+    "week": "Week 10B: Pointers – Part B",
+    "createdAt": "2026-05-12T00:00",
+    "deadline": "2026-05-18T23:59",
+    "title": "Sort Strings with qsort",
+    "desc": "n개의 문자열을 입력받아 <code>qsort</code>로 알파벳 순 정렬하여 출력하시오.<br><br><b>qsort 사용법 (강의 p.36~37):</b><br><code>qsort(배열, 개수, 원소크기, 비교함수);</code><br>• 어떤 타입이든 정렬할 수 있는 범용 함수입니다 (<code>stdlib.h</code>).<br>• 대신 \"두 원소를 어떻게 비교할지\" 알려주는 비교 함수를 직접 만들어야 합니다.<br>• 비교 함수는 음수/0/양수를 리턴합니다 (작다/같다/크다).<br><br><b>비교 함수의 <code>const void *</code>가 어려울 수 있습니다:</b><br><code>qsort</code>는 어떤 타입이든 받기 위해 <code>const void *</code>를 씁니다.<br>우리가 정렬하는 건 <code>char *</code> 배열이므로, 비교 함수 안에서 <code>const char **</code>로 캐스팅합니다.<br>이 부분은 패턴으로 외워 두면 됩니다.<br><br><b>비교 함수 (이 부분은 그대로 쓰세요):</b><div class=\"io-box\">int cmp(const void *a, const void *b) {\n    const char *sa = *(const char **)a;\n    const char *sb = *(const char **)b;\n    return strcmp(sa, sb);   // 사전순 비교\n}</div><br><b>main 코드 (빈칸을 채우세요):</b><div class=\"io-box\">int main(void) {\n    char buf[20][51];       // 실제 문자열 저장 공간\n    const char *arr[20];    // 포인터 배열\n    int n, i;\n    scanf(\"%d\", &n);\n    for (i = 0; i < n; i++) {\n        scanf(\"%s\", ___);    // buf[i]에 문자열 저장\n        arr[i] = ___;        // 포인터가 buf[i]를 가리킴\n    }\n\n    qsort(arr, n, sizeof(char *), ___);  // 비교함수 이름\n\n    for (i = 0; i < n; i++)\n        printf(\"%s\\n\", arr[i]);\n    return 0;\n}</div>",
+    "input_desc": "첫째 줄에 n (2 이상 20 이하). 다음 n줄에 문자열 (길이 50 이하, 공백 없음).",
+    "output_desc": "알파벳 오름차순으로 한 줄에 하나씩 출력.",
+    "ex_in": "4\nbanana\napple\ncherry\ndate",
+    "ex_out": "apple\nbanana\ncherry\ndate"
+  },
   {
     "id": "pc1",
     "desc": "정수 배열에서 특정 값의 원소를 모두 제거하는 함수를 <b>읽기/쓰기 두 포인터(read/write pointer)</b>로 in-place 구현하시오.<br>함수 원형: <code>int remove_val(int *arr, int n, int target)</code> — 반환값은 남은 원소 수.<br>Hint: <code>int *rd = arr, *wr = arr;</code>로 시작. <code>rd</code>로 순회하며 <code>*rd != target</code>이면 <code>*wr++ = *rd</code>로 복사. <code>rd</code>는 항상 증가.",
