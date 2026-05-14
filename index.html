@@ -2013,12 +2013,14 @@ function renderResults(){
       else if (r.status === 'running') badge = '<span class="badge run">채점중</span>';
       else {
         badge = '<span class="badge" style="background:var(--run-badge-bg);color:var(--run-badge-tx)">실행됨</span>';
-        if (r.stdout !== undefined) {
-          const isMulti = (r.stdout||'').includes('\n');
-          outputHtml = isMulti
-            ? `<div class="tc-detail">출력:<br><code style="display:block;white-space:pre-wrap;margin-top:2px;padding:4px 6px;background:var(--surface3);border-radius:4px">${r.stdout||'(없음)'}</code></div>`
-            : `<div class="tc-detail">출력: <code>${r.stdout||'(없음)'}</code></div>`;
-        }
+        const inputPreview = (tc.input||'').replace(/\n/g,' / ').slice(0,40);
+        const isMulti = (r.stdout||'').includes('\n');
+        outputHtml = (inputPreview ? `<div class="tc-detail">입력: <code>${inputPreview}</code></div>` : '')
+          + (r.stdout !== undefined
+            ? (isMulti
+              ? `<div class="tc-detail">출력:<br><code style="display:block;white-space:pre-wrap;margin-top:2px;padding:4px 6px;background:var(--surface3);border-radius:4px">${r.stdout||'(없음)'}</code></div>`
+              : `<div class="tc-detail">출력: <code>${r.stdout||'(없음)'}</code></div>`)
+            : '');
       }
       return `<div class="tc-row">
         ${badge}
