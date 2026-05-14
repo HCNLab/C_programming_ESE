@@ -1805,7 +1805,7 @@ function renderProb(pid, push=true){
           <div class="body-text">${p.output_desc}</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
             <div><div class="section-lbl">예제 입력</div><div class="io-box">${p.ex_in}</div></div>
-            <div><div class="section-lbl">예제 출력</div><div class="io-box">${p.quiz ? '<span style="color:var(--text4);font-size:12px">(시험 중 숨김)</span>' : p.ex_out.replace(/\n/g, '<span style="color:var(--text4)">↵</span>\n')}</div></div>
+            <div><div class="section-lbl">예제 출력</div><div class="io-box">${p.ex_out.replace(/\n/g, '<span style="color:var(--text4)">↵</span>\n')}</div></div>
           </div>
           ${p.quiz ? '' : '<div id="prof-note-slot"></div>'}
         </div>
