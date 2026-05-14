@@ -52,7 +52,7 @@ PROBLEMS.push({
   cases: [
     { id: 1, input: '12\n', pts: 2 },
     { id: 2, input: '7\n',  pts: 3 },
-    { id: 3, input: '1\n',  pts: 2 },
+    { id: 3, input: '17\n',  pts: 2 },
     { id: 4, input: '36\n', pts: 3 },
   ],
 });
