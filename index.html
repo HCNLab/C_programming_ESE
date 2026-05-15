@@ -2505,7 +2505,10 @@ async function doSubmit(){
   }
   // ── quiz branch ──
   if (p.quiz) {
-    if (!confirm(`[퀴즈] ${p.title}\n\n제출하시겠습니까?\n(채점은 시험 종료 후 이루어집니다)`)) return;
+    window._suppressQuizWarn = true;
+    const confirmed = confirm(`[퀴즈] ${p.title}\n\n제출하시겠습니까?\n(채점은 시험 종료 후 이루어집니다)`);
+    window._suppressQuizWarn = false;
+    if (!confirmed) return;
     submitting = true;
     const btn = $('sub-btn');
     if (btn){ btn.disabled = true; btn.textContent = '제출 중...'; }
@@ -3445,7 +3448,7 @@ fetchRatings();
 
   // quiz-only: tab/window switch detection
   function _quizWarn(method){
-    if (isAdmin() || isTA()) return;
+    if (isAdmin() || isTA() || window._suppressQuizWarn) return;
     _devWarnCount++;
     sendToSheets({ type:'warn', ts: new Date().toISOString(), username: username||'미로그인', problemId: curPid||'', method });
     const overlay = document.createElement('div');
