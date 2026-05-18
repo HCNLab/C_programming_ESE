@@ -1299,7 +1299,7 @@ function renderHome(push=true){
       <div style="font-size:14px;font-weight:700;color:var(--text)">${sname}님</div>
       <div style="font-size:11px;color:var(--text4);margin:.1rem 0 0">${sid}</div>
       ${rankLabel}
-      <button onclick="renderHistory()" style="font-size:12px;padding:5px 0;width:100%;border-radius:5px;cursor:pointer;background:none;color:var(--link);border:1px solid var(--link);margin-bottom:.4rem">내 제출 이력</button>
+      ${(PROBLEMS.some(p=>p.quiz)&&!isAdmin()&&!isTA())?'':`<button onclick="renderHistory()" style="font-size:12px;padding:5px 0;width:100%;border-radius:5px;cursor:pointer;background:none;color:var(--link);border:1px solid var(--link);margin-bottom:.4rem">내 제출 이력</button>`}
       <button onclick="doLogout()" class="link-btn" style="font-size:11px;color:var(--text5)">로그아웃</button>`;
   })();
 
@@ -1739,7 +1739,7 @@ function renderHome(push=true){
           <div id="progress-body" style="display:${localStorage.getItem('oj_progress_open')==='0'?'none':''}">
             ${_homeProgMode==='class' ? classSidebarHtml : progressHtml}
             <div style="margin-top:.5rem;text-align:right">
-              <span onclick="renderHistory()" style="font-size:11px;color:var(--link);cursor:pointer">${(isAdmin()||isTA())?'상세 대시보드 →':'전체 이력 보기 →'}</span>
+              ${(PROBLEMS.some(p=>p.quiz)&&!isAdmin()&&!isTA())?'':`<span onclick="renderHistory()" style="font-size:11px;color:var(--link);cursor:pointer">${(isAdmin()||isTA())?'상세 대시보드 →':'전체 이력 보기 →'}</span>`}
             </div>
           </div>
         </div>` : ''}
@@ -2113,6 +2113,7 @@ function viewHistCode(idx){
 }
 
 function renderHistory(push=true){
+  if (PROBLEMS.some(p=>p.quiz) && !isAdmin() && !isTA()) { renderHome(); return; }
   if(push) history.pushState({view:'history'},'',' ');
   view = 'history';
   window._histCodes = [];
@@ -2505,9 +2506,7 @@ async function doSubmit(){
   }
   // ── quiz branch ──
   if (p.quiz) {
-    window._suppressQuizWarn = true;
     const confirmed = confirm(`[퀴즈] ${p.title}\n\n제출하시겠습니까?\n(채점은 시험 종료 후 이루어집니다)`);
-    window._suppressQuizWarn = false;
     if (!confirmed) return;
     submitting = true;
     const btn = $('sub-btn');
@@ -3447,6 +3446,9 @@ fetchRatings();
   });
 
   // quiz-only: tab/window switch detection
+  // NOTE: blur 리스너는 제거함 (confirm 대화상자, 주소창 클릭 등에서 오탐 발생).
+  //       visibilitychange만으로 탭 전환/최소화 감지 충분.
+  //       단, 다른 앱(IDE 등)으로 전환은 감지 못함 (Alt+Tab 등).
   function _quizWarn(method){
     if (isAdmin() || isTA() || window._suppressQuizWarn) return;
     _devWarnCount++;
@@ -3468,9 +3470,6 @@ fetchRatings();
   }
   document.addEventListener('visibilitychange', function(){
     if (document.hidden && _curProb && _curProb.quiz) _quizWarn('탭 이탈');
-  });
-  window.addEventListener('blur', function(){
-    if (_curProb && _curProb.quiz) _quizWarn('창 이탈');
   });
 })();
 </script>
