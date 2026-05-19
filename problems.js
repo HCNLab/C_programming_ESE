@@ -541,6 +541,7 @@ const GEN = {
     return {input:`${n}\n${words.join('\n')}`,expected:sorted.join('\n')};
   },
 
+
 };
 
 function buildCases(pid){
@@ -550,6 +551,265 @@ function buildCases(pid){
 }
 
 const PROBLEMS = [
+  {
+    "id": "st1",
+    "cases": [
+      {
+        "input": "Alice\n20260001\n3.85\n",
+        "expected": "Name: Alice\nID:   20260001\nGPA:  3.85\n",
+        "pts": 25,
+        "id": 1
+      },
+      {
+        "pts": 25,
+        "expected": "Name: Bob\nID:   20260042\nGPA:  2.70\n",
+        "input": "Bob\n20260042\n2.70\n",
+        "id": 2
+      },
+      {
+        "id": 3,
+        "pts": 25,
+        "expected": "Name: Charlie\nID:   20261234\nGPA:  4.00\n",
+        "input": "Charlie\n20261234\n4.00\n"
+      },
+      {
+        "input": "Dave\n20260100\n1.00\n",
+        "expected": "Name: Dave\nID:   20260100\nGPA:  1.00\n",
+        "pts": 25,
+        "id": 4
+      }
+    ],
+    "deadline": "2026-05-25T23:59",
+    "input_desc": "세 줄 — 이름(공백없음), 학번(정수), 학점(실수).",
+    "ex_out": "Name: Alice\nID:   20260001\nGPA:  3.85",
+    "desc": "학생 정보를 구조체로 표현하고 출력하시오.<br><code>typedef struct { char name[50]; int id; double gpa; } Student;</code>를 정의하시오.<br>Hint: <code>scanf(\"%s\", s.name)</code> — char 배열은 & 없이. double 입력은 <code>%lf</code>.",
+    "ex_in": "Alice\n20260001\n3.85",
+    "output_desc": "<code>Name: 이름</code><br><code>ID:   학번</code><br><code>GPA:  학점</code> (소수점 둘째 자리)",
+    "week": "Week 12A: Structs – Part A",
+    "title": "Print Student Card"
+  },
+  {
+    "id": "st2",
+    "cases": [
+      {
+        "expected": "Area: 12\nPerimeter: 14\n",
+        "pts": 25,
+        "input": "3 4\n",
+        "id": 1
+      },
+      {
+        "expected": "Area: 35\nPerimeter: 24\n",
+        "pts": 25,
+        "input": "7 5\n",
+        "id": 2
+      },
+      {
+        "id": 3,
+        "pts": 25,
+        "expected": "Area: 80\nPerimeter: 36\n",
+        "input": "10 8\n"
+      },
+      {
+        "input": "1 15\n",
+        "pts": 25,
+        "expected": "Area: 15\nPerimeter: 32\n",
+        "id": 4
+      }
+    ],
+    "deadline": "2026-05-25T23:59",
+    "input_desc": "한 줄에 가로(w)와 세로(h) (1 이상 1000 이하 정수).",
+    "ex_out": "Area: 12\nPerimeter: 14",
+    "desc": "직사각형의 가로·세로를 구조체로 표현하고 넓이와 둘레를 출력하시오.<br><code>typedef struct { int w; int h; } Rect;</code>를 정의하고 <code>int area(Rect r)</code>, <code>int perimeter(Rect r)</code> 함수를 작성하시오.<br>함수가 <code>Rect r</code>(값)을 받으므로 호출 시 & 없이 넘깁니다.",
+    "ex_in": "3 4",
+    "output_desc": "<code>Area: (넓이)</code><br><code>Perimeter: (둘레)</code>",
+    "week": "Week 12A: Structs – Part A",
+    "title": "Rectangle Area and Perimeter"
+  },
+  {
+    "id": "st3",
+    "desc": "학생 이름·현재점수·보너스를 입력받아 포인터로 점수를 갱신하고 출력하시오. 최종 점수가 100을 넘으면 100으로 제한합니다.<br>함수 원형: <code>void add_bonus(Student *s, int bonus)</code><br>Hint: <code>s-&gt;score += bonus;</code> — 포인터 매개변수는 <code>-&gt;</code>로 접근. 호출 시 <code>add_bonus(&amp;stu, bonus)</code>.",
+    "week": "Week 12A: Structs – Part A",
+    "output_desc": "<code>Updated: 이름 gets 최종점수</code>",
+    "ex_in": "Alice 85 10",
+    "cases": [
+      {
+        "expected": "Updated: Alice gets 95\n",
+        "pts": 25,
+        "input": "Alice 85 10\n",
+        "id": 1
+      },
+      {
+        "id": 2,
+        "expected": "Updated: Bob gets 100\n",
+        "pts": 25,
+        "input": "Bob 95 10\n"
+      },
+      {
+        "id": 3,
+        "pts": 25,
+        "expected": "Updated: Carol gets 55\n",
+        "input": "Carol 60 -5\n"
+      },
+      {
+        "id": 4,
+        "pts": 25,
+        "expected": "Updated: Dave gets 100\n",
+        "input": "Dave 50 50\n"
+      }
+    ],
+    "deadline": "2026-05-25T23:59",
+    "ex_out": "Updated: Alice gets 95",
+    "input_desc": "한 줄에 이름(공백없음) 현재점수(정수) 보너스(정수).",
+    "title": "Update Score via Pointer"
+  },
+  {
+    "id": "st4",
+    "deadline": "2026-05-25T23:59",
+    "cases": [
+      {
+        "id": 1,
+        "input": "3\nAlice 85\nBob 92\nCarol 78\n",
+        "pts": 25,
+        "expected": "Bob 92\nAlice 85\nCarol 78\n"
+      },
+      {
+        "pts": 25,
+        "expected": "Dave 95\nGrace 90\nEve 88\nFrank 72\n",
+        "input": "4\nDave 95\nEve 88\nFrank 72\nGrace 90\n",
+        "id": 2
+      },
+      {
+        "input": "1\nSolo 100\n",
+        "pts": 25,
+        "expected": "Solo 100\n",
+        "id": 3
+      },
+      {
+        "expected": "B 90\nD 80\nC 70\nE 60\nA 50\n",
+        "pts": 25,
+        "input": "5\nA 50\nB 90\nC 70\nD 80\nE 60\n",
+        "id": 4
+      }
+    ],
+    "ex_out": "Bob 92\nAlice 85\nCarol 78",
+    "input_desc": "첫째 줄에 N (1 이상 100 이하). 다음 N줄에 이름(공백없음)과 점수(정수).",
+    "desc": "N명의 학생 이름과 점수를 입력받아 점수 내림차순으로 정렬하여 출력하시오.<br><code>typedef struct { char name[30]; int score; } Student;</code>를 정의하고 bubble sort로 정렬하시오.<br>Hint: 구조체 통째로 swap — <code>Student tmp = arr[j]; arr[j] = arr[j+1]; arr[j+1] = tmp;</code>",
+    "week": "Week 12A: Structs – Part A",
+    "ex_in": "3\nAlice 85\nBob 92\nCarol 78",
+    "output_desc": "점수 내림차순으로 이름과 점수를 한 줄씩 출력.",
+    "title": "Sort Students by Score"
+  },
+  {
+    "id": "stc1",
+    "week": "Week 12A: Structs – Part A",
+    "ex_in": "0 0 3 4",
+    "output_desc": "<code>Midpoint: (X.XX, Y.XX)</code><br><code>Distance: D.XX</code>",
+    "desc": "두 점의 좌표를 입력받아 중점과 유클리드 거리를 출력하시오.<br><code>typedef struct { double x; double y; } Point;</code>를 정의하고 <code>Point midpoint(Point a, Point b)</code>, <code>double distance(Point a, Point b)</code>를 작성하시오.<br>Hint: <code>#include &lt;math.h&gt;</code> 필요. <code>sqrt(dx*dx + dy*dy)</code>. 함수에서 struct를 값으로 반환 가능.",
+    "ex_out": "Midpoint: (1.50, 2.00)\nDistance: 5.00",
+    "input_desc": "한 줄에 x1 y1 x2 y2 (실수 또는 정수, 공백 구분).",
+    "cases": [
+      {
+        "id": 1,
+        "input": "0 0 3 4\n",
+        "pts": 25,
+        "expected": "Midpoint: (1.50, 2.00)\nDistance: 5.00\n"
+      },
+      {
+        "id": 2,
+        "expected": "Midpoint: (2.50, 3.00)\nDistance: 5.00\n",
+        "pts": 25,
+        "input": "1 1 4 5\n"
+      },
+      {
+        "id": 3,
+        "input": "0 0 1 0\n",
+        "expected": "Midpoint: (0.50, 0.00)\nDistance: 1.00\n",
+        "pts": 25
+      },
+      {
+        "input": "-1 -1 1 1\n",
+        "pts": 25,
+        "expected": "Midpoint: (0.00, 0.00)\nDistance: 2.83\n",
+        "id": 4
+      }
+    ],
+    "deadline": "2026-05-25T23:59",
+    "title": "Point Distance and Midpoint"
+  },
+  {
+    "id": "stc2",
+    "input_desc": "첫째 줄에 N (1 이상 100 이하).<br>다음 N줄에 센서 id와 온도(정수).",
+    "ex_out": "Sensor 1: OK\nSensor 2: ALERT\nSensor 3: OK\nAlerts: 1\nHottest: Sensor 2 (85)",
+    "deadline": "2026-05-25T23:59",
+    "cases": [
+      {
+        "id": 1,
+        "expected": "Sensor 1: OK\nSensor 2: ALERT\nSensor 3: OK\nAlerts: 1\nHottest: Sensor 2 (85)\n",
+        "pts": 25,
+        "input": "3\n1 75\n2 85\n3 60\n"
+      },
+      {
+        "id": 2,
+        "input": "4\n1 80\n2 81\n3 79\n4 100\n",
+        "expected": "Sensor 1: OK\nSensor 2: ALERT\nSensor 3: OK\nSensor 4: ALERT\nAlerts: 2\nHottest: Sensor 4 (100)\n",
+        "pts": 25
+      },
+      {
+        "id": 3,
+        "expected": "Sensor 1: OK\nSensor 2: OK\nAlerts: 0\nHottest: Sensor 1 (50)\n",
+        "pts": 25,
+        "input": "2\n1 50\n2 50\n"
+      },
+      {
+        "input": "3\n1 90\n2 85\n3 95\n",
+        "expected": "Sensor 1: ALERT\nSensor 2: ALERT\nSensor 3: ALERT\nAlerts: 3\nHottest: Sensor 3 (95)\n",
+        "pts": 25,
+        "id": 4
+      }
+    ],
+    "output_desc": "각 센서에 대해 <code>Sensor id: OK</code> 또는 <code>Sensor id: ALERT</code> 출력.<br>마지막 두 줄에 <code>Alerts: (개수)</code>, <code>Hottest: Sensor id (temp)</code>.",
+    "ex_in": "3\n1 75\n2 85\n3 60",
+    "week": "Week 12A: Structs – Part A",
+    "desc": "N개의 센서 id와 온도를 구조체 배열로 입력받아 상태를 출력하시오.<br><code>typedef struct { int id; int temp; } Sensor;</code>를 정의하시오.<br>함수 <code>int is_alert(const Sensor *s)</code>를 작성하여 온도가 80 초과이면 1, 이하이면 0을 반환하시오.<br>마지막에 경보 횟수와 가장 온도가 높은 센서를 출력하시오.<br>Hint: <code>const Sensor *s</code> — 읽기 전용 포인터, 호출 시 <code>is_alert(&amp;arr[i])</code>.",
+    "title": "Sensor Temperature Alert"
+  },
+  {
+    "id": "stc3",
+    "deadline": "2026-05-25T23:59",
+    "cases": [
+      {
+        "pts": 25,
+        "expected": "Top: Carol (91)\nBottom: Bob (72)\nAverage: 82.67\n",
+        "input": "3\nAlice 85\nBob 72\nCarol 91\n",
+        "id": 1
+      },
+      {
+        "expected": "Top: Eve (90)\nBottom: Dave (70)\nAverage: 82.50\n",
+        "pts": 25,
+        "input": "4\nDave 70\nEve 90\nFrank 80\nGrace 90\n",
+        "id": 2
+      },
+      {
+        "id": 3,
+        "input": "1\nSolo 100\n",
+        "pts": 25,
+        "expected": "Top: Solo (100)\nBottom: Solo (100)\nAverage: 100.00\n"
+      },
+      {
+        "pts": 25,
+        "expected": "Top: E (100)\nBottom: A (60)\nAverage: 80.00\n",
+        "input": "5\nA 60\nB 70\nC 80\nD 90\nE 100\n",
+        "id": 4
+      }
+    ],
+    "input_desc": "첫째 줄에 N (1 이상 100 이하). 다음 N줄에 이름(공백없음)과 점수(정수).",
+    "ex_out": "Top: Carol (91)\nBottom: Bob (72)\nAverage: 82.67",
+    "desc": "N명의 학생 이름과 점수를 입력받아 최고점 학생, 최저점 학생, 평균을 출력하시오.<br><code>typedef struct { char name[30]; int score; } Student;</code>를 정의하시오.<br>Hint: best, worst 인덱스를 따로 추적하고 합계를 누적해서 평균을 계산.",
+    "ex_in": "3\nAlice 85\nBob 72\nCarol 91",
+    "output_desc": "<code>Top: 이름 (점수)</code><br><code>Bottom: 이름 (점수)</code><br><code>Average: 평균</code> (소수점 둘째 자리)",
+    "week": "Week 12A: Structs – Part A",
+    "title": "Grade Statistics"
+  },
   {
     "id": "bp1",
     "week": "Week 10B: Pointers – Part B",
