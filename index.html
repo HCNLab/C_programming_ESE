@@ -1201,16 +1201,12 @@ function renderHome(push=true){
     if (!groups[w]) groups[w] = [];
     groups[w].push(p);
   });
-  // sort within each week: practice (p/lp) -> challenge (c/lc) -> ascending number
-  // (ensures easy problems appear first even if Firestore returns alphabetical order)
+  // sort within each week: basic/practice first -> challenge last, then ascending number
   const _sortKey = (p) => {
     const id = p.id || '';
-    const isChallenge = /c\d/.test(id);   // c1, lc1, fc1, ac1, sc1... -> challenge
-    const isPractice  = /p\d/.test(id);   // p1, lp1, fp1, ap1, sp1... -> practice
+    const isChallenge = /c\d/.test(id);   // c1, uc1, lc1, stc1... -> challenge
     const num = parseInt(id.replace(/\D/g,''), 10) || 0;
-    // practice: 0~999, challenge: 1000~1999, other: large value (preserves original order)
-    const base = isPractice ? 0 : isChallenge ? 1000 : 5000;
-    return base + num;
+    return (isChallenge ? 1000 : 0) + num;
   };
   Object.keys(groups).forEach(w => {
     // stable sort: equal keys preserve original order
