@@ -494,7 +494,7 @@ async function runCase(tc, src){
     const stdout = trim(d.program_output || '');
     const exp    = trim(tc.expected);
     if (stdout === exp){
-      return { status:'pass', stdout, expected:exp };
+      return { status:'pass', stdout, expected:exp, input:tc.input };
     } else {
       const msg = (serverBusy && stdout === '') ? '서버 혼잡 — 잠시 후 재시도' : '오답';
       return { status:'fail', msg, stdout, expected:exp, input:tc.input };
