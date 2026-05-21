@@ -552,6 +552,272 @@ function buildCases(pid){
 
 const PROBLEMS = [
   {
+    "id": "u1",
+    "input_desc": "첫째 줄에 명령 수 N (1 이상 100 이하).<br>다음 N줄에 방향 번호 (0=NORTH, 1=EAST, 2=SOUTH, 3=WEST).<br>로봇의 초기 위치는 (0, 0), 초기 이동 횟수는 0이다.",
+    "deadline": "2026-05-27T23:59",
+    "createdAt": "2026-05-22T00:00",
+    "output_desc": "최종 위치와 이동 횟수를 한 줄에 출력: <code>x y steps</code>",
+    "ex_out": "2 0 4",
+    "cases": [
+      {
+        "input": "4\n0\n1\n1\n2\n",
+        "id": 1,
+        "pts": 25,
+        "expected": "2 0 4\n"
+      },
+      {
+        "input": "5\n3\n3\n0\n0\n0\n",
+        "id": 2,
+        "pts": 25,
+        "expected": "-2 3 5\n"
+      },
+      {
+        "pts": 25,
+        "expected": "1 1 6\n",
+        "input": "6\n0\n1\n2\n3\n0\n1\n",
+        "id": 3
+      },
+      {
+        "expected": "-1 -2 3\n",
+        "pts": 25,
+        "id": 4,
+        "input": "3\n2\n2\n3\n"
+      }
+    ],
+    "ex_in": "4\n0\n1\n1\n2",
+    "title": "Robot Navigator",
+    "week": "Week 12B: Structs – Part B",
+    "desc": "N개의 방향 명령을 받아 로봇을 이동시키고 최종 위치와 이동 횟수를 출력하시오.<br><code>typedef enum { NORTH=0, EAST, SOUTH, WEST } Direction;</code>과 위치·이동 횟수를 담는 <code>typedef struct { int x; int y; int steps; } Robot;</code>를 정의하시오.<br>함수 <code>void advance(Robot *r, Direction d)</code>를 작성하시오: steps를 1 증가시킨 뒤, <code>switch(d)</code>로 방향에 따라 x 또는 y를 갱신합니다. (NORTH: y+1, EAST: x+1, SOUTH: y-1, WEST: x-1)<br>Hint: switch의 case 레이블에 enum 상수를 쓰면 0/1/2/3보다 훨씬 읽기 쉽습니다."
+  },
+  {
+    "id": "u2",
+    "ex_out": "GREEN\nYELLOW\nRED",
+    "input_desc": "한 줄에 초기 상태(0=RED, 1=YELLOW, 2=GREEN)와 N.",
+    "deadline": "2026-05-27T23:59",
+    "createdAt": "2026-05-22T00:00",
+    "output_desc": "N줄에 advance() 호출 후의 상태 이름을 출력.",
+    "desc": "신호등 유한 상태 머신(FSM)을 구현하시오.<br><code>typedef enum { RED, YELLOW, GREEN } LightState;</code>와 현재 상태·전이 횟수를 담는 <code>TrafficLight</code> struct를 정의하시오.<br>함수 <code>void advance(TrafficLight *tl)</code>를 작성하시오: 전이 횟수를 1 증가시킨 뒤, 현재 상태에 따라 다음 상태로 전이합니다.<br>전이 규칙: RED → GREEN → YELLOW → RED (순환).<br>Hint: enum 값을 문자열로 변환할 때 문자열 배열을 인덱스로 조회하면 편리합니다 (강의 슬라이드 참고).",
+    "week": "Week 12B: Structs – Part B",
+    "ex_in": "0 3",
+    "title": "Traffic Light FSM",
+    "cases": [
+      {
+        "expected": "GREEN\nYELLOW\nRED\n",
+        "pts": 25,
+        "id": 1,
+        "input": "0 3\n"
+      },
+      {
+        "input": "1 3\n",
+        "id": 2,
+        "pts": 25,
+        "expected": "RED\nGREEN\nYELLOW\n"
+      },
+      {
+        "pts": 25,
+        "expected": "YELLOW\nRED\nGREEN\nYELLOW\n",
+        "input": "2 4\n",
+        "id": 3
+      },
+      {
+        "id": 4,
+        "input": "0 6\n",
+        "expected": "GREEN\nYELLOW\nRED\nGREEN\nYELLOW\nRED\n",
+        "pts": 25
+      }
+    ]
+  },
+  {
+    "id": "u3",
+    "week": "Week 12B: Structs – Part B",
+    "desc": "N개의 값을 배열에 저장한 뒤, M개의 인덱스 쿼리에 답하시오.<br><code>typedef enum { TYPE_INT, TYPE_DOUBLE } VType;</code>와 내부에 <code>union { int i; double d; } data;</code>를 갖는 <code>Value</code> struct를 정의하시오.<br>저장 시점에 <code>arr[i].type</code>과 해당 union 멤버에 값을 기록하시오.<br>쿼리 시점에는 인덱스만 주어지므로, <code>arr[idx].type</code>을 확인해야만 어떤 멤버를 읽을지 알 수 있습니다.",
+    "cases": [
+      {
+        "id": 1,
+        "input": "4\ni 42\nd 3.14\ni -5\nd 1.00\n3\n2\n0\n3\n",
+        "expected": "INT: -5\nINT: 42\nDOUBLE: 1.00\n",
+        "pts": 25
+      },
+      {
+        "pts": 25,
+        "expected": "INT: 10\nDOUBLE: 0.50\n",
+        "input": "3\nd 0.50\ni 10\nd 2.75\n2\n1\n0\n",
+        "id": 2
+      },
+      {
+        "pts": 25,
+        "expected": "DOUBLE: 5.00\nDOUBLE: 3.14\nINT: 1\nINT: 4\n",
+        "input": "5\ni 1\ni 2\nd 3.14\ni 4\nd 5.00\n4\n4\n2\n0\n3\n",
+        "id": 3
+      },
+      {
+        "pts": 25,
+        "expected": "DOUBLE: 99.99\nINT: -7\nDOUBLE: 99.99\n",
+        "input": "2\nd 99.99\ni -7\n3\n0\n1\n0\n",
+        "id": 4
+      }
+    ],
+    "title": "Type Store",
+    "ex_in": "4\ni 42\nd 3.14\ni -5\nd 1.00\n3\n2\n0\n3",
+    "ex_out": "INT: -5\nINT: 42\nDOUBLE: 1.00",
+    "createdAt": "2026-05-22T00:00",
+    "output_desc": "M줄에 걸쳐 출력. <code>INT: 값</code> 또는 <code>DOUBLE: 값</code>. double은 <code>%.2f</code>.",
+    "input_desc": "첫째 줄에 N (1 이상 100 이하).<br>다음 N줄에 타입(<code>i</code>=int, <code>d</code>=double)과 값 (0번부터 순서대로 저장).<br>다음 줄에 쿼리 수 M.<br>다음 M줄에 조회할 인덱스 (0 이상 N-1 이하).",
+    "deadline": "2026-05-27T23:59"
+  },
+  {
+    "id": "u4",
+    "ex_in": "4\n0 25\n1 1013\n0 30\n1 1010",
+    "title": "Sensor Category Stats",
+    "cases": [
+      {
+        "expected": "TEMP: count=2 min=25 max=30\nPRESSURE: count=2 min=1010 max=1013\n",
+        "pts": 25,
+        "id": 1,
+        "input": "4\n0 25\n1 1013\n0 30\n1 1010\n"
+      },
+      {
+        "pts": 25,
+        "expected": "TEMP: count=3 min=20 max=35\nPRESSURE: count=0 min=N/A max=N/A\n",
+        "input": "3\n0 20\n0 35\n0 28\n",
+        "id": 2
+      },
+      {
+        "expected": "TEMP: count=0 min=N/A max=N/A\nPRESSURE: count=1 min=1000 max=1000\n",
+        "pts": 25,
+        "id": 3,
+        "input": "1\n1 1000\n"
+      },
+      {
+        "expected": "TEMP: count=3 min=15 max=22\nPRESSURE: count=3 min=1005 max=1020\n",
+        "pts": 25,
+        "id": 4,
+        "input": "6\n0 15\n1 1020\n0 22\n1 1005\n0 18\n1 1015\n"
+      }
+    ],
+    "desc": "N개의 센서 데이터를 종류별로 분류하여 최솟값·최댓값·개수를 출력하시오.<br><code>typedef enum { TEMP=0, PRESSURE=1 } SensorType;</code>과 <code>Sensor</code> struct(type, value)를 정의하시오.<br>TEMP와 PRESSURE 각각의 최솟값·최댓값·개수를 별도 변수로 관리하고, 첫 데이터가 들어올 때 min = max = value로 초기화하시오.<br>해당 종류의 데이터가 없으면 <code>min=N/A max=N/A</code>를 출력하시오.",
+    "week": "Week 12B: Structs – Part B",
+    "deadline": "2026-05-27T23:59",
+    "input_desc": "첫째 줄에 N.<br>다음 N줄에 type(0=온도, 1=압력)과 value(정수).",
+    "output_desc": "<code>TEMP: count=X min=Y max=Z</code><br><code>PRESSURE: count=X min=Y max=Z</code><br>데이터 없으면 <code>min=N/A max=N/A</code>.",
+    "createdAt": "2026-05-22T00:00",
+    "ex_out": "TEMP: count=2 min=25 max=30\nPRESSURE: count=2 min=1010 max=1013"
+  },
+  {
+    "id": "uc1",
+    "ex_out": "41 00 00 00",
+    "output_desc": "b[0]~b[3]을 두 자리 대문자 16진수, 공백 구분 출력. (<code>%02X</code>)",
+    "createdAt": "2026-05-22T00:00",
+    "deadline": "2026-05-27T23:59",
+    "input_desc": "한 줄에 부호 없는 정수 N (0 이상 2³²-1 이하).",
+    "week": "Week 12B: Structs – Part B",
+    "desc": "부호 없는 정수를 union으로 4바이트로 분해하여 16진수로 출력하시오.<br><code>typedef union { unsigned int i; unsigned char b[4]; } Word;</code>를 정의하시오.<br><code>w.i</code>에 값을 쓰면 같은 메모리를 <code>w.b[0]~w.b[3]</code>으로 바이트 단위로 읽을 수 있다.<br>Hint: <code>b[0]</code>이 최하위 바이트(LSB). 예) 65 = 0x41이면 b[0]=0x41, 나머지 b[1]~b[3]=0x00.",
+    "cases": [
+      {
+        "pts": 25,
+        "expected": "41 00 00 00\n",
+        "input": "65\n",
+        "id": 1
+      },
+      {
+        "input": "0\n",
+        "id": 2,
+        "pts": 25,
+        "expected": "00 00 00 00\n"
+      },
+      {
+        "pts": 25,
+        "expected": "00 01 00 00\n",
+        "input": "256\n",
+        "id": 3
+      },
+      {
+        "pts": 25,
+        "expected": "78 56 34 12\n",
+        "input": "305419896\n",
+        "id": 4
+      }
+    ],
+    "ex_in": "65",
+    "title": "Union Byte Inspector"
+  },
+  {
+    "id": "uc2",
+    "ex_out": "0x01",
+    "input_desc": "한 줄에 ready(0 또는 1), err(0 또는 1), mode(0~7).",
+    "deadline": "2026-05-27T23:59",
+    "createdAt": "2026-05-22T00:00",
+    "output_desc": "최종 레지스터 값을 <code>0x%02X</code> 형식으로 출력.",
+    "week": "Week 12B: Structs – Part B",
+    "desc": "비트 필드 struct와 union으로 레지스터 값을 설정하고 출력하시오.<br><code>unsigned char ready:1; err:1; mode:3; reserved:3;</code> 멤버를 갖는 <code>StatusBits</code> struct와 <code>unsigned char reg</code>를 공유하는 union <code>StatusReg</code>를 정의하시오.<br><code>s.reg = 0;</code>으로 초기화 후 각 bits 멤버에 입력값을 대입하고, <code>s.reg</code>를 출력하시오.<br>Hint: bit 위치 — ready=bit0, err=bit1, mode=bits2~4. ready=1,err=1,mode=5 → 1+2+20 = 0x17.",
+    "cases": [
+      {
+        "pts": 25,
+        "expected": "0x01\n",
+        "input": "1 0 0\n",
+        "id": 1
+      },
+      {
+        "expected": "0x17\n",
+        "pts": 25,
+        "id": 2,
+        "input": "1 1 5\n"
+      },
+      {
+        "input": "0 0 7\n",
+        "id": 3,
+        "pts": 25,
+        "expected": "0x1C\n"
+      },
+      {
+        "input": "1 1 0\n",
+        "id": 4,
+        "pts": 25,
+        "expected": "0x03\n"
+      }
+    ],
+    "ex_in": "1 0 0",
+    "title": "Bit Field Register"
+  },
+  {
+    "id": "uc3",
+    "deadline": "2026-05-27T23:59",
+    "input_desc": "첫째 줄에 N.<br>다음 N줄에 day(1~7) hour minute event(공백 없음).",
+    "output_desc": "정렬된 순서로 출력. u1과 동일하게 주말은 <code>[Weekend]</code> 접두어.",
+    "createdAt": "2026-05-22T00:00",
+    "ex_out": "Mon 09:00 Class\nFri 17:00 Gym\n[Weekend] Sat 14:00 Meeting",
+    "title": "Appointment Sorter",
+    "ex_in": "3\n5 17 0 Gym\n1 9 0 Class\n6 14 0 Meeting",
+    "cases": [
+      {
+        "expected": "Mon 09:00 Class\nFri 17:00 Gym\n[Weekend] Sat 14:00 Meeting\n",
+        "pts": 25,
+        "id": 1,
+        "input": "3\n5 17 0 Gym\n1 9 0 Class\n6 14 0 Meeting\n"
+      },
+      {
+        "id": 2,
+        "input": "4\n7 10 0 Brunch\n2 8 0 Standup\n5 16 0 Review\n2 14 0 Lunch\n",
+        "expected": "Tue 08:00 Standup\nTue 14:00 Lunch\nFri 16:00 Review\n[Weekend] Sun 10:00 Brunch\n",
+        "pts": 25
+      },
+      {
+        "pts": 25,
+        "expected": "Mon 09:45 C\nMon 15:00 A\nMon 15:30 B\n",
+        "input": "3\n1 15 30 B\n1 15 0 A\n1 9 45 C\n",
+        "id": 3
+      },
+      {
+        "expected": "Thu 12:00 DocReview\n[Weekend] Sat 20:00 Party\n[Weekend] Sun 10:00 Brunch\n",
+        "pts": 25,
+        "id": 4,
+        "input": "3\n6 20 0 Party\n4 12 0 DocReview\n7 10 0 Brunch\n"
+      }
+    ],
+    "desc": "N개의 약속을 요일 오름차순으로, 같은 요일이면 시간 오름차순(hour → minute)으로 정렬하여 출력하시오.<br><code>typedef enum { MON=1, TUE, WED, THU, FRI, SAT, SUN } Weekday;</code>와 <code>typedef struct { Weekday day; int hour; int minute; char event[50]; } Appointment;</code>를 정의하시오. 요일 번호에 대응하는 이름 문자열 배열을 만들어 출력에 활용하시오.<br>Bubble sort로 정렬하시오. 여러 필드를 비교할 때 우선순위를 어떻게 하나의 비교 조건으로 만들지 생각해 보세요.<br>Hint: 구조체 배열 정렬은 12A에서 배운 것과 동일합니다 — 구조체를 통째로 swap합니다.",
+    "week": "Week 12B: Structs – Part B"
+  },
+  {
     "id": "st1",
     "cases": [
       {
