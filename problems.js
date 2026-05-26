@@ -552,6 +552,272 @@ function buildCases(pid){
 
 const PROBLEMS = [
   {
+    "id": "dm1",
+    "deadline": "2026-06-01T23:59",
+    "week": "Week 13A: Dynamic Memory – Part A",
+    "cases": [
+      {
+        "pts": 25,
+        "expected": "0 1 2 3 4\n",
+        "input": "5\n",
+        "id": 1
+      },
+      {
+        "input": "1\n",
+        "pts": 25,
+        "expected": "0\n",
+        "id": 2
+      },
+      {
+        "pts": 25,
+        "input": "3\n",
+        "expected": "0 1 2\n",
+        "id": 3
+      },
+      {
+        "id": 4,
+        "expected": "0 1 2 3 4 5 6 7 8 9\n",
+        "input": "10\n",
+        "pts": 25
+      }
+    ],
+    "title": "Allocate and Fill (Warm-up)",
+    "ex_out": "0 1 2 3 4",
+    "ex_in": "5",
+    "createdAt": "2026-05-26T00:00",
+    "output_desc": "0부터 N-1까지의 정수를 공백으로 구분하여 한 줄에 출력. <b>마지막 숫자 뒤에 공백 없음.</b><br>예: N=5 → <code>0 1 2 3 4</code><br>예: N=1 → <code>0</code>",
+    "desc": "정수 N을 입력받아 <code>malloc</code>으로 크기 N의 int 배열을 할당하고, 0부터 N-1까지 차례대로 채운 뒤 한 줄에 공백으로 구분하여 출력하시오.<br>이 문제는 <b>malloc → 채우기 → 출력 → free</b>의 기본 흐름을 연습하는 워밍업입니다.<br>Hint: <code>int *arr = (int *)malloc(n * sizeof(int));</code> — 사용 후 반드시 <code>free(arr);</code>",
+    "input_desc": "첫째 줄에 정수 N (1 이상 100 이하)."
+  },
+  {
+    "id": "dm2",
+    "input_desc": "첫째 줄에 N과 K가 공백으로 구분되어 주어진다 (1 ≤ N ≤ 100, -100 ≤ K ≤ 100).<br>다음 N줄에 정수 하나씩.",
+    "output_desc": "각 원소에 K를 곱한 값을 공백으로 구분하여 한 줄에 출력. <b>마지막 숫자 뒤에 공백 없음.</b><br>예: N=4, K=3, [1 2 3 4] → <code>3 6 9 12</code>",
+    "desc": "정수 N과 배수 K를 입력받고, N개의 정수를 동적 배열에 저장한 뒤 각 원소에 K를 곱한 결과를 한 줄에 출력하시오.<br><code>malloc</code>으로 크기 N의 int 배열을 할당하시오.<br>Hint: 배열을 채운 뒤 다시 순회하며 <code>arr[i] * k</code>를 출력.",
+    "title": "Scale Array",
+    "ex_out": "3 6 9 12",
+    "ex_in": "4 3\n1\n2\n3\n4",
+    "createdAt": "2026-05-26T00:00",
+    "cases": [
+      {
+        "pts": 25,
+        "input": "4 3\n1\n2\n3\n4\n",
+        "expected": "3 6 9 12\n",
+        "id": 1
+      },
+      {
+        "pts": 25,
+        "input": "1 5\n7\n",
+        "expected": "35\n",
+        "id": 2
+      },
+      {
+        "id": 3,
+        "expected": "0 0 0\n",
+        "input": "3 0\n10\n20\n30\n",
+        "pts": 25
+      },
+      {
+        "id": 4,
+        "pts": 25,
+        "expected": "-2 4 -6\n",
+        "input": "3 -2\n1\n-2\n3\n"
+      }
+    ],
+    "week": "Week 13A: Dynamic Memory – Part A",
+    "deadline": "2026-06-01T23:59"
+  },
+  {
+    "id": "dm3",
+    "output_desc": "<code>Sum: (합계)</code><br><code>Avg: (평균)</code> (소수점 둘째 자리)<br>예: [10 20 30 40] → <code>Sum: 100</code> / <code>Avg: 25.00</code>",
+    "desc": "N개의 정수를 동적 배열에 저장하고 합계와 평균을 출력하시오.<br><code>malloc</code>으로 정확히 N개 크기의 int 배열을 할당하시오.<br>Hint: <code>int *arr = (int *)malloc(n * sizeof(int));</code> — 사용 후 반드시 <code>free(arr);</code>",
+    "input_desc": "첫째 줄에 N (1 이상 100 이하).<br>다음 N줄에 정수 하나씩.",
+    "title": "Dynamic Sum and Average",
+    "createdAt": "2026-05-26T00:00",
+    "ex_out": "Sum: 100\nAvg: 25.00",
+    "ex_in": "4\n10\n20\n30\n40",
+    "week": "Week 13A: Dynamic Memory – Part A",
+    "cases": [
+      {
+        "pts": 25,
+        "expected": "Sum: 100\nAvg: 25.00\n",
+        "input": "4\n10\n20\n30\n40\n",
+        "id": 1
+      },
+      {
+        "expected": "Sum: 15\nAvg: 5.00\n",
+        "input": "3\n7\n3\n5\n",
+        "pts": 25,
+        "id": 2
+      },
+      {
+        "id": 3,
+        "pts": 25,
+        "expected": "Sum: 42\nAvg: 42.00\n",
+        "input": "1\n42\n"
+      },
+      {
+        "id": 4,
+        "pts": 25,
+        "expected": "Sum: -30\nAvg: -6.00\n",
+        "input": "5\n-10\n20\n-30\n40\n-50\n"
+      }
+    ],
+    "deadline": "2026-06-01T23:59"
+  },
+  {
+    "id": "dm4",
+    "input_desc": "첫째 줄에 N (1 이상 100 이하).<br>다음 N줄에 정수 하나씩 (-1000 ≤ 값 ≤ 1000).",
+    "output_desc": "<code>Min: (최솟값)</code><br><code>Max: (최댓값)</code><br>예: [3 1 4 1 5] → <code>Min: 1</code> / <code>Max: 5</code>",
+    "desc": "N개의 정수를 동적 배열에 저장하고 최솟값과 최댓값을 출력하시오.<br><code>malloc</code>으로 배열을 할당하고, 반복문으로 min/max를 찾으시오.<br><b>주의:</b> min/max의 초기값은 0이 아니라 <b>첫 번째 원소</b>로 설정해야 한다 (음수 입력 고려).",
+    "title": "Dynamic Min and Max",
+    "createdAt": "2026-05-26T00:00",
+    "ex_out": "Min: 1\nMax: 5",
+    "ex_in": "5\n3\n1\n4\n1\n5",
+    "cases": [
+      {
+        "expected": "Min: 1\nMax: 5\n",
+        "input": "5\n3\n1\n4\n1\n5\n",
+        "pts": 25,
+        "id": 1
+      },
+      {
+        "input": "3\n-5\n0\n5\n",
+        "pts": 25,
+        "expected": "Min: -5\nMax: 5\n",
+        "id": 2
+      },
+      {
+        "expected": "Min: 99\nMax: 99\n",
+        "pts": 25,
+        "input": "1\n99\n",
+        "id": 3
+      },
+      {
+        "id": 4,
+        "pts": 25,
+        "expected": "Min: 10\nMax: 10\n",
+        "input": "4\n10\n10\n10\n10\n"
+      }
+    ],
+    "week": "Week 13A: Dynamic Memory – Part A",
+    "deadline": "2026-06-01T23:59"
+  },
+  {
+    "id": "dm5",
+    "deadline": "2026-06-01T23:59",
+    "cases": [
+      {
+        "id": 1,
+        "pts": 25,
+        "input": "4\n10\n20\n30\n40\n",
+        "expected": "Average: 25.00\nAbove: 2\n"
+      },
+      {
+        "id": 2,
+        "pts": 25,
+        "expected": "Average: 10.00\nAbove: 0\n",
+        "input": "5\n10\n10\n10\n10\n10\n"
+      },
+      {
+        "expected": "Average: 4.00\nAbove: 1\n",
+        "pts": 25,
+        "input": "3\n1\n2\n9\n",
+        "id": 3
+      },
+      {
+        "input": "6\n5\n5\n5\n5\n5\n20\n",
+        "expected": "Average: 7.50\nAbove: 1\n",
+        "pts": 25,
+        "id": 4
+      }
+    ],
+    "week": "Week 13A: Dynamic Memory – Part A",
+    "ex_out": "Average: 25.00\nAbove: 2",
+    "ex_in": "4\n10\n20\n30\n40",
+    "createdAt": "2026-05-26T00:00",
+    "title": "Above Average Count",
+    "input_desc": "첫째 줄에 N (1 이상 100 이하).<br>다음 N줄에 정수 하나씩.",
+    "desc": "N개의 정수를 동적 배열에 저장하고, 평균을 구한 뒤 <b>평균보다 큰(초과)</b> 원소가 몇 개인지 세시오.<br><code>malloc</code>으로 배열을 할당하고, 먼저 전체 평균을 구한 다음 다시 순회하며 개수를 세시오.<br>Hint: 평균은 실수(<code>double</code>)로 계산하고, <code>arr[i] &gt; avg</code> (초과, 등호 없음) 로 비교.",
+    "output_desc": "<code>Average: (평균)</code> (소수점 둘째 자리)<br><code>Above: (평균 초과 원소 개수)</code><br>예: [10 20 30 40] 평균 25.00 → <code>Average: 25.00</code> / <code>Above: 2</code> (30, 40)"
+  },
+  {
+    "id": "dm6",
+    "input_desc": "한 줄에 문자열 하나 (공백 없음, 최대 99자).",
+    "desc": "문자열을 입력받아 <code>malloc</code>으로 복사본을 만들고 원본과 복사본의 내용 및 길이를 출력하시오.<br>Hint: <code>malloc(strlen(s) + 1)</code> — null terminator를 위한 <b>+1</b>을 잊지 마세요. <code>strcpy</code>로 복사.",
+    "output_desc": "<code>Original: (문자열)</code><br><code>Copy: (문자열)</code><br><code>Length: (길이)</code><br>예: <code>Hello</code> → <code>Original: Hello</code> / <code>Copy: Hello</code> / <code>Length: 5</code>",
+    "createdAt": "2026-05-26T00:00",
+    "ex_in": "Hello",
+    "ex_out": "Original: Hello\nCopy: Hello\nLength: 5",
+    "title": "Dynamic String Duplicate",
+    "cases": [
+      {
+        "id": 1,
+        "input": "Hello\n",
+        "expected": "Original: Hello\nCopy: Hello\nLength: 5\n",
+        "pts": 25
+      },
+      {
+        "expected": "Original: C\nCopy: C\nLength: 1\n",
+        "input": "C\n",
+        "pts": 25,
+        "id": 2
+      },
+      {
+        "pts": 25,
+        "input": "DynamicMemory\n",
+        "expected": "Original: DynamicMemory\nCopy: DynamicMemory\nLength: 13\n",
+        "id": 3
+      },
+      {
+        "id": 4,
+        "pts": 25,
+        "input": "test1234\n",
+        "expected": "Original: test1234\nCopy: test1234\nLength: 8\n"
+      }
+    ],
+    "week": "Week 13A: Dynamic Memory – Part A",
+    "deadline": "2026-06-01T23:59"
+  },
+  {
+    "id": "dm7",
+    "input_desc": "첫째 줄에 N (1 이상 1000 이하).<br>다음 N줄에 정수 하나씩 (0~99).",
+    "output_desc": "등장한 숫자를 오름차순으로 <code>숫자: 횟수</code> 형태로 출력.<br>예: [3 1 4 1 5 9 3] → <code>1: 2</code> / <code>3: 2</code> / <code>4: 1</code> / <code>5: 1</code> / <code>9: 1</code>",
+    "desc": "N개의 정수(0 이상 99 이하)를 입력받아, 각 숫자가 몇 번 등장했는지 출력하시오. 등장 횟수가 0인 숫자는 출력하지 않습니다.<br><code>calloc</code>으로 크기 100의 카운터 배열을 만드시오. 입력값(0~99)을 그대로 배열 인덱스로 사용하므로 크기가 100입니다.<br>Hint: <code>int *cnt = (int *)calloc(100, sizeof(int));</code> — calloc은 자동으로 0으로 초기화하므로 따로 0을 넣을 필요가 없습니다.",
+    "title": "Frequency Counter",
+    "ex_out": "1: 2\n3: 2\n4: 1\n5: 1\n9: 1",
+    "ex_in": "7\n3\n1\n4\n1\n5\n9\n3",
+    "createdAt": "2026-05-26T00:00",
+    "cases": [
+      {
+        "id": 1,
+        "expected": "1: 2\n3: 2\n4: 1\n5: 1\n9: 1\n",
+        "input": "7\n3\n1\n4\n1\n5\n9\n3\n",
+        "pts": 25
+      },
+      {
+        "id": 2,
+        "expected": "0: 5\n",
+        "pts": 25,
+        "input": "5\n0\n0\n0\n0\n0\n"
+      },
+      {
+        "pts": 25,
+        "input": "3\n99\n50\n0\n",
+        "expected": "0: 1\n50: 1\n99: 1\n",
+        "id": 3
+      },
+      {
+        "id": 4,
+        "expected": "10: 3\n20: 2\n30: 1\n",
+        "pts": 25,
+        "input": "6\n10\n20\n10\n20\n10\n30\n"
+      }
+    ],
+    "week": "Week 13A: Dynamic Memory – Part A",
+    "deadline": "2026-06-01T23:59"
+  },
+  {
     "id": "u1",
     "input_desc": "첫째 줄에 명령 수 N (1 이상 100 이하).<br>다음 N줄에 방향 번호 (0=NORTH, 1=EAST, 2=SOUTH, 3=WEST).<br>로봇의 초기 위치는 (0, 0), 초기 이동 횟수는 0이다.",
     "deadline": "2026-05-27T23:59",
