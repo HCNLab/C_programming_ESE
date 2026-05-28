@@ -552,6 +552,234 @@ function buildCases(pid){
 
 const PROBLEMS = [
   {
+    "id": "dr1",
+    "createdAt": "2026-05-28T00:00",
+    "deadline": "2026-06-04T23:59",
+    "cases": [
+      {
+        "input": "3\n10 20 30\n5\n",
+        "pts": 25,
+        "id": 1,
+        "expected": "10 20 30 0 0\n"
+      },
+      {
+        "input": "5\n1 2 3 4 5\n3\n",
+        "id": 2,
+        "pts": 25,
+        "expected": "1 2 3\n"
+      },
+      {
+        "expected": "7 8 9 10\n",
+        "pts": 25,
+        "input": "4\n7 8 9 10\n4\n",
+        "id": 3
+      },
+      {
+        "input": "1\n42\n6\n",
+        "id": 4,
+        "pts": 25,
+        "expected": "42 0 0 0 0 0\n"
+      }
+    ],
+    "ex_in": "3\n10 20 30\n5",
+    "week": "Week 13B: Dynamic Memory – Part B",
+    "input_desc": "첫째 줄에 N (1 ≤ N ≤ 100).<br>둘째 줄에 N개의 정수 (공백 구분).<br>셋째 줄에 M (1 ≤ M ≤ 200).",
+    "ex_out": "10 20 30 0 0",
+    "output_desc": "리사이즈된 배열의 M개 원소를 공백으로 구분하여 한 줄에 출력.<br><b>마지막 숫자 뒤에 공백 없음.</b>",
+    "title": "Resize Array",
+    "desc": "크기 N의 정수 배열을 <code>malloc</code>으로 만들고 값을 채운 뒤, <code>realloc</code>으로 크기를 M으로 변경하시오.<br><br><b>규칙:</b><ul><li>M &gt; N이면: 새로 늘어난 자리에 <code>0</code>을 채운다.</li><li>M &lt; N이면: 앞 M개만 남긴다 (뒤는 버린다).</li><li>M == N이면: 변화 없음.</li></ul><b>반드시 <code>realloc</code>의 반환값을 임시 포인터로 받으시오</b> (강의 tmp 패턴).<br><br>Hint:<br><code>int *tmp = realloc(arr, m * sizeof(int));</code><br><code>if (!tmp) { free(arr); return 1; }</code><br><code>arr = tmp;</code><br>늘어난 구간 초기화: <code>for (i = n; i &lt; m; i++) arr[i] = 0;</code>"
+  },
+  {
+    "id": "dr2",
+    "createdAt": "2026-05-28T00:00",
+    "deadline": "2026-06-04T23:59",
+    "cases": [
+      {
+        "pts": 25,
+        "input": "5\n10\n15\n20\n25\n30\n-1\n",
+        "id": 1,
+        "expected": "5 10 15 20 25 30\nCount: 6\n"
+      },
+      {
+        "pts": 25,
+        "id": 2,
+        "input": "1\n2\n3\n-1\n",
+        "expected": "1 2 3\nCount: 3\n"
+      },
+      {
+        "pts": 25,
+        "id": 3,
+        "input": "100\n-1\n",
+        "expected": "100\nCount: 1\n"
+      },
+      {
+        "pts": 25,
+        "id": 4,
+        "input": "1\n2\n3\n4\n5\n6\n7\n8\n9\n-1\n",
+        "expected": "1 2 3 4 5 6 7 8 9\nCount: 9\n"
+      }
+    ],
+    "desc": "정수를 계속 입력받다가 <code>-1</code>이 입력되면 멈추고, 저장된 모든 수를 한 줄에 출력한 뒤 개수를 출력하시오. <code>-1</code>은 저장하지 않습니다.<br><br><b>핵심 패턴 (double-when-full):</b><ol><li>초기: <code>capacity = 4</code>, <code>size = 0</code>, <code>arr = malloc(4 * sizeof(int))</code></li><li>입력을 받을 때마다 <code>size == capacity</code>이면:<br><code>capacity *= 2;</code><br><code>int *tmp = realloc(arr, capacity * sizeof(int));</code><br>tmp가 NULL이면 에러 처리, 아니면 <code>arr = tmp;</code></li><li><code>arr[size++] = val;</code></li></ol>이 패턴은 Python의 list, C++의 vector, Java의 ArrayList가 내부적으로 사용하는 방식과 동일합니다.<br><br>Hint: <code>-1</code>이 첫 입력으로 바로 오면 아무것도 저장되지 않으므로 <code>Count: 0</code>을 출력합니다.",
+    "output_desc": "첫째 줄: 저장된 수를 입력 순서대로 공백 구분 출력 (0개면 빈 줄).<br>둘째 줄: <code>Count: (개수)</code>",
+    "title": "Growing Array",
+    "ex_out": "5 10 15 20 25 30\nCount: 6",
+    "input_desc": "한 줄에 정수 하나씩 입력. <code>-1</code>이 나오면 종료.<br>정수 범위: -1000 ≤ 값 ≤ 1000 (단 <code>-1</code>은 종료 신호).",
+    "ex_in": "5\n10\n15\n20\n25\n30\n-1",
+    "week": "Week 13B: Dynamic Memory – Part B"
+  },
+  {
+    "id": "dr3",
+    "createdAt": "2026-05-28T00:00",
+    "deadline": "2026-06-04T23:59",
+    "cases": [
+      {
+        "pts": 25,
+        "input": "3\n1 2 3\n2\n4 5\n",
+        "id": 1,
+        "expected": "1 2 3 4 5\n"
+      },
+      {
+        "expected": "10 20\n",
+        "input": "1\n10\n1\n20\n",
+        "pts": 25,
+        "id": 2
+      },
+      {
+        "expected": "5 6 7 8 1 2 3\n",
+        "pts": 25,
+        "input": "4\n5 6 7 8\n3\n1 2 3\n",
+        "id": 3
+      },
+      {
+        "expected": "-1 -2 -3 -4\n",
+        "input": "2\n-1 -2\n2\n-3 -4\n",
+        "id": 4,
+        "pts": 25
+      }
+    ],
+    "output_desc": "합쳐진 배열을 한 줄에 공백 구분 출력. <b>마지막 숫자 뒤에 공백 없음.</b>",
+    "title": "Array Concatenation",
+    "desc": "두 개의 정수 배열을 입력받아, 두 배열을 이어붙인 새 배열을 <b>함수</b>로 만들어 반환하시오.<br><br>함수 원형:<br><code>int *concat(int *a, int na, int *b, int nb)</code><br><ul><li><code>malloc((na + nb) * sizeof(int))</code>로 새 배열을 할당</li><li>a의 원소를 먼저, b의 원소를 뒤에 복사</li><li>새 배열의 포인터를 반환</li></ul><b>이 패턴이 중요한 이유:</b> 함수 안에서 <code>malloc</code>한 메모리는 <b>heap</b>에 있으므로 함수가 끝나도 살아있습니다. caller(main)가 사용 후 <code>free</code>해야 합니다.<br><br>Hint: 반복문으로 복사하거나 <code>memcpy</code>를 사용하세요.",
+    "ex_in": "3\n1 2 3\n2\n4 5",
+    "week": "Week 13B: Dynamic Memory – Part B",
+    "input_desc": "첫째 줄에 N1, 둘째 줄에 N1개의 정수 (공백 구분).<br>셋째 줄에 N2, 넷째 줄에 N2개의 정수 (공백 구분).<br>(1 ≤ N1, N2 ≤ 50)",
+    "ex_out": "1 2 3 4 5"
+  },
+  {
+    "id": "dr4",
+    "createdAt": "2026-05-28T00:00",
+    "deadline": "2026-06-04T23:59",
+    "cases": [
+      {
+        "expected": "Bob 92\nDave 92\nAlice 85\nCarol 78\n",
+        "id": 1,
+        "pts": 25,
+        "input": "Alice 85\nBob 92\nCarol 78\nDave 92\nend\n"
+      },
+      {
+        "id": 2,
+        "pts": 25,
+        "input": "Solo 100\nend\n",
+        "expected": "Solo 100\n"
+      },
+      {
+        "input": "E 30\nD 10\nC 50\nB 40\nA 20\nend\n",
+        "id": 3,
+        "pts": 25,
+        "expected": "C 50\nB 40\nE 30\nA 20\nD 10\n"
+      },
+      {
+        "expected": "Lee 95\nHan 95\nKim 88\nChoi 88\nPark 72\nJung 60\n",
+        "pts": 25,
+        "id": 4,
+        "input": "Kim 88\nLee 95\nPark 72\nChoi 88\nJung 60\nHan 95\nend\n"
+      }
+    ],
+    "ex_in": "Alice 85\nBob 92\nCarol 78\nDave 92\nend",
+    "week": "Week 13B: Dynamic Memory – Part B",
+    "ex_out": "Bob 92\nDave 92\nAlice 85\nCarol 78",
+    "input_desc": "매 줄에 이름(공백없음, 최대 29자)과 점수(정수).<br><code>end</code>가 나오면 입력 종료 (end 뒤에 점수 없음).",
+    "title": "Growing Student Records",
+    "output_desc": "점수 <b>내림차순</b>으로 <code>이름 점수</code>를 한 줄씩 출력.<br>동점이면 입력 순서 유지.",
+    "desc": "학생의 이름과 점수를 반복 입력받고, 이름이 <code>end</code>이면 멈추시오. 그 뒤 점수 내림차순으로 정렬하여 출력하시오.<br><br><b>이 문제가 연습하는 것:</b> <code>realloc</code>으로 <b>구조체 배열</b>을 동적으로 키우기.<br><br><b>구조체 정의:</b><br><code>typedef struct { char name[30]; int score; } Student;</code><br><br><b>구현 순서:</b><ol><li>초기: <code>cap = 2</code>, <code>size = 0</code>, <code>Student *arr = malloc(cap * sizeof(Student));</code></li><li>이름을 읽어서 <code>\"end\"</code>이면 중단</li><li><code>size == cap</code>이면 <code>cap *= 2</code>하고 <code>realloc</code> (tmp 패턴)</li><li>구조체에 이름과 점수 저장, <code>size++</code></li><li>전부 읽은 뒤 점수 내림차순 bubble sort</li><li>출력 후 <code>free</code></li></ol>Hint: 구조체 전체를 swap — <code>Student tmp = arr[j]; arr[j] = arr[j+1]; arr[j+1] = tmp;</code>"
+  },
+  {
+    "id": "dr5",
+    "week": "Week 13B: Dynamic Memory – Part B",
+    "ex_in": "2 3\n1 2 3\n4 5 6",
+    "ex_out": "Row 0: 6\nRow 1: 15\nTotal: 21",
+    "input_desc": "첫째 줄에 R C (1 ≤ R, C ≤ 10).<br>다음 R줄에 C개의 정수 (공백 구분).",
+    "output_desc": "각 행마다 <code>Row i: (합)</code> 출력 (i는 0부터).<br>마지막에 <code>Total: (전체 합)</code>",
+    "title": "Dynamic 2D Matrix Sum",
+    "desc": "R행 C열의 행렬을 <b>동적 2D 배열</b>로 할당하여 입력받고, 각 행의 합과 전체 합을 출력하시오.<br><br><b>동적 2D 배열 할당 패턴:</b><br><code>int **mat = (int **)malloc(R * sizeof(int *));</code><br><code>for (i = 0; i &lt; R; i++)</code><br>&nbsp;&nbsp;&nbsp;&nbsp;<code>mat[i] = (int *)calloc(C, sizeof(int));</code><br><br><b>해제 순서 (반드시 역순!):</b><br><code>for (i = 0; i &lt; R; i++) free(mat[i]);</code> &larr; 각 행 먼저<br><code>free(mat);</code> &larr; 행 포인터 배열 마지막<br><br><b>주의:</b> <code>free(mat)</code>을 먼저 하면 행 포인터를 잃어 메모리 누수 발생!<br><br>Hint: <code>mat[i][j]</code>로 접근 — 정적 2D 배열과 문법이 동일합니다.",
+    "cases": [
+      {
+        "expected": "Row 0: 6\nRow 1: 15\nTotal: 21\n",
+        "input": "2 3\n1 2 3\n4 5 6\n",
+        "id": 1,
+        "pts": 25
+      },
+      {
+        "input": "1 1\n42\n",
+        "pts": 25,
+        "id": 2,
+        "expected": "Row 0: 42\nTotal: 42\n"
+      },
+      {
+        "expected": "Row 0: 2\nRow 1: 4\nRow 2: 6\nTotal: 12\n",
+        "input": "3 2\n1 1\n2 2\n3 3\n",
+        "id": 3,
+        "pts": 25
+      },
+      {
+        "input": "2 4\n10 20 30 40\n-10 -20 -30 -40\n",
+        "id": 4,
+        "pts": 25,
+        "expected": "Row 0: 100\nRow 1: -100\nTotal: 0\n"
+      }
+    ],
+    "deadline": "2026-06-04T23:59",
+    "createdAt": "2026-05-28T00:00"
+  },
+  {
+    "id": "dr6",
+    "ex_in": "apple\nbanana\ncherry\nquit",
+    "week": "Week 13B: Dynamic Memory – Part B",
+    "input_desc": "한 줄에 단어 하나씩 (공백 없음, 최대 99자).<br><code>quit</code>이 나오면 종료.",
+    "ex_out": "cherry\nbanana\napple\nCount: 3",
+    "output_desc": "저장된 단어를 <b>입력 역순</b>으로 한 줄에 하나씩 출력.<br>마지막에 <code>Count: (개수)</code>",
+    "title": "Word Collector",
+    "desc": "단어를 한 줄에 하나씩 입력받아 동적으로 저장하다가 <code>quit</code>이 입력되면 멈추시오. 저장된 단어를 <b>역순</b>으로 출력하고 총 개수를 출력하시오.<br><br><b>이 문제가 연습하는 것:</b> <code>char **</code> (문자열 포인터 배열)을 <code>realloc</code>으로 키우기 + 각 문자열을 개별 <code>malloc</code>으로 복사하기.<br><br><b>구현 순서:</b><ol><li>초기: <code>cap = 4</code>, <code>size = 0</code>, <code>char **words = malloc(cap * sizeof(char *));</code></li><li>단어를 읽어서 <code>\"quit\"</code>이면 중단</li><li><code>size == cap</code>이면 <code>cap *= 2</code>하고 words를 <code>realloc</code></li><li><code>words[size] = malloc(strlen(word) + 1);</code>로 문자열 복사 공간 할당</li><li><code>strcpy(words[size], word); size++;</code></li><li>역순 출력 후 <b>모든 메모리 해제:</b><br>각 <code>words[i]</code>를 <code>free</code> → 마지막에 <code>free(words)</code></li></ol>Hint: <code>char buf[100]; scanf(\"%s\", buf);</code>로 읽고, 길이만큼만 malloc하여 복사합니다.<br><code>quit</code>은 저장하지 않습니다.",
+    "cases": [
+      {
+        "expected": "cherry\nbanana\napple\nCount: 3\n",
+        "input": "apple\nbanana\ncherry\nquit\n",
+        "id": 1,
+        "pts": 25
+      },
+      {
+        "input": "hello\nquit\n",
+        "pts": 25,
+        "id": 2,
+        "expected": "hello\nCount: 1\n"
+      },
+      {
+        "id": 3,
+        "pts": 25,
+        "input": "a\nb\nc\nd\ne\nquit\n",
+        "expected": "e\nd\nc\nb\na\nCount: 5\n"
+      },
+      {
+        "id": 4,
+        "pts": 25,
+        "input": "programming\nis\nfun\nwith\ndynamic\nmemory\nquit\n",
+        "expected": "memory\ndynamic\nwith\nfun\nis\nprogramming\nCount: 6\n"
+      }
+    ],
+    "deadline": "2026-06-04T23:59",
+    "createdAt": "2026-05-28T00:00"
+  },
+  {
     "id": "dm1",
     "deadline": "2026-06-01T23:59",
     "week": "Week 13A: Dynamic Memory – Part A",
