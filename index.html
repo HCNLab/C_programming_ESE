@@ -60,9 +60,11 @@ button.primary:hover{background:var(--text6)}
 .body-text{font-size:14px;line-height:1.7;color:var(--text)}
 .body-text.final-desc{font-size:16px;line-height:1.8}
 .body-text pre[class*="language-"],.body-text pre:has(>code[class*="language-"]){background:#fff!important;border:1.5px solid #222;border-radius:8px;padding:.8rem 1rem;margin:.8rem 0;overflow-x:auto}
-.body-text code[class*="language-"]{font-family:Consolas,'Courier New',monospace!important;font-size:13px!important;line-height:1.0!important;color:#1a1a1a!important}
+.body-text code[class*="language-"]{font-family:Consolas,'Courier New',monospace!important;font-size:13px!important;line-height:.7!important;color:#1a1a1a!important}
 body.dark .body-text pre[class*="language-"],body.dark .body-text pre:has(>code[class*="language-"]){background:#1e1e1e!important;border-color:#555}
 body.dark .body-text code[class*="language-"]{color:#cdd6f4!important}
+.body-text pre.line-numbers{padding-left:3.2em!important}.body-text .line-numbers-rows{border-right:1px solid #ddd!important}.body-text .line-numbers-rows>span::before{color:#999!important}
+body.dark .body-text .line-numbers-rows{border-right-color:#444!important}body.dark .body-text .line-numbers-rows>span::before{color:#666!important}
 .prob-pane{-webkit-user-select:none;user-select:none}
 .io-box{font-family:'Menlo','Consolas',monospace;font-size:13px;padding:.55rem .8rem;background:var(--surface3);border:1px solid var(--border);border-radius:8px;white-space:pre-wrap;word-break:break-word;color:var(--text)}
 textarea{width:100%;min-height:200px;font-family:'Menlo','Consolas',monospace;font-size:13px;padding:.75rem;border:1px solid var(--border2);border-radius:8px;background:var(--surface);color:var(--text);resize:vertical;outline:none;line-height:1.6;margin-bottom:.75rem}
@@ -283,6 +285,7 @@ body.dark .mascot-toast .bubble::before{border-left-color:#1e293b}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css">
 <style>
 .CodeMirror{height:auto;min-height:200px;font-family:'Menlo','Consolas',monospace;font-size:13px;
   border:1px solid var(--border2);border-radius:8px;line-height:1.6;margin-bottom:.75rem}
@@ -1874,7 +1877,10 @@ function renderProb(pid, push=true){
 
   /* Prism syntax highlighting for problem desc */
   const descEl = $('prob-desc');
-  if (descEl && typeof Prism !== 'undefined') Prism.highlightAllUnder(descEl);
+  if (descEl && typeof Prism !== 'undefined') {
+    descEl.querySelectorAll('pre').forEach(pre => pre.classList.add('line-numbers'));
+    Prism.highlightAllUnder(descEl);
+  }
 
   /* CodeMirror initialization */
   const ta = $('code-ta');
@@ -3512,5 +3518,6 @@ fetchRatings();
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
 </body>
 </html>
