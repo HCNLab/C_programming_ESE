@@ -1,15 +1,12 @@
 // final.js — 기말고사 문제 모음
-// 사용법: quiz_prepare.js 참고
-// - FINAL_OPEN = false → _isDraft 자동 부여 (교수/TA만 보임)
-// - FINAL_OPEN = true  → 전체 공개 (시험 시작 시 변경)
-// - allowedUsers: ['학번_이름'] → 특정 학생만 보이게 제한 가능
-
-const FINAL_OPEN = false;
+// - allowedUsers 있으면 해당 학생 + 교수/TA만 보임
+// - allowedUsers 없으면 전체 공개
+// - 시험 시작 시 allowedUsers 제거 후 푸시
 
 // ── 테스트 문제 (삭제 예정) ──
 PROBLEMS.push({
   final: true,
-  _isDraft: !FINAL_OPEN,
+  allowedUsers: ['원경호'],
   id: 'ft1',
   week: '기말고사',
   deadline: '2026-06-30T23:59',
