@@ -6,7 +6,7 @@
 // ── 테스트 문제 (삭제 예정) ──
 PROBLEMS.push({
   final: true,
-  allowedUsers: ['원경호'],
+  allowedUsers: ['20251004_원경호'],
   id: 'ft1',
   week: '기말고사',
   deadline: '2026-06-30T23:59',
