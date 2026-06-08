@@ -1,22 +1,12 @@
 // final.js — 기말고사 문제 모음
-// 구조: PROBLEMS.push({ final: true, id, title, week, desc, input_desc, output_desc, ex_in, cases: [{id, input, expected, pts}], ... })
+// 구조: quiz_prepare.js 참고. PROBLEMS.push({ final: true, ... })
 // 기말 탭에서만 표시, 출력 결과만 보임 (정답/오답 여부 X), 컴파일 에러는 표시
-// 기말고사 문제는 아래에 addFinal({...}) 로 추가 (누적 방식)
-
-// ★ 시험 공개 스위치 — false면 교수/TA만 보임, 시험 시작 시 true로 변경
-const FINAL_OPEN = false;
-
-// 문제 추가 헬퍼: FINAL_OPEN=false면 자동으로 _isDraft=true 부여
-function addFinal(prob) {
-  prob.final = true;
-  if (!FINAL_OPEN) prob._isDraft = true;
-  PROBLEMS.push(prob);
-}
 
 // ── 테스트 문제 (삭제 예정) ──
-addFinal({
+PROBLEMS.push({
+  final: true,
   id: 'ft1',
-  week: 'Final Exam',
+  week: '기말고사',
   deadline: '2026-06-30T23:59',
   title: '[테스트] 두 수의 합',
   desc: '두 정수를 입력받아 합을 출력하시오.',
