@@ -1,20 +1,19 @@
 // final.js — 기말고사 문제 모음
 // - allowedUsers 있으면 해당 학생 + 교수/TA만 보임
 // - allowedUsers 없으면 전체 공개
-// - 시험 시작 시 allowedUsers 제거 후 푸시
+// - subjective: true → 주관식 (코드 에디터 X, 테스트 실행 X, 답안 텍스트만 제출)
 
 // ══════════════════════════════════════════════════
-// 카테고리 1: 코드 추적 (Trace)
-// — 코드를 보고 정확한 출력을 printf로 출력
+// 카테고리 1: 코드 추적 (주관식)
 // ══════════════════════════════════════════════════
 PROBLEMS.push({
-  final: true,
+  final: true, subjective: true,
   allowedUsers: ['20251004_원경호'],
   id: 'fe1',
   week: '기말고사',
   deadline: '2026-06-30T23:59',
   title: '[Trace] 포인터와 배열',
-  desc: `다음 코드의 <b>정확한 출력</b>을 그대로 출력하는 프로그램을 작성하시오.<br><br>
+  desc: `다음 코드의 <b>정확한 출력</b>을 작성하시오.<br><br>
 <pre style="background:var(--surface3);padding:.8rem;border-radius:6px;font-size:13px;overflow-x:auto">
 int arr[] = {10, 20, 30, 40, 50};
 int *p = arr + 1;
@@ -28,53 +27,34 @@ printf("%d\\n", *(p + 2));
 p++;
 printf("%d %d\\n", *p, arr[1]);
 </pre>
-<br><b>주의:</b> 출력 형식을 정확히 맞추시오 (공백, 줄바꿈 포함).`,
-  input_desc: '입력 없음',
-  output_desc: '코드의 출력을 정확히 재현',
-  ex_in: '',
-  ex_out: '',
-  cases: [
-    { id: 1, input: '\n', expected: '20 40\n2\n40\n30 45\n', pts: 25 },
-    { id: 2, input: '\n', expected: '20 40\n2\n40\n30 45\n', pts: 25 },
-    { id: 3, input: '\n', expected: '20 40\n2\n40\n30 45\n', pts: 25 },
-    { id: 4, input: '\n', expected: '20 40\n2\n40\n30 45\n', pts: 25 },
-  ],
+<br><b>주의:</b> 출력 형식을 정확히 맞추시오 (공백, 줄바꿈 포함). 줄 단위로 작성하시오.`,
 });
 
 // ══════════════════════════════════════════════════
-// 카테고리 2: True / False
-// — 각 문장의 참/거짓을 T 또는 F로 출력
+// 카테고리 2: True / False (주관식)
 // ══════════════════════════════════════════════════
 PROBLEMS.push({
-  final: true,
+  final: true, subjective: true,
   allowedUsers: ['20251004_원경호'],
   id: 'fe2',
   week: '기말고사',
   deadline: '2026-06-30T23:59',
   title: '[T/F] 포인터와 메모리',
-  desc: `다음 각 문장이 참이면 <code>T</code>, 거짓이면 <code>F</code>를 한 줄에 하나씩 출력하시오.<br><br>
+  desc: `다음 각 문장이 참이면 <code>T</code>, 거짓이면 <code>F</code>를 작성하시오. 거짓인 경우 간단히 이유를 적으시오.<br><br>
 <ol style="line-height:2.2">
 <li><code>int a = 5; int *p = &a;</code> 에서 <code>sizeof(p)</code>의 값은 항상 <code>sizeof(int)</code>와 같다.</li>
 <li><code>int arr[5]; int *p = arr;</code> 에서 <code>p + 3</code>은 <code>&arr[3]</code>과 같다.</li>
 <li><code>char *s = "hello";</code> 에서 <code>s[0] = 'H';</code>는 정의되지 않은 동작(UB)이다.</li>
 <li><code>int *p = malloc(sizeof(int));</code> 후 <code>free(p); *p = 10;</code>은 안전하다.</li>
 <li><code>int arr[3] = {1, 2, 3};</code> 에서 <code>arr</code>과 <code>&arr[0]</code>의 값(주소)은 같다.</li>
-</ol>`,
-  input_desc: '입력 없음',
-  output_desc: '각 줄에 T 또는 F를 출력 (총 5줄)',
-  ex_in: '',
-  ex_out: '',
-  cases: [
-    { id: 1, input: '\n', expected: 'F\nT\nT\nF\nT\n', pts: 25 },
-    { id: 2, input: '\n', expected: 'F\nT\nT\nF\nT\n', pts: 25 },
-    { id: 3, input: '\n', expected: 'F\nT\nT\nF\nT\n', pts: 25 },
-    { id: 4, input: '\n', expected: 'F\nT\nT\nF\nT\n', pts: 25 },
-  ],
+</ol>
+<br><b>형식 예시:</b><br>
+<code>1. T</code><br>
+<code>2. F — 이유: ...</code>`,
 });
 
 // ══════════════════════════════════════════════════
-// 카테고리 3: 빈칸 채우기 (함수 완성)
-// — 불완전한 코드의 빈칸을 채워 동작하게 만들기
+// 카테고리 3: 빈칸 채우기 (코딩 — 함수 완성)
 // ══════════════════════════════════════════════════
 PROBLEMS.push({
   final: true,
@@ -123,8 +103,7 @@ int main(void) {
 });
 
 // ══════════════════════════════════════════════════
-// 카테고리 4: 버그 찾기
-// — 버그가 있는 코드를 수정하여 제출
+// 카테고리 4: 버그 찾기 (코딩)
 // ══════════════════════════════════════════════════
 PROBLEMS.push({
   final: true,
@@ -144,10 +123,10 @@ struct Student {
     int score;
 };
 
-void sort_students(struct Student arr, int n) {     // Bug?
-    for (int i = 0; i < n - 1; i++) {
-        for (int j = 0; j < n - 1; j++) {           // Bug?
-            if (arr[j].score < arr[j+1].score) {    // Bug?
+void sort_students(struct Student arr, int n) {
+    for (int i = 0; i &lt; n - 1; i++) {
+        for (int j = 0; j &lt; n - 1; j++) {
+            if (arr[j].score &lt; arr[j+1].score) {
                 struct Student temp = arr[j];
                 arr[j] = arr[j+1];
                 arr[j+1] = temp;
@@ -160,18 +139,16 @@ int main(void) {
     int n;
     scanf("%d", &n);
     struct Student students[100];
-    for (int i = 0; i < n; i++) {
-        scanf("%s %d", students[i].name, students[i].score);  // Bug?
+    for (int i = 0; i &lt; n; i++) {
+        scanf("%s %d", students[i].name, students[i].score);
     }
     sort_students(students, n);
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i &lt; n; i++) {
         printf("%s %d\\n", students[i].name, students[i].score);
     }
     return 0;
 }
-</pre>
-<br><b>입력 형식:</b> 첫 줄에 학생 수 n, 이후 n줄에 이름과 점수<br>
-<b>출력 형식:</b> 점수 내림차순으로 이름과 점수 출력`,
+</pre>`,
   input_desc: '첫 줄: 학생 수 n<br>이후 n줄: 이름(공백 없음) 점수',
   output_desc: '점수 내림차순으로 "이름 점수" 형식으로 한 줄씩 출력',
   ex_in: '3\nAlice 85\nBob 92\nCharlie 78',
@@ -186,7 +163,6 @@ int main(void) {
 
 // ══════════════════════════════════════════════════
 // 카테고리 5: 함수 작성 (코딩)
-// — 표준 OJ 문제
 // ══════════════════════════════════════════════════
 PROBLEMS.push({
   final: true,

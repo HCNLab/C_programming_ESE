@@ -1795,18 +1795,31 @@ function renderProb(pid, push=true){
         <div class="card">
           <div style="display:flex;align-items:center"><div class="section-lbl" style="margin-top:0;flex:1">문제</div><div class="prob-resize"><button onclick="resizeProb('default')" title="기본">◁</button><button onclick="resizeProb('wide')" title="확대">▷</button><button onclick="resizeProb('full')" title="전체">⬛</button></div></div>
           <div class="body-text">${p.desc}</div>
-          <div class="section-lbl">입력</div>
+          ${p.subjective ? '' : `<div class="section-lbl">입력</div>
           <div class="body-text">${p.input_desc}</div>
           <div class="section-lbl">출력</div>
           <div class="body-text">${p.output_desc}</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
             <div><div class="section-lbl">예제 입력</div><div class="io-box">${p.ex_in}</div></div>
-            <div><div class="section-lbl">예제 출력</div><div class="io-box">${p.ex_out.replace(/\n/g, '<span style="color:var(--text4)">↵</span>\n')}</div></div>
-          </div>
+            <div><div class="section-lbl">예제 출력</div><div class="io-box">${p.ex_out.replace(/\\n/g, '<span style="color:var(--text4)">↵</span>\\n')}</div></div>
+          </div>`}
           ${p.final ? '' : '<div id="prof-note-slot"></div>'}
         </div>
       </div>
       <div class="code-pane">
+        ${p.subjective ? `
+        <div class="section-lbl" style="margin-bottom:.4rem">답안 작성</div>
+        <div style="font-size:12px;color:#7C3AED;margin-bottom:.6rem;padding:.6rem .75rem;background:#f5f0ff;border-radius:6px;border:1px solid #c4b5fd;line-height:1.7">
+          ⚠️ <b>기말고사 안내</b><br>
+          답안을 작성한 후 <b>제출</b> 버튼을 누르시오. 채점 결과는 시험 종료 후 안내됩니다.<br>
+          <b>AI 사용, 다른 탭/창 이동</b>은 자동으로 감지되어 기록됩니다.
+        </div>
+        <textarea id="code-ta" spellcheck="false" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;line-height:1.8;min-height:180px">${sessionStorage.getItem('draft:'+p.id)||''}</textarea>
+        <div class="btn-row">
+          <button class="primary" id="sub-btn" onclick="doSubmit()">제출</button>
+          <button onclick="doReset()">초기화</button>
+        </div>
+        ` : `
         <div class="section-lbl" style="margin-bottom:.4rem">코드 작성</div>
         ${p.final ? `
         <div style="font-size:12px;color:#7C3AED;margin-bottom:.6rem;padding:.6rem .75rem;background:#f5f0ff;border-radius:6px;border:1px solid #c4b5fd;line-height:1.7">
@@ -1829,7 +1842,7 @@ function renderProb(pid, push=true){
           ${p.final ? '<button class="primary" id="sub-btn" onclick="doSubmit()">제출</button>' : p.noSubmit ? '<button class="primary" id="sub-btn" onclick="doSubmit()" style="background:var(--link);border-color:var(--link)" title="제출 순위에 반영됩니다 (성적 무관)">제출 (순위 반영)</button>' : '<button class="primary" id="sub-btn" onclick="doSubmit()">제출</button>'}
           <button id="test-btn" onclick="doTest()">테스트 실행</button>
           <button onclick="doReset()">초기화</button>
-          ${p.final ? '' : '<button id="ta-btn" onclick="startTimeAttack()" style="margin-left:auto;font-size:12px;color:#e94560;border-color:#e94560" title="타임어택: 복붙 차단 후 타이머 시작">⏱ 타임어택</button>'}
+          ${p.final ? '' : '<button id="ta-btn" onclick="startTimeAttack()" style="margin-left:auto;font-size:12px;color:#e94560;border-color:#e94560" title="타임어택: 복붙 차단 후 타이머 시작">⏱ 타임어택</button>'}`}
         </div>
         ${p.final ? '' : `
         <div style="display:flex;align-items:center;gap:10px;padding:.5rem .75rem;margin-bottom:.75rem;background:var(--surface3);border:1px solid var(--border);border-radius:6px;font-size:12px;flex-wrap:wrap">
@@ -1855,7 +1868,13 @@ function renderProb(pid, push=true){
 
   /* CodeMirror initialization */
   const ta = $('code-ta');
-  if (ta && typeof CodeMirror !== 'undefined'){
+  if (p.subjective && ta) {
+    // 주관식: CodeMirror 없이 일반 textarea + draft 저장
+    window._cm = null;
+    const draft = sessionStorage.getItem('draft:'+pid);
+    if (draft) ta.value = draft;
+    ta.addEventListener('input', e => { sessionStorage.setItem('draft:'+pid, e.target.value); });
+  } else if (ta && typeof CodeMirror !== 'undefined'){
     window._cm = CodeMirror.fromTextArea(ta, {
       mode: 'text/x-csrc',
       lineNumbers: true,
@@ -2000,6 +2019,7 @@ function switchTab(t){
 function renderResults(){
   const p = _curProb || PROBLEMS.find(x => x.id === curPid);
   if (!p || !$('results')) return;
+  if (p.subjective) return;
 
   if (p.final) {
     const rows = p.cases.map((tc, i) => {
@@ -2502,7 +2522,9 @@ async function doSubmit(){
   const p   = _curProb || PROBLEMS.find(x => x.id === curPid);
   const src = getCode();
   const _starter = (p.starter || STARTER);
-  if (!src.trim() || src.trim() === _starter.trim()){
+  if (p.subjective) {
+    if (!src.trim()){ alert('답안을 작성한 후 제출하세요.'); return; }
+  } else if (!src.trim() || src.trim() === _starter.trim()){
     alert('코드를 작성한 후 제출하세요.'); return;
   }
   // ── final exam branch ──
@@ -2513,7 +2535,7 @@ async function doSubmit(){
     const btn = $('sub-btn');
     if (btn){ btn.disabled = true; btn.textContent = '제출 중...'; }
     const ts = new Date().toISOString();
-    const outputs = p.cases.map(tc => (tcResults[tc.id]?.stdout ?? '')).join(' | ');
+    const outputs = p.subjective ? src.trim() : (p.cases||[]).map(tc => (tcResults[tc.id]?.stdout ?? '')).join(' | ');
     addHistory(p.id, { ts, submitted: true, score: null, max: null, code: src });
     sessionStorage.removeItem('draft:'+p.id);
     sendToSheets({ type:'final', ts, username, problemId: p.id, problem: p.title, outputs, code: src });
