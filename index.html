@@ -1189,8 +1189,8 @@ function renderHome(push=true){
   view = 'home';
   const hist = loadHistory();
   // final tab state
-  if (!window._homeTab) window._homeTab = 'assign';
   const hasQuizTab = PROBLEMS.some(p => p.final && (!p._isDraft || isAdmin() || isTA()) && _userAllowed(p));
+  if (!window._homeTab) window._homeTab = hasQuizTab ? 'final' : 'assign';
   const _visibleProbs = window._homeTab === 'final'
     ? PROBLEMS.filter(p => p.final && (!p._isDraft || isAdmin() || isTA()) && _userAllowed(p))
     : PROBLEMS.filter(p => !p.final);
@@ -1546,8 +1546,8 @@ function renderHome(push=true){
   const submitWeeks = allWeekKeys.filter(w =>  noSubmitWeeks.has(w));
   const weekKeys = [...assignWeeks, ...submitWeeks];
   const tabBarHtml = hasQuizTab ? `<div style="display:flex;gap:6px;margin-bottom:.6rem">
-    <button onclick="window._homeTab='assign';renderHome(false)" style="font-size:13px;padding:5px 16px;border-radius:6px${window._homeTab!=='final'?';background:var(--text);color:var(--surface);border-color:transparent':''}">과제 / 연습</button>
     <button onclick="window._homeTab='final';renderHome(false)" style="font-size:13px;padding:5px 16px;border-radius:6px${window._homeTab==='final'?';background:var(--text);color:var(--surface);border-color:transparent':''}">기말고사</button>
+    <button onclick="window._homeTab='assign';renderHome(false)" style="font-size:13px;padding:5px 16px;border-radius:6px${window._homeTab!=='final'?';background:var(--text);color:var(--surface);border-color:transparent':''}">과제 / 연습</button>
   </div>` : '';
   const filterHtml = `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.8rem">
     <button class="wf-btn${!window._weekFilter?' active':''}" data-wf="" onclick="setWeekFilter('')">전체</button>
