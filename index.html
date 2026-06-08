@@ -58,9 +58,9 @@ button.primary:hover{background:var(--text6)}
 .section-lbl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.3rem;margin-top:.85rem}
 .section-lbl:first-child{margin-top:0}
 .body-text{font-size:14px;line-height:1.7;color:var(--text)}
-.body-text.final-desc{font-size:15px;line-height:1.8}
-.body-text pre[class*="language-"],.body-text pre:has(>code[class*="language-"]){background:#fff!important;border:1.5px solid #222;border-radius:8px;padding:1rem;margin:.8rem 0;overflow-x:auto}
-.body-text code[class*="language-"]{font-family:Consolas,'Courier New',monospace!important;font-size:13.5px!important;line-height:1.0!important;color:#1a1a1a!important}
+.body-text.final-desc{font-size:16px;line-height:1.8}
+.body-text pre[class*="language-"],.body-text pre:has(>code[class*="language-"]){background:#fff!important;border:1.5px solid #222;border-radius:8px;padding:.8rem 1rem;margin:.8rem 0;overflow-x:auto}
+.body-text code[class*="language-"]{font-family:Consolas,'Courier New',monospace!important;font-size:13px!important;line-height:1.15!important;color:#1a1a1a!important}
 body.dark .body-text pre[class*="language-"],body.dark .body-text pre:has(>code[class*="language-"]){background:#1e1e1e!important;border-color:#555}
 body.dark .body-text code[class*="language-"]{color:#cdd6f4!important}
 .prob-pane{-webkit-user-select:none;user-select:none}
@@ -1820,7 +1820,7 @@ function renderProb(pid, push=true){
           답안을 작성한 후 <b>제출</b> 버튼을 누르시오. 채점 결과는 시험 종료 후 안내됩니다.<br>
           <b>AI 사용, 다른 탭/창 이동</b>은 자동으로 감지되어 기록됩니다.
         </div>
-        <textarea id="code-ta" spellcheck="false" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;line-height:1.8;min-height:180px">${sessionStorage.getItem('draft:'+p.id)||''}</textarea>
+        <textarea id="code-ta" spellcheck="false" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;line-height:1.8;min-height:180px">${sessionStorage.getItem('draft:'+p.id)||(p.template||'')}</textarea>
         <div class="btn-row">
           <button class="primary" id="sub-btn" onclick="doSubmit()">제출</button>
           <button onclick="doReset()">초기화</button>
