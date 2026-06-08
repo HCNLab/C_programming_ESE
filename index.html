@@ -296,7 +296,7 @@ body.dark .CodeMirror-focused{border-color:#888}
 <body>
 <div class="wrap"><div id="app"></div></div>
 <script src="problems.js"></script>
-<script src="quiz.js"></script>
+<script src="final.js"></script>
 <script>
 
 /* ============================================================
@@ -1103,7 +1103,7 @@ function userBar(){
   const adminBtn = isAdmin() ? `<button onclick="renderAdmin()" style="color:#D85A30;font-weight:600">관리자</button>` : '';
   if (firebaseUser && username) return `<div class="user-chip">${username}
     <button class="link-btn" onclick="doLogout()">로그아웃</button></div>
-    ${adminBtn}${(PROBLEMS.some(p=>p.quiz)&&!isAdmin()&&!isTA())?'':'<button onclick="renderHistory()">내 이력</button>'}${themeBtn}`;
+    ${adminBtn}${(PROBLEMS.some(p=>p.final)&&!isAdmin()&&!isTA())?'':'<button onclick="renderHistory()">내 이력</button>'}${themeBtn}`;
   if (firebaseUser && !username) return `${adminBtn}<button onclick="doRegisterName()">학번_이름 등록</button>${themeBtn}`;
   return `<button onclick="doLogin()">Google 로그인</button>${themeBtn}`;
 }
@@ -1188,12 +1188,12 @@ function renderHome(push=true){
   if(push) history.pushState({view:'home'},'',' ');
   view = 'home';
   const hist = loadHistory();
-  // quiz tab state
+  // final tab state
   if (!window._homeTab) window._homeTab = 'assign';
-  const hasQuizTab = PROBLEMS.some(p => p.quiz && (!p._isDraft || isAdmin() || isTA()) && _userAllowed(p));
-  const _visibleProbs = window._homeTab === 'quiz'
-    ? PROBLEMS.filter(p => p.quiz && (!p._isDraft || isAdmin() || isTA()) && _userAllowed(p))
-    : PROBLEMS.filter(p => !p.quiz);
+  const hasQuizTab = PROBLEMS.some(p => p.final && (!p._isDraft || isAdmin() || isTA()) && _userAllowed(p));
+  const _visibleProbs = window._homeTab === 'final'
+    ? PROBLEMS.filter(p => p.final && (!p._isDraft || isAdmin() || isTA()) && _userAllowed(p))
+    : PROBLEMS.filter(p => !p.final);
   // group by week
   const groups = {};
   _visibleProbs.forEach(p => {
@@ -1295,7 +1295,7 @@ function renderHome(push=true){
       <div style="font-size:14px;font-weight:700;color:var(--text)">${sname}님</div>
       <div style="font-size:11px;color:var(--text4);margin:.1rem 0 0">${sid}</div>
       ${rankLabel}
-      ${(PROBLEMS.some(p=>p.quiz)&&!isAdmin()&&!isTA())?'':`<button onclick="renderHistory()" style="font-size:12px;padding:5px 0;width:100%;border-radius:5px;cursor:pointer;background:none;color:var(--link);border:1px solid var(--link);margin-bottom:.4rem">내 제출 이력</button>`}
+      ${(PROBLEMS.some(p=>p.final)&&!isAdmin()&&!isTA())?'':`<button onclick="renderHistory()" style="font-size:12px;padding:5px 0;width:100%;border-radius:5px;cursor:pointer;background:none;color:var(--link);border:1px solid var(--link);margin-bottom:.4rem">내 제출 이력</button>`}
       <button onclick="doLogout()" class="link-btn" style="font-size:11px;color:var(--text5)">로그아웃</button>`;
   })();
 
@@ -1308,7 +1308,7 @@ function renderHome(push=true){
   // sidebar: unsubmitted list (assignments only, no practice)
   const now = new Date();
   const upcoming = PROBLEMS
-    .filter(p => !p.noSubmit && !p.quiz && isOpen(p) && !(hist[p.id] && hist[p.id].length > 0))
+    .filter(p => !p.noSubmit && !p.final && isOpen(p) && !(hist[p.id] && hist[p.id].length > 0))
     .sort((a,b) => new Date(a.deadline) - new Date(b.deadline));
   const showAll = window._sidebarAll || false;
   const display = showAll ? upcoming : upcoming.slice(0,5);
@@ -1374,8 +1374,8 @@ function renderHome(push=true){
   })();
 
   // progress (assignment/practice split) — drafts excluded from total (not visible to students)
-  const assignProbs    = PROBLEMS.filter(p => !p.noSubmit && !p._isDraft && !p.quiz);
-  const practiceProbs  = PROBLEMS.filter(p =>  p.noSubmit && !p._isDraft && !p.quiz);
+  const assignProbs    = PROBLEMS.filter(p => !p.noSubmit && !p._isDraft && !p.final);
+  const practiceProbs  = PROBLEMS.filter(p =>  p.noSubmit && !p._isDraft && !p.final);
   const doneAssign     = assignProbs.filter(p => hist[p.id] && hist[p.id].length > 0).length;
   const donePractice   = practiceProbs.filter(p => hist[p.id] && hist[p.id].length > 0).length;
   const totalAssign    = assignProbs.length;
@@ -1546,8 +1546,8 @@ function renderHome(push=true){
   const submitWeeks = allWeekKeys.filter(w =>  noSubmitWeeks.has(w));
   const weekKeys = [...assignWeeks, ...submitWeeks];
   const tabBarHtml = hasQuizTab ? `<div style="display:flex;gap:6px;margin-bottom:.6rem">
-    <button onclick="window._homeTab='assign';renderHome(false)" style="font-size:13px;padding:5px 16px;border-radius:6px${window._homeTab!=='quiz'?';background:var(--text);color:var(--surface);border-color:transparent':''}">과제 / 연습</button>
-    <button onclick="window._homeTab='quiz';renderHome(false)" style="font-size:13px;padding:5px 16px;border-radius:6px${window._homeTab==='quiz'?';background:var(--text);color:var(--surface);border-color:transparent':''}">퀴즈</button>
+    <button onclick="window._homeTab='assign';renderHome(false)" style="font-size:13px;padding:5px 16px;border-radius:6px${window._homeTab!=='final'?';background:var(--text);color:var(--surface);border-color:transparent':''}">과제 / 연습</button>
+    <button onclick="window._homeTab='final';renderHome(false)" style="font-size:13px;padding:5px 16px;border-radius:6px${window._homeTab==='final'?';background:var(--text);color:var(--surface);border-color:transparent':''}">기말고사</button>
   </div>` : '';
   const filterHtml = `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.8rem">
     <button class="wf-btn${!window._weekFilter?' active':''}" data-wf="" onclick="setWeekFilter('')">전체</button>
@@ -1562,7 +1562,7 @@ function renderHome(push=true){
       const open = isOpen(p);
       const entries = hist[p.id] || [];
 
-      if (p.quiz) {
+      if (p.final) {
         return `<div class="prob-card${p._isDraft?' draft-card':''}" onclick="goProb('${p.id}')">
           <div class="prob-card-title">
             <span style="font-family:'Menlo','Consolas',monospace;font-size:11px;font-weight:500;color:var(--text4);margin-right:5px;background:var(--surface3);border:1px solid var(--border);border-radius:3px;padding:1px 4px">${p.id}</span>${p.title}${p._isDraft?'<span class="draft-badge">DRAFT</span>':''}
@@ -1735,7 +1735,7 @@ function renderHome(push=true){
           <div id="progress-body" style="display:${localStorage.getItem('oj_progress_open')==='0'?'none':''}">
             ${_homeProgMode==='class' ? classSidebarHtml : progressHtml}
             <div style="margin-top:.5rem;text-align:right">
-              ${(PROBLEMS.some(p=>p.quiz)&&!isAdmin()&&!isTA())?'':`<span onclick="renderHistory()" style="font-size:11px;color:var(--link);cursor:pointer">${(isAdmin()||isTA())?'상세 대시보드 →':'전체 이력 보기 →'}</span>`}
+              ${(PROBLEMS.some(p=>p.final)&&!isAdmin()&&!isTA())?'':`<span onclick="renderHistory()" style="font-size:11px;color:var(--link);cursor:pointer">${(isAdmin()||isTA())?'상세 대시보드 →':'전체 이력 보기 →'}</span>`}
             </div>
           </div>
         </div>` : ''}
@@ -1787,8 +1787,8 @@ function renderProb(pid, push=true){
       window._probLastCodeTs = new Date(hist[0].ts).toLocaleString('ko-KR');
       return `<div class="notice">제출 이력: <strong>${hist.length}회</strong>
         &nbsp;·&nbsp; 최근 ${new Date(hist[0].ts).toLocaleString('ko-KR')}
-        ${(PROBLEMS.some(p=>p.quiz)&&!isAdmin()&&!isTA())?'':'&nbsp;·&nbsp; <span style="color:var(--link);cursor:pointer" onclick="renderHistory()">이력 보기</span>'}
-        ${(hist[0].code&&(!PROBLEMS.some(p=>p.quiz)||isAdmin()||isTA())) ? `&nbsp;·&nbsp; <span style="color:var(--link);cursor:pointer" onclick="showCode(window._probLastCode,window._probLastCodeTitle,window._probLastCodeTs)">최근 제출 코드 보기</span>` : ''}</div>`;
+        ${(PROBLEMS.some(p=>p.final)&&!isAdmin()&&!isTA())?'':'&nbsp;·&nbsp; <span style="color:var(--link);cursor:pointer" onclick="renderHistory()">이력 보기</span>'}
+        ${(hist[0].code&&(!PROBLEMS.some(p=>p.final)||isAdmin()||isTA())) ? `&nbsp;·&nbsp; <span style="color:var(--link);cursor:pointer" onclick="showCode(window._probLastCode,window._probLastCodeTitle,window._probLastCodeTs)">최근 제출 코드 보기</span>` : ''}</div>`;
     })() : ''}
     <div class="prob-layout">
       <div class="prob-pane">
@@ -1803,12 +1803,12 @@ function renderProb(pid, push=true){
             <div><div class="section-lbl">예제 입력</div><div class="io-box">${p.ex_in}</div></div>
             <div><div class="section-lbl">예제 출력</div><div class="io-box">${p.ex_out.replace(/\n/g, '<span style="color:var(--text4)">↵</span>\n')}</div></div>
           </div>
-          ${p.quiz ? '' : '<div id="prof-note-slot"></div>'}
+          ${p.final ? '' : '<div id="prof-note-slot"></div>'}
         </div>
       </div>
       <div class="code-pane">
         <div class="section-lbl" style="margin-bottom:.4rem">코드 작성</div>
-        ${p.quiz ? `
+        ${p.final ? `
         <div style="font-size:12px;color:#7C3AED;margin-bottom:.6rem;padding:.6rem .75rem;background:#f5f0ff;border-radius:6px;border:1px solid #c4b5fd;line-height:1.7">
           ⚠️ <b>퀴즈 안내</b><br>
           테스트 실행 시 <b>본인 코드의 출력 결과만</b> 표시됩니다. 채점 결과는 추후 안내됩니다.<br>
@@ -1826,12 +1826,12 @@ function renderProb(pid, push=true){
           <button onclick="stopTimeAttack()" style="margin-left:auto;font-size:11px;padding:2px 7px;color:var(--error);border:1px solid var(--error);background:none;border-radius:4px;cursor:pointer">종료</button>
         </div>
         <div class="btn-row">
-          ${p.quiz ? '<button class="primary" id="sub-btn" onclick="doSubmit()">제출</button>' : p.noSubmit ? '<button class="primary" id="sub-btn" onclick="doSubmit()" style="background:var(--link);border-color:var(--link)" title="제출 순위에 반영됩니다 (성적 무관)">제출 (순위 반영)</button>' : '<button class="primary" id="sub-btn" onclick="doSubmit()">제출</button>'}
+          ${p.final ? '<button class="primary" id="sub-btn" onclick="doSubmit()">제출</button>' : p.noSubmit ? '<button class="primary" id="sub-btn" onclick="doSubmit()" style="background:var(--link);border-color:var(--link)" title="제출 순위에 반영됩니다 (성적 무관)">제출 (순위 반영)</button>' : '<button class="primary" id="sub-btn" onclick="doSubmit()">제출</button>'}
           <button id="test-btn" onclick="doTest()">테스트 실행</button>
           <button onclick="doReset()">초기화</button>
-          ${p.quiz ? '' : '<button id="ta-btn" onclick="startTimeAttack()" style="margin-left:auto;font-size:12px;color:#e94560;border-color:#e94560" title="타임어택: 복붙 차단 후 타이머 시작">⏱ 타임어택</button>'}
+          ${p.final ? '' : '<button id="ta-btn" onclick="startTimeAttack()" style="margin-left:auto;font-size:12px;color:#e94560;border-color:#e94560" title="타임어택: 복붙 차단 후 타이머 시작">⏱ 타임어택</button>'}
         </div>
-        ${p.quiz ? '' : `
+        ${p.final ? '' : `
         <div style="display:flex;align-items:center;gap:10px;padding:.5rem .75rem;margin-bottom:.75rem;background:var(--surface3);border:1px solid var(--border);border-radius:6px;font-size:12px;flex-wrap:wrap">
           <button id="diff-btn" onclick="toggleDifficulty('${p.id}')" style="font-size:12px;padding:4px 10px;cursor:pointer" title="이 문제가 많이 어려우면 눌러주세요 (한 번 더 누르면 취소)">😵 어려워요 <span id="diff-count">-</span></button>
           <span style="color:var(--text4)">많이 어려우면 교수님이 힌트를 드려요</span>
@@ -2001,13 +2001,33 @@ function renderResults(){
   const p = _curProb || PROBLEMS.find(x => x.id === curPid);
   if (!p || !$('results')) return;
 
-  if (p.quiz) {
+  if (p.final) {
     const rows = p.cases.map((tc, i) => {
       const r = tcResults[tc.id];
-      let badge = '', outputHtml = '';
+      let cls = '', badge = '', outputHtml = '';
       if (!r) badge = '<span class="badge wait">대기</span>';
       else if (r.status === 'running') badge = '<span class="badge run">채점중</span>';
-      else {
+      else if (r.status === 'fail') {
+        cls = 'tc-fail';
+        badge = `<span class="badge fail">${r.msg || '오류'}</span>`;
+        if (r.detail)
+          outputHtml = `<div class="tc-detail">${r.detail}</div>`;
+        else if (r.stdout !== undefined) {
+          const tcInput = tc.input||'';
+          const isMultiIn = tcInput.includes('\n') && tcInput.trimEnd().includes('\n');
+          const isMultiOut = (r.stdout||'').includes('\n');
+          const inputHtml = tcInput
+            ? (isMultiIn
+              ? `<div class="tc-detail">입력:<br><code style="display:block;white-space:pre-wrap;margin-top:2px;padding:4px 6px;background:var(--surface3);border-radius:4px">${tcInput.trimEnd()}</code></div>`
+              : `<div class="tc-detail">입력: <code>${tcInput.trimEnd()}</code></div>`)
+            : '';
+          const isMulti = (r.stdout||'').includes('\n');
+          outputHtml = inputHtml
+            + (isMulti
+              ? `<div class="tc-detail">출력:<br><code style="display:block;white-space:pre-wrap;margin-top:2px;padding:4px 6px;background:var(--surface3);border-radius:4px">${r.stdout||'(없음)'}</code></div>`
+              : `<div class="tc-detail">출력: <code>${r.stdout||'(없음)'}</code></div>`);
+        }
+      } else {
         badge = '<span class="badge" style="background:var(--run-badge-bg);color:var(--run-badge-tx)">실행됨</span>';
         const tcInput = tc.input||'';
         const isMultiIn = tcInput.includes('\n') && tcInput.trimEnd().includes('\n');
@@ -2024,7 +2044,7 @@ function renderResults(){
               : `<div class="tc-detail">출력: <code>${r.stdout||'(없음)'}</code></div>`)
             : '');
       }
-      return `<div class="tc-row">
+      return `<div class="tc-row ${cls}">
         ${badge}
         <div style="flex:1;min-width:0">
           <div style="font-size:12px;color:var(--text3)">TC ${i+1}</div>
@@ -2109,7 +2129,7 @@ function viewHistCode(idx){
 }
 
 function renderHistory(push=true){
-  if (PROBLEMS.some(p=>p.quiz) && !isAdmin() && !isTA()) { renderHome(); return; }
+  if (PROBLEMS.some(p=>p.final) && !isAdmin() && !isTA()) { renderHome(); return; }
   if(push) history.pushState({view:'history'},'',' ');
   view = 'history';
   window._histCodes = [];
@@ -2500,9 +2520,9 @@ async function doSubmit(){
   if (!src.trim() || src.trim() === _starter.trim()){
     alert('코드를 작성한 후 제출하세요.'); return;
   }
-  // ── quiz branch ──
-  if (p.quiz) {
-    const confirmed = confirm(`[퀴즈] ${p.title}\n\n제출하시겠습니까?\n(채점은 시험 종료 후 이루어집니다)`);
+  // ── final exam branch ──
+  if (p.final) {
+    const confirmed = confirm(`[기말] ${p.title}\n\n제출하시겠습니까?\n(채점은 시험 종료 후 이루어집니다)`);
     if (!confirmed) return;
     submitting = true;
     const btn = $('sub-btn');
@@ -2511,7 +2531,7 @@ async function doSubmit(){
     const outputs = p.cases.map(tc => (tcResults[tc.id]?.stdout ?? '')).join(' | ');
     addHistory(p.id, { ts, submitted: true, score: null, max: null, code: src });
     sessionStorage.removeItem('draft:'+p.id);
-    sendToSheets({ type:'quiz', ts, username, problemId: p.id, problem: p.title, outputs, code: src });
+    sendToSheets({ type:'final', ts, username, problemId: p.id, problem: p.title, outputs, code: src });
     submitting = false;
     if (btn){ btn.disabled = false; btn.textContent = '제출'; }
     if ($('results')){
@@ -3441,21 +3461,21 @@ fetchRatings();
     e.preventDefault();
   });
 
-  // quiz-only: tab/window switch detection
+  // final-only: tab/window switch detection
   // NOTE: blur 리스너는 제거함 (confirm 대화상자, 주소창 클릭 등에서 오탐 발생).
   //       visibilitychange만으로 탭 전환/최소화 감지 충분.
   //       단, 다른 앱(IDE 등)으로 전환은 감지 못함 (Alt+Tab 등).
-  function _quizWarn(method){
-    if (isAdmin() || isTA() || window._suppressQuizWarn) return;
+  function _examWarn(method){
+    // if (isAdmin() || isTA() || window._suppressExamWarn) return;  // 테스트용 주석처리
     _devWarnCount++;
     sendToSheets({ type:'warn', ts: new Date().toISOString(), username: username||'미로그인', problemId: curPid||'', method });
     const overlay = document.createElement('div');
     overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:center;justify-content:center;padding:2rem';
     overlay.innerHTML = `<div style="background:#fff;border-radius:12px;padding:2rem;max-width:420px;text-align:center">
       <div style="font-size:48px;margin-bottom:12px">⚠️</div>
-      <div style="font-size:18px;font-weight:700;color:#d32f2f;margin-bottom:8px">퀴즈 중 이탈 감지</div>
+      <div style="font-size:18px;font-weight:700;color:#d32f2f;margin-bottom:8px">시험 중 이탈 감지</div>
       <div style="font-size:14px;color:#333;line-height:1.6">
-        퀴즈 진행 중 다른 창/탭 이동이 감지되었습니다.<br>
+        시험 진행 중 다른 창/탭 이동이 감지되었습니다.<br>
         <b>이 행위는 관리자에게 자동으로 기록됩니다.</b><br>
         (${username || '미로그인'} / ${_devWarnCount}회)
       </div>
@@ -3465,7 +3485,7 @@ fetchRatings();
     document.body.appendChild(overlay);
   }
   document.addEventListener('visibilitychange', function(){
-    if (document.hidden && _curProb && _curProb.quiz) _quizWarn('탭 이탈');
+    if (document.hidden && _curProb && _curProb.final) _examWarn('탭 이탈');
   });
 })();
 </script>
