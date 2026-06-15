@@ -2532,6 +2532,7 @@ function goProb(pid){
 }
 
 async function doSubmit(){
+  alert('학기 종료로 제출이 불가합니다.'); return;
   if (submitting) return;
   if (!username){ doSetUser(() => doSubmit()); return; }
   if (!isApproved){ alert('승인 대기 중입니다. 교수님/TA의 승인 후 제출할 수 있습니다.'); return; }
@@ -2670,6 +2671,7 @@ function startTestCooldown() {
 }
 
 async function doTest(){
+  alert('학기 종료로 테스트 실행이 불가합니다.'); return;
   if (submitting || testCooldown > 0) return;
   const _base = PROBLEMS.find(x => x.id === curPid);
   const _newCases = buildCases(curPid);

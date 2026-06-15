@@ -6,7 +6,7 @@ const SHEETS_KEY  = 'h0vBgzOeEvfvK0WQYqXdDw';  // auth key for admin/ratings mod
 const COURSE_NAME = 'C Programming (1)';
 
 // Notice (empty string = hidden)
-const NOTICE = '';
+const NOTICE = '2026-1 C Programming (1) 종료로 테스트 실행 및 제출 불가입니다.';
 
 // Admin emails (admin panel shown on login with these accounts)
 const ADMIN_EMAILS = ['khwon.public@gmail.com'];
