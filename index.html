@@ -1109,7 +1109,7 @@ window._approveAllLegacy = async function(){
 function userBar(){
   const isDark = document.body.classList.contains('dark');
   const themeBtn = `<button onclick="toggleTheme()" title="테마 전환" style="font-size:15px;background:none;border:none;cursor:pointer;padding:2px 6px;line-height:1">${isDark ? '☀️' : '🌙'}</button>`;
-  const adminBtn = isAdmin() ? `<button onclick="renderAdmin()" style="color:#D85A30;font-weight:600">관리자</button>` : '';
+  const adminBtn = (isAdmin() || isTA()) ? `<button onclick="renderAdmin()" style="color:#D85A30;font-weight:600">관리자</button>` : '';
   if (firebaseUser && username) return `<div class="user-chip">${username}
     <button class="link-btn" onclick="doLogout()">로그아웃</button></div>
     ${adminBtn}${(PROBLEMS.some(p=>p.final)&&!isAdmin()&&!isTA())?'':'<button onclick="renderHistory()">내 이력</button>'}${themeBtn}`;
@@ -3047,7 +3047,7 @@ function showCode(code, title, ts){
 /* Admin panel: query full user mapping */
 let _adminTab = 'users';
 async function renderAdmin(push=true){
-  if (!isAdmin()) { alert('관리자 권한이 없습니다.'); return; }
+  if (!isAdmin() && !isTA()) { alert('관리자 권한이 없습니다.'); return; }
   if (push) history.pushState({view:'admin'}, '', ' ');
   view = 'admin';
   const tabStyle = (t) => `padding:8px 16px;border:none;background:${_adminTab===t?'var(--text)':'var(--surface)'};color:${_adminTab===t?'var(--surface)':'var(--text)'};border-radius:8px 8px 0 0;cursor:pointer;font-weight:${_adminTab===t?'600':'400'};font-size:13px`;
